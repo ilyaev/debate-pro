@@ -1,0 +1,58 @@
+import type { Mode } from '../App';
+
+interface Props {
+    onStart: (mode: Mode) => void;
+}
+
+const modes = [
+    {
+        id: 'pitch_perfect' as Mode,
+        title: 'PitchPerfect',
+        subtitle: 'Startup Pitch Coach',
+        description: 'Face a skeptical VC who will challenge every claim you make.',
+        icon: '🎯',
+        color: '#4f8cff',
+    },
+    {
+        id: 'empathy_trainer' as Mode,
+        title: 'EmpathyTrainer',
+        subtitle: 'Difficult Conversations',
+        description: 'Practice handling upset customers, struggling employees, and tense situations.',
+        icon: '🤝',
+        color: '#22c55e',
+    },
+    {
+        id: 'veritalk' as Mode,
+        title: 'Veritalk',
+        subtitle: 'Debate Sparring',
+        description: 'Defend your thesis against real-time fact-checks and logical traps.',
+        icon: '⚔️',
+        color: '#8b5cf6',
+    },
+];
+
+export function ModeSelect({ onStart }: Props) {
+    return (
+        <div className="mode-select">
+            <div className="mode-select__header">
+                <h1 className="logo-text">DebatePro</h1>
+                <p className="subtitle">Choose your sparring partner</p>
+            </div>
+            <div className="mode-cards">
+                {modes.map((m) => (
+                    <button
+                        key={m.id}
+                        className="mode-card"
+                        onClick={() => onStart(m.id)}
+                        style={{ '--card-accent': m.color } as React.CSSProperties}
+                    >
+                        <span className="mode-card__icon">{m.icon}</span>
+                        <h2 className="mode-card__title">{m.title}</h2>
+                        <h3 className="mode-card__subtitle">{m.subtitle}</h3>
+                        <p className="mode-card__desc">{m.description}</p>
+                    </button>
+                ))}
+            </div>
+        </div>
+    );
+}

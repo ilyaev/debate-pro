@@ -1,0 +1,28 @@
+{
+    "name": "debatepro",
+    "version": "1.0.0",
+    "type": "module",
+    "scripts": {
+        "dev:server": "tsx watch server/main.ts",
+        "dev:client": "cd client && npm run dev",
+        "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
+        "build:server": "tsc",
+        "build:client": "cd client && npm run build",
+        "build": "npm run build:server && npm run build:client",
+        "start": "node dist/server/main.js"
+    },
+    "dependencies": {
+        "@google/genai": "^1.0.0",
+        "@google-cloud/firestore": "^7.0.0",
+        "express": "^5.0.0",
+        "ws": "^8.18.0",
+        "dotenv": "^16.4.0"
+    },
+    "devDependencies": {
+        "@types/express": "^5.0.0",
+        "@types/ws": "^8.5.0",
+        "concurrently": "^9.1.0",
+        "tsx": "^4.19.0",
+        "typescript": "^5.6.0"
+    }
+}

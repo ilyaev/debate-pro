@@ -1,0 +1,137 @@
+import { useRef, useCallback } from 'react';
+
+interface UseAudioReturn {
+  startCapture: () => Promise<void>;
+  stopCapture: () => void;
+  playChunk: (audioData: ArrayBuffer) => void;
+  handleInterrupt: () => void;
+  analyserRef: React.RefObject<AnalyserNode | null>;
+}
+
+export function useAudio(sendBinary: (data: ArrayBuffer) => void): UseAudioReturn {
+  const contextRef = useRef<AudioContext | null>(null);
+  const streamRef = useRef<MediaStream | null>(null);
+  const workletRef = useRef<AudioWorkletNode | null>(null);
+  const analyserRef = useRef<AnalyserNode | null>(null);
+
+  // Playback state
+  const playbackContextRef = useRef<AudioContext | null>(null);
+  const nextPlayTimeRef = useRef<number>(0);
+  const isPlayingRef = useRef<boolean>(false);
+
+  const startCapture = useCallback(async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: {
+          sampleRate: 16000,
+          channelCount: 1,
+          echoCancellation: true,
+          noiseSuppression: true,
+        },
+      });
+      streamRef.current = stream;
+
+      const context = new AudioContext({ sampleRate: 16000 });
+      contextRef.current = context;
+
+      // Create analyser for waveform visualization
+      const analyser = context.createAnalyser();
+      analyser.fftSize = 2048;
+      analyserRef.current = analyser;
+
+      const source = context.createMediaStreamSource(stream);
+      source.connect(analyser);
+
+      let audioChunkCount = 0;
+      // Use ScriptProcessor as fallback (AudioWorklet requires HTTPS)
+      const processor = context.createScriptProcessor(4096, 1, 1);
+      processor.onaudioprocess = (e) => {
+        const inputData = e.inputBuffer.getChannelData(0);
+        // Convert Float32 to Int16 PCM
+        const pcm = new Int16Array(inputData.length);
+        for (let i = 0; i < inputData.length; i++) {
+          const s = Math.max(-1, Math.min(1, inputData[i]));
+          pcm[i] = s < 0 ? s * 0x8000 : s * 0x7FFF;
+        }
+        audioChunkCount++;
+        if (audioChunkCount === 1 || audioChunkCount % 50 === 0) {
+          console.log(`🎤 [Audio] Captured chunk #${audioChunkCount}: ${pcm.buffer.byteLength} bytes`);
+        }
+        sendBinary(pcm.buffer);
+      };
+
+      source.connect(processor);
+      processor.connect(context.destination);
+
+      // Init playback context
+      playbackContextRef.current = new AudioContext({ sampleRate: 24000 });
+      nextPlayTimeRef.current = 0;
+
+      console.log('🎤 Audio capture started');
+    } catch (err) {
+      console.error('Failed to start audio capture:', err);
+      throw err;
+    }
+  }, [sendBinary]);
+
+  const stopCapture = useCallback(() => {
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach(track => track.stop());
+      streamRef.current = null;
+    }
+    if (contextRef.current) {
+      contextRef.current.close();
+      contextRef.current = null;
+    }
+    if (playbackContextRef.current) {
+      playbackContextRef.current.close();
+      playbackContextRef.current = null;
+    }
+    console.log('🎤 Audio capture stopped');
+  }, []);
+
+  const playChunk = useCallback((audioData: ArrayBuffer) => {
+    const ctx = playbackContextRef.current;
+    if (!ctx) return;
+
+    // Convert raw PCM Int16 to Float32 for Web Audio API
+    const int16 = new Int16Array(audioData);
+    const float32 = new Float32Array(int16.length);
+    for (let i = 0; i < int16.length; i++) {
+      float32[i] = int16[i] / 0x7FFF;
+    }
+
+    const buffer = ctx.createBuffer(1, float32.length, 24000);
+    buffer.copyToChannel(float32, 0);
+
+    const source = ctx.createBufferSource();
+    source.buffer = buffer;
+    source.connect(ctx.destination);
+
+    // Schedule playback sequentially to avoid gaps
+    const now = ctx.currentTime;
+    const startTime = Math.max(now, nextPlayTimeRef.current);
+    source.start(startTime);
+    nextPlayTimeRef.current = startTime + buffer.duration;
+    isPlayingRef.current = true;
+
+    source.onended = () => {
+      if (nextPlayTimeRef.current <= ctx.currentTime + 0.01) {
+        isPlayingRef.current = false;
+      }
+    };
+  }, []);
+
+  const handleInterrupt = useCallback(() => {
+    // Stop current playback by resetting the playback context
+    if (playbackContextRef.current) {
+      playbackContextRef.current.close();
+      playbackContextRef.current = new AudioContext({ sampleRate: 24000 });
+      nextPlayTimeRef.current = 0;
+      isPlayingRef.current = false;
+    }
+    console.log('⚡ Playback interrupted');
+  }, []);
+
+  return { startCapture, stopCapture, playChunk, handleInterrupt, analyserRef };
+}
