@@ -139,10 +139,21 @@ export function ImprovementTips({ tips }: { tips: string[] }) {
         </div>
     );
 }
+// ─── Partner Info ───────────────────────────────────────────────────────────
+
+export function PartnerInfo({ voiceName, roleHint }: { voiceName?: string; roleHint?: string }) {
+    if (!voiceName) return null;
+    return (
+        <div className="report__partner-oneliner">
+            <span className="report__partner-label">{roleHint || 'AI Partner'}:</span>
+            <span className="report__partner-name">{voiceName}</span>
+        </div>
+    );
+}
 
 // ─── Transcript ────────────────────────────────────────────────────
 
-export function Transcript({ lines }: { lines?: string[] }) {
+export function Transcript({ lines, aiName }: { lines?: string[]; aiName?: string }) {
     if (!lines || lines.length === 0) return null;
     return (
         <div className="session-detail__transcript">
@@ -153,7 +164,7 @@ export function Transcript({ lines }: { lines?: string[] }) {
                     const text = line.replace(/^\[(User|AI)\]\s*/, '');
                     return (
                         <div key={i} className={`session-detail__line ${isUser ? 'session-detail__line--user' : 'session-detail__line--ai'}`}>
-                            <span className="session-detail__line-role">{isUser ? 'You' : 'AI'}</span>
+                            <span className="session-detail__line-role">{isUser ? 'You' : (aiName || 'AI')}</span>
                             <span className="session-detail__line-text">{text}</span>
                         </div>
                     );

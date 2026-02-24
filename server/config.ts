@@ -13,6 +13,7 @@ export const config = {
   geminiModel: 'gemini-2.5-flash-native-audio-preview-12-2025',
   port: parseInt(process.env.PORT || '8080'),
   isDev: process.env.NODE_ENV !== 'production',
+  voices: ['Puck', 'Charon', 'Kore', 'Fenrir', 'Aoede'] as const,
 };
 
 // ─── Report Config Types ─────────────────────────────────────────────────────

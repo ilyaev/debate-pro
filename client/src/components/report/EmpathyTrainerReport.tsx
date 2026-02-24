@@ -2,6 +2,7 @@ import type { SessionReport, EmpathyTrainerExtra } from '../../types';
 import {
     ScoreGauge, CategoryCards, MetricsStrip,
     KeyMoments, ImprovementTips, ReportActions, Transcript,
+    PartnerInfo,
 } from './ReportBase';
 
 interface Props {
@@ -17,9 +18,11 @@ export function EmpathyTrainerReport({ data, onRestart, transcript, sessionId, u
     const extra = data.extra as EmpathyTrainerExtra | undefined;
     return (
         <div className="report">
-            <h1 className="report__title">Empathy Session Review</h1>
-            <p className="report__subtitle">Difficult Conversations · Post-Session Analysis</p>
+            <h1 className="report__title">Empathy Evaluation</h1>
+            <PartnerInfo voiceName={data.voiceName} roleHint="Emotional Sparring Partner" />
+            <p className="report__subtitle">Emotional Intelligence Review</p>
             <ScoreGauge score={data.overall_score} />
+
             <CategoryCards categories={data.categories} />
             <MetricsStrip metrics={data.metrics} displayMetrics={data.displayMetrics} />
             {extra?.escalation_moments && extra.escalation_moments.length > 0 && (
@@ -62,7 +65,7 @@ export function EmpathyTrainerReport({ data, onRestart, transcript, sessionId, u
                 </div>
             )}
             <ImprovementTips tips={data.improvement_tips} />
-            <Transcript lines={transcript} />
+            <Transcript lines={transcript} aiName={data.voiceName} />
             <ReportActions onRestart={onRestart} sessionId={sessionId} userId={userId} isShared={isShared} />
         </div>
     );

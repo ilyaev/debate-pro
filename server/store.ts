@@ -29,6 +29,8 @@ export interface SessionReport {
   extra?: Record<string, unknown>;
   /** Which metric keys from `metrics` are relevant for this mode */
   displayMetrics?: string[];
+  /** The name of the AI voice used in this session */
+  voiceName?: string;
 }
 
 export interface SessionData {
@@ -39,6 +41,7 @@ export interface SessionData {
   transcript: string[];
   metrics: MetricSnapshot[];
   report?: SessionReport;
+  voiceName?: string;
 }
 
 export interface SessionSummary {

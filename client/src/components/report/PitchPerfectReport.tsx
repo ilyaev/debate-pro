@@ -2,6 +2,7 @@ import type { SessionReport, PitchPerfectExtra } from '../../types';
 import {
     ScoreGauge, CategoryCards, MetricsStrip,
     KeyMoments, ImprovementTips, ReportActions, Transcript,
+    PartnerInfo,
 } from './ReportBase';
 
 interface Props {
@@ -18,7 +19,8 @@ export function PitchPerfectReport({ data, onRestart, transcript, sessionId, use
     return (
         <div className="report">
             <h1 className="report__title">Pitch Evaluation</h1>
-            <p className="report__subtitle">Skeptical VC · Post-Session Review</p>
+            <PartnerInfo voiceName={data.voiceName} roleHint="Skeptical VC" />
+            <p className="report__subtitle">Post-Session Evaluation</p>
             <ScoreGauge score={data.overall_score} />
             {extra?.pitch_structure_score !== undefined && (
                 <div className="report__extra-card report__extra-card--pitch">
@@ -44,7 +46,7 @@ export function PitchPerfectReport({ data, onRestart, transcript, sessionId, use
                 </div>
             )}
             <ImprovementTips tips={data.improvement_tips} />
-            <Transcript lines={transcript} />
+            <Transcript lines={transcript} aiName={data.voiceName} />
             <ReportActions onRestart={onRestart} sessionId={sessionId} userId={userId} isShared={isShared} />
         </div>
     );

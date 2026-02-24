@@ -2,6 +2,7 @@ import type { SessionReport, ImpromptuExtra } from '../../types';
 import {
     ScoreGauge, CategoryCards, MetricsStrip,
     KeyMoments, ImprovementTips, ReportActions, Transcript,
+    PartnerInfo,
 } from './ReportBase';
 
 interface Props {
@@ -17,8 +18,9 @@ export function ImpromptuReport({ data, onRestart, transcript, sessionId, userId
     const extra = data.extra as ImpromptuExtra | undefined;
     return (
         <div className="report">
-            <h1 className="report__title">Impromptu Debrief</h1>
-            <p className="report__subtitle">On-the-Spot Speaking · Post-Session Review</p>
+            <h1 className="report__title">Impromptu Evaluation</h1>
+            <PartnerInfo voiceName={data.voiceName} roleHint="Improv Coach" />
+            <p className="report__subtitle">Spontaneous Speaking Debrief</p>
             {extra?.assigned_topic && (
                 <div className="report__topic-banner">
                     <span className="report__topic-label">Your Topic Was</span>
@@ -57,7 +59,7 @@ export function ImpromptuReport({ data, onRestart, transcript, sessionId, userId
                 </div>
             )}
             <ImprovementTips tips={data.improvement_tips} />
-            <Transcript lines={transcript} />
+            <Transcript lines={transcript} aiName={data.voiceName} />
             <ReportActions onRestart={onRestart} sessionId={sessionId} userId={userId} isShared={isShared} />
         </div>
     );

@@ -97,6 +97,7 @@ export async function handleConnection(ws: WebSocket, modeStr: string, userId: s
   const startedAt = new Date();
   const transcript: { role: 'user' | 'ai'; text: string; timestamp: number }[] = [];
   const metrics: MetricSnapshot[] = [];
+  const voiceName = config.voices[Math.floor(Math.random() * config.voices.length)];
   let sessionClosed = false;
   let endingSession = false;
   let userTranscriptBuffer = '';
@@ -106,7 +107,7 @@ export async function handleConnection(ws: WebSocket, modeStr: string, userId: s
   let currentHint = '';
   let lastToneCheck = Date.now();
 
-  console.log(`🎙️  New session: ${sessionId} [${mode}]`);
+  console.log(`🎙️  New session: ${sessionId} [${mode}] (Voice: ${voiceName})`);
   console.log(`   System prompt loaded: ${MODES[mode].promptFile}`);
 
   try {
@@ -309,6 +310,13 @@ export async function handleConnection(ws: WebSocket, modeStr: string, userId: s
         outputAudioTranscription: {},
         inputAudioTranscription: {},
         systemInstruction: { parts: [{ text: systemPrompt }] },
+        speechConfig: {
+          voiceConfig: {
+            prebuiltVoiceConfig: {
+              voiceName: voiceName,
+            },
+          },
+        },
       },
     });
 
@@ -418,7 +426,7 @@ export async function handleConnection(ws: WebSocket, modeStr: string, userId: s
       // Generate post-session report
       try {
         console.log(`   [${sessionId}] Generating post-session report...`);
-        const report = await generateReport(sessionId, mode, transcript, metrics, durationSeconds);
+        const report = await generateReport(sessionId, mode, transcript, metrics, durationSeconds, voiceName);
         console.log(`   [${sessionId}] Report generated: overall_score=${report.overall_score}`);
 
         // Save session data
@@ -430,6 +438,7 @@ export async function handleConnection(ws: WebSocket, modeStr: string, userId: s
           transcript: transcript.map(t => `[${t.role === 'user' ? 'User' : 'AI'}] ${t.text}`),
           metrics,
           report,
+          voiceName,
         });
 
         // Send report to client

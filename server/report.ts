@@ -214,7 +214,8 @@ export async function generateReport(
   mode: Mode,
   transcript: TranscriptEntry[],
   metrics: MetricSnapshot[],
-  durationSeconds: number
+  durationSeconds: number,
+  voiceName?: string
 ): Promise<SessionReport> {
   const reportConfig = getReportConfig(mode);
 
@@ -244,6 +245,7 @@ export async function generateReport(
       ...base,
       extra,
       displayMetrics: reportConfig.displayMetrics,
+      voiceName,
     };
   } catch (error) {
     console.error('Report generation failed:', error);
@@ -271,6 +273,7 @@ export async function generateReport(
       key_moments: [],
       improvement_tips: ['Unable to generate report. Please try again.'],
       displayMetrics: reportConfig.displayMetrics,
+      voiceName,
     };
   }
 }
