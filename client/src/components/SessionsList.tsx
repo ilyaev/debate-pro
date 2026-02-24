@@ -106,18 +106,9 @@ export function SessionsList({ userId }: Props) {
                             onClick={() => navigateTo(`sessions/${s.id}`)}
                         >
                             <div className="sessions-list__row-top">
-                                <div className="sessions-list__date">
-                                    <span className="sessions-list__date-day">{formatDate(s.startedAt)}</span>
-                                    <span className="sessions-list__date-time">{formatTime(s.startedAt)}</span>
-                                </div>
-                                <div className="sessions-list__row-top-right">
-                                    <span className={`sessions-list__badge ${MODE_COLORS[s.mode] ?? 'badge--blue'}`}>
-                                        {MODE_LABELS[s.mode] ?? s.mode}
-                                    </span>
-                                    <span className="sessions-list__duration">{formatDuration(s.duration_seconds)}</span>
-                                </div>
-                            </div>
-                            <div className="sessions-list__row-bottom">
+                                <span className={`sessions-list__badge ${MODE_COLORS[s.mode] ?? 'badge--blue'}`}>
+                                    {MODE_LABELS[s.mode] ?? s.mode}
+                                </span>
                                 <div className="sessions-list__score">
                                     <span
                                         className="sessions-list__score-value"
@@ -127,7 +118,16 @@ export function SessionsList({ userId }: Props) {
                                     </span>
                                     {s.overall_score > 0 && <span className="sessions-list__score-denom">/10</span>}
                                 </div>
-                                <span className="sessions-list__arrow">→</span>
+                            </div>
+                            <div className="sessions-list__row-bottom">
+                                <div className="sessions-list__date">
+                                    <span className="sessions-list__date-day">{formatDate(s.startedAt)}</span>
+                                    <span className="sessions-list__date-time">{formatTime(s.startedAt)}</span>
+                                </div>
+                                <div className="sessions-list__row-bottom-right">
+                                    <span className="sessions-list__duration">{formatDuration(s.duration_seconds)}</span>
+                                    <span className="sessions-list__arrow">→</span>
+                                </div>
                             </div>
                         </div>
                     ))}
