@@ -14,7 +14,7 @@ interface Props {
 
 export function Session({ mode, userId, onEnd }: Props) {
     const { connect, disconnect, sendBinary, sendJSON, isConnected } = useWebSocket(mode, userId);
-    const { initPlayback, startCapture, stopCapture, playChunk, handleInterrupt, analyserRef } = useAudio(sendBinary);
+    const { initPlayback, startCapture, stopCapture, playChunk, handleInterrupt, userAnalyserRef, aiAnalyserRef } = useAudio(sendBinary);
     const [metrics, setMetrics] = useState<MetricSnapshot | null>(null);
     const [cues, setCues] = useState<CoachingCue[]>([]);
     const [elapsed, setElapsed] = useState(0);
@@ -168,12 +168,8 @@ export function Session({ mode, userId, onEnd }: Props) {
                 <span className={`session__timer ${elapsed >= 150 ? 'session__timer--warning' : ''}`}>{formatTime(elapsed)}</span>
             </div>
 
-            {/* Waveform */}
-            <Waveform analyserRef={analyserRef} />
-
-            {/* Status indicator */}
+            {/* Status Text (Moved above waveform for cleaner look) */}
             <div className={`session__status session__status--${status}`}>
-                <div className="session__status-ring" />
                 <span className="session__status-text">
                     {status === 'connecting' && 'Connecting...'}
                     {status === 'listening' && "I'm listening..."}
@@ -182,6 +178,13 @@ export function Session({ mode, userId, onEnd }: Props) {
                     {status === 'disconnected' && 'AI disconnected — click End Session for your report'}
                 </span>
             </div>
+
+            {/* Mirrored Waveform */}
+            <Waveform
+                userAnalyserRef={userAnalyserRef}
+                aiAnalyserRef={aiAnalyserRef}
+                status={status}
+            />
 
             {/* Dashboard */}
             <Dashboard metrics={metrics} elapsed={elapsed} />

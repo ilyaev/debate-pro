@@ -6,14 +6,15 @@ interface UseAudioReturn {
   stopCapture: () => void;
   playChunk: (audioData: ArrayBuffer) => void;
   handleInterrupt: () => void;
-  analyserRef: React.RefObject<AnalyserNode | null>;
+  userAnalyserRef: React.RefObject<AnalyserNode | null>;
+  aiAnalyserRef: React.RefObject<AnalyserNode | null>;
 }
 
 export function useAudio(sendBinary: (data: ArrayBuffer) => void): UseAudioReturn {
   const contextRef = useRef<AudioContext | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
-  // const workletRef = useRef<AudioWorkletNode | null>(null);
-  const analyserRef = useRef<AnalyserNode | null>(null);
+  const userAnalyserRef = useRef<AnalyserNode | null>(null);
+  const aiAnalyserRef = useRef<AnalyserNode | null>(null);
 
   // Playback state
   const playbackContextRef = useRef<AudioContext | null>(null);
@@ -23,7 +24,13 @@ export function useAudio(sendBinary: (data: ArrayBuffer) => void): UseAudioRetur
   // Initialize playback context immediately so we can hear the AI before opening the mic
   const initPlayback = useCallback(() => {
     if (!playbackContextRef.current) {
-      playbackContextRef.current = new AudioContext({ sampleRate: 24000 });
+      const ctx = new AudioContext({ sampleRate: 24000 });
+      playbackContextRef.current = ctx;
+
+      const analyser = ctx.createAnalyser();
+      analyser.fftSize = 2048;
+      aiAnalyserRef.current = analyser;
+
       nextPlayTimeRef.current = 0;
       console.log('🔊 Playback audio context initialized');
     }
@@ -47,7 +54,7 @@ export function useAudio(sendBinary: (data: ArrayBuffer) => void): UseAudioRetur
       // Create analyser for waveform visualization
       const analyser = context.createAnalyser();
       analyser.fftSize = 2048;
-      analyserRef.current = analyser;
+      userAnalyserRef.current = analyser;
 
       const source = context.createMediaStreamSource(stream);
       source.connect(analyser);
@@ -120,7 +127,14 @@ export function useAudio(sendBinary: (data: ArrayBuffer) => void): UseAudioRetur
 
     const source = ctx.createBufferSource();
     source.buffer = buffer;
-    source.connect(ctx.destination);
+
+    // Connect to both the analyser (for waveform) and the destination (speakers)
+    if (aiAnalyserRef.current) {
+      source.connect(aiAnalyserRef.current);
+      aiAnalyserRef.current.connect(ctx.destination);
+    } else {
+      source.connect(ctx.destination);
+    }
 
     // Schedule playback sequentially to avoid gaps
     const now = ctx.currentTime;
@@ -147,5 +161,5 @@ export function useAudio(sendBinary: (data: ArrayBuffer) => void): UseAudioRetur
     console.log('⚡ Playback interrupted');
   }, []);
 
-  return { initPlayback, startCapture, stopCapture, playChunk, handleInterrupt, analyserRef };
+  return { initPlayback, startCapture, stopCapture, playChunk, handleInterrupt, userAnalyserRef, aiAnalyserRef };
 }

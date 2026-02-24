@@ -14,12 +14,12 @@ export function Report({ data, onRestart }: Props) {
             <div className="report__overall">
                 <svg className="score-gauge" viewBox="0 0 120 120">
                     <circle
-                        cx="60" cy="60" r="52"
+                        cx="50%" cy="50%" r="52"
                         fill="none" stroke="rgba(255,255,255,0.08)"
                         strokeWidth="8"
                     />
                     <circle
-                        cx="60" cy="60" r="52"
+                        cx="50%" cy="50%" r="52"
                         fill="none"
                         stroke="url(#scoreGradient)"
                         strokeWidth="8"
@@ -34,11 +34,9 @@ export function Report({ data, onRestart }: Props) {
                             <stop offset="100%" stopColor="#8b5cf6" />
                         </linearGradient>
                     </defs>
-                    <text x="60" y="55" textAnchor="middle" className="score-gauge__text">
-                        {data.overall_score}
-                    </text>
-                    <text x="60" y="72" textAnchor="middle" className="score-gauge__subtext">
-                        / 10
+                    <text x="50%" y="54%" textAnchor="middle" dominantBaseline="middle">
+                        <tspan className="score-gauge__text">{data.overall_score}</tspan>
+                        <tspan className="score-gauge__subtext"> / 10</tspan>
                     </text>
                 </svg>
                 <span className="report__overall-label">Overall Score</span>
