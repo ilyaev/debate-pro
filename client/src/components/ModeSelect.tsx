@@ -8,8 +8,8 @@ interface Props {
 const modes = [
     {
         id: 'pitch_perfect' as Mode,
-        title: 'PitchPerfect',
-        subtitle: 'Startup Pitch Coach',
+        title: 'Pitch Perfect',
+        subtitle: 'Investor Pitch',
         description: 'Face a skeptical VC who will challenge every claim you make.',
         icon: <Target size={48} strokeWidth={1.5} />,
         iconUrl: '/icons/pitch_perfect.png',
@@ -17,7 +17,7 @@ const modes = [
     },
     {
         id: 'empathy_trainer' as Mode,
-        title: 'EmpathyTrainer',
+        title: 'Empathy Trainer',
         subtitle: 'Difficult Conversations',
         description: 'Practice handling upset customers, struggling employees, and tense situations.',
         icon: <Handshake size={48} strokeWidth={1.5} />,
@@ -35,12 +35,41 @@ const modes = [
     },
 ];
 
+const steps = [
+    {
+        title: 'Choose a Persona',
+        desc: 'Pick a sparring partner built for your high-stakes goal.'
+    },
+    {
+        title: 'Speak Naturally',
+        desc: 'Talk to the AI; it will listen, challenge, and intervene in real-time.'
+    },
+    {
+        title: 'Master the Moment',
+        desc: 'Get a data-driven training report to refine your communication.'
+    }
+];
+
 export function ModeSelect({ onStart }: Props) {
     return (
         <div className="mode-select">
             <div className="mode-select__header">
                 <h1 className="logo-text">Glotti</h1>
-                <p className="subtitle">Choose your sparring partner</p>
+                <p className="tagline">Master high-stakes conversations with real-time AI sparring.</p>
+
+                <div className="how-it-works">
+                    {steps.map((s, idx) => (
+                        <div key={idx} className="how-it-works__step">
+                            <span className="how-it-works__number">{idx + 1}</span>
+                            <div className="how-it-works__content">
+                                <h4 className="how-it-works__title">{s.title}</h4>
+                                <p className="how-it-works__desc">{s.desc}</p>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+
+                <p className="subtitle">Choose your sparring partner to begin</p>
             </div>
             <div className="mode-cards">
                 {modes.map((m) => (

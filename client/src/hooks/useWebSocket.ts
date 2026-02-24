@@ -105,7 +105,7 @@ export function useWebSocket(mode: string, userId: string): UseWebSocketReturn {
           const text = fakeMessages[Math.floor(Math.random() * fakeMessages.length)];
           if (mockWs.onmessage) {
             mockWs.onmessage({
-              data: JSON.stringify({ type: 'coaching_cue', text, timestamp: Math.floor(Date.now()/1000) })
+              data: JSON.stringify({ type: 'transcript_cue', text, timestamp: Math.floor(Date.now()/1000) })
             } as MessageEvent);
           }
         }, 5000);

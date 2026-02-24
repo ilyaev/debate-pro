@@ -3,7 +3,7 @@ import { useWebSocket } from '../hooks/useWebSocket';
 import { useAudio } from '../hooks/useAudio';
 import { Dashboard } from './Dashboard';
 import { Waveform } from './Waveform';
-import type { SessionReport, MetricSnapshot, CoachingCue } from '../types';
+import type { SessionReport, MetricSnapshot, TranscriptCue } from '../types';
 import { Target, Handshake, Swords, Mic } from 'lucide-react';
 
 interface Props {
@@ -16,7 +16,7 @@ export function Session({ mode, userId, onEnd }: Props) {
     const { connect, disconnect, sendBinary, sendJSON, isConnected } = useWebSocket(mode, userId);
     const { initPlayback, startCapture, stopCapture, playChunk, handleInterrupt, userAnalyserRef, aiAnalyserRef } = useAudio(sendBinary);
     const [metrics, setMetrics] = useState<MetricSnapshot | null>(null);
-    const [cues, setCues] = useState<CoachingCue[]>([]);
+    const [cues, setCues] = useState<TranscriptCue[]>([]);
     const [elapsed, setElapsed] = useState(0);
     const [status, setStatus] = useState<'connecting' | 'listening' | 'speaking' | 'interrupted' | 'ending' | 'disconnected'>('connecting');
     const timerRef = useRef<number | null>(null);
@@ -35,7 +35,7 @@ export function Session({ mode, userId, onEnd }: Props) {
                 playChunk(event.data);
             } else {
                 const msg = JSON.parse(event.data as string);
-                console.log(`📩 [Session] ← ${msg.type}`, msg.type === 'coaching_cue' ? msg.text?.slice(0, 80) : '');
+                console.log(`📩 [Session] ← ${msg.type}`, msg.type === 'transcript_cue' ? msg.text?.slice(0, 80) : '');
                 switch (msg.type) {
                     case 'session_started':
                         console.log(`✅ [Session] Session started: ${msg.sessionId}`);
@@ -51,7 +51,7 @@ export function Session({ mode, userId, onEnd }: Props) {
                         console.log('📊 [Session] Metrics update:', msg.data);
                         setMetrics(msg.data as MetricSnapshot);
                         break;
-                    case 'coaching_cue':
+                    case 'transcript_cue':
                         setCues(prev => [...prev, { text: msg.text, timestamp: msg.timestamp }]);
                         break;
                     case 'turn_complete':
@@ -117,12 +117,12 @@ export function Session({ mode, userId, onEnd }: Props) {
 
     const modeLabels: Record<string, { label: string; icon: React.ReactNode; iconUrl?: string }> = {
         pitch_perfect: {
-            label: 'PitchPerfect',
+            label: 'Pitch Perfect',
             icon: <Target size={18} strokeWidth={2} />,
             iconUrl: '/icons/pitch_perfect.png'
         },
         empathy_trainer: {
-            label: 'EmpathyTrainer',
+            label: 'Empathy Trainer',
             icon: <Handshake size={18} strokeWidth={2} />,
             iconUrl: '/icons/empathy_trainer.png'
         },
@@ -224,24 +224,24 @@ export function Session({ mode, userId, onEnd }: Props) {
             <Dashboard metrics={metrics} elapsed={elapsed} />
 
             {/* Live transcript feed */}
-            <div className="coaching-feed">
-                <h3 className="coaching-feed__title">
-                    <span className="coaching-feed__live-dot" />
+            <div className="transcript-feed">
+                <h3 className="transcript-feed__title">
+                    <span className="transcript-feed__live-dot" />
                     Live Transcript
                 </h3>
-                <div className="coaching-feed__list">
+                <div className="transcript-feed__list">
                     {cues.length === 0 ? (
-                        <div className="coaching-feed__empty">
+                        <div className="transcript-feed__empty">
                             Waiting for conversation...
                         </div>
                     ) : (
                         cues.map((cue, i) => (
                             <div
                                 key={i}
-                                className={`coaching-feed__item ${i === cues.length - 1 ? 'coaching-feed__item--latest' : ''}`}
+                                className={`transcript-feed__item ${i === cues.length - 1 ? 'transcript-feed__item--latest' : ''}`}
                             >
-                                <span className="coaching-feed__time">{formatTime(cue.timestamp)}</span>
-                                <span className="coaching-feed__text">{cue.text}</span>
+                                <span className="transcript-feed__time">{formatTime(cue.timestamp)}</span>
+                                <span className="transcript-feed__text">{cue.text}</span>
                             </div>
                         ))
                     )}

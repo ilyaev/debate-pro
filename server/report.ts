@@ -47,19 +47,19 @@ function buildReportPrompt(
     ? transcript.map(t => {
         const mins = Math.floor(t.timestamp / 60).toString().padStart(2, '0');
         const secs = (t.timestamp % 60).toString().padStart(2, '0');
-        const prefix = t.role === 'user' ? '[User]' : '[AI Coach]';
+        const prefix = t.role === 'user' ? '[User]' : '[AI Partner]';
         return `[${mins}:${secs}] ${prefix}: ${t.text}`;
       }).join('\n')
     : '(No dialogue recorded during this session)';
 
   return `
-You are an expert speech coach analyzing a completed coaching session.
+You are an expert specialist analyzing a completed training session.
 
-IMPORTANT: You must evaluate the USER's performance ONLY, NOT the AI coach.
+IMPORTANT: You must evaluate the USER's performance ONLY, NOT the AI partner.
 The transcript below is a chronological script of the conversation. Lines starting
-with [User] are what the person being coached said. Lines starting with [AI Coach]
-are what the AI coach said. You MUST evaluate ONLY the [User] lines, but you should
-use the [AI Coach] lines as context to understand the flow and how well the user
+with [User] are what the person being trained said. Lines starting with [AI Partner]
+are what the AI partner said. You MUST evaluate ONLY the [User] lines, but you should
+use the [AI Partner] lines as context to understand the flow and how well the user
 responded to pressure or questions.
 
 If the user did not speak or said very little, score them LOW (1-3) and provide

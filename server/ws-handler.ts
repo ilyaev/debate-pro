@@ -172,7 +172,7 @@ export async function handleConnection(ws: WebSocket, modeStr: string, userId: s
                 // Send to client so it appears in transcript feed
                 if (ws.readyState === ws.OPEN) {
                   ws.send(JSON.stringify({
-                    type: 'coaching_cue',
+                    type: 'transcript_cue',
                     text: `[User]: ${finishedSentence}`,
                     timestamp: Math.round((Date.now() - startedAt.getTime()) / 1000),
                   }));
@@ -191,7 +191,7 @@ export async function handleConnection(ws: WebSocket, modeStr: string, userId: s
                    lastToneCheck = now;
                    genai.models.generateContent({
                       model: 'gemini-2.5-flash',
-                      contents: `Analyze the following text from a user in a speech coaching session. Return a JSON object with two fields: "tone" (exactly one word describing the emotional tone of the speaker, e.g., Confident, Nervous, Defensive, Excited, Thoughtful, Frustrated) and "hint" (a very short, one-sentence actionable coaching hint for the user based on the current context). If no specific hint is needed, "hint" can be empty.\n\nText: "${allUserText.slice(-800)}"`,
+                      contents: `Analyze the following text from a user in a speech training session. Return a JSON object with two fields: "tone" (exactly one word describing the emotional tone of the speaker, e.g., Confident, Nervous, Defensive, Excited, Thoughtful, Frustrated) and "hint" (a very short, one-sentence actionable training hint for the user based on the current context). If no specific hint is needed, "hint" can be empty.\n\nText: "${allUserText.slice(-800)}"`,
                       config: {
                          responseMimeType: "application/json"
                       }
@@ -236,7 +236,7 @@ export async function handleConnection(ws: WebSocket, modeStr: string, userId: s
                 const flushed = aiTranscriptBuffer.trim();
                 console.log(`   [${sessionId}] ← AI: "${flushed.slice(0, 120)}"`);
                 ws.send(JSON.stringify({
-                  type: 'coaching_cue',
+                  type: 'transcript_cue',
                   text: flushed,
                   timestamp: Math.round((Date.now() - startedAt.getTime()) / 1000),
                 }));
@@ -287,7 +287,7 @@ export async function handleConnection(ws: WebSocket, modeStr: string, userId: s
           // Flush any remaining transcript buffer
           if (aiTranscriptBuffer.trim()) {
             ws.send(JSON.stringify({
-              type: 'coaching_cue',
+              type: 'transcript_cue',
               text: aiTranscriptBuffer.trim(),
               timestamp: Math.round((Date.now() - startedAt.getTime()) / 1000),
             }));

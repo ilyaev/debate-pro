@@ -1,10 +1,10 @@
 # Scenarios & Personas Specification
 
-This document details how DebatePro implements its various coaching scenarios and provide a step-by-step guide for developers to add new personas.
+This document details how DebatePro implements its various training scenarios and provide a step-by-step guide for developers to add new personas.
 
 ## 1. Concepts
 
-*   **Scenario (Mode)**: A high-level category of coaching (e.g., PitchPerfect, EmpathyTrainer). Each scenario defines the overall goal and evaluation criteria.
+*   **Scenario (Mode)**: A high-level category of training (e.g., PitchPerfect, EmpathyTrainer). Each scenario defines the overall goal and evaluation criteria.
 *   **Persona**: The specific AI character the user interacts with (e.g., Skeptical VC, Upset Customer). The persona is defined primarily by its system prompt.
 
 ## 2. Implementation Architecture
@@ -30,7 +30,7 @@ const session = await genai.live.connect({
 ```
 
 ### Metrics & Hints
-While the persona handles the conversation, real-time coaching heuristics are implemented in `server/ws-handler.ts` within the `extractMetrics` function. This function uses the `mode` to provide scenario-specific hints:
+While the persona handles the conversation, real-time training heuristics are implemented in `server/ws-handler.ts` within the `extractMetrics` function. This function uses the `mode` to provide scenario-specific hints:
 
 ```typescript
 // server/ws-handler.ts -> extractMetrics
@@ -84,7 +84,7 @@ const modes = [
     {
         id: 'negotiator' as Mode,
         title: 'MasterNegotiator',
-        subtitle: 'Salary & Contract Coach',
+        subtitle: 'Salary & Contract Partner',
         description: 'Practice high-stakes negotiation where every word counts.',
         icon: <Briefcase size={48} strokeWidth={1.5} />,
         iconUrl: '/icons/negotiator.png', // Optional custom PNG
@@ -106,7 +106,7 @@ If your persona requires specific real-time heuristics, add logic to `extractMet
 
 ## 4. Prompt Engineering Best Practices
 
-For the best coaching experience, ensure your system prompts include:
+For the best training experience, ensure your system prompts include:
 1.  **Strict Persona**: Remind the AI to stay in character and never break the fourth wall unless absolutely necessary.
 2.  **Interruption Rules**: Encourage the AI to use the barge-in capability (e.g., "Interrupt the user if they ramble or provide weak evidence").
 3.  **Progression**: Define how the scenario should evolve (e.g., "Start skeptical, but become more receptive if the user provides data").

@@ -975,7 +975,7 @@ export function Waveform() {
 - Binary: raw PCM audio response
 - JSON: `{"type": "interrupted"}`
 - JSON: `{"type": "metrics", "data": {...}}`
-- JSON: `{"type": "coaching_cue", "text": "..."}`
+- JSON: `{"type": "transcript_cue", "text": "..."}`
 - JSON: `{"type": "report", "data": {...}}`
 
 ---

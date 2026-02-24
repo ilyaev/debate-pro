@@ -115,7 +115,7 @@ body {
   align-items: center;
   justify-content: flex-start;
   /* Shifted from center to top */
-  padding-top: 12vh;
+  padding-top: 5vh;
   /* Precise control for 'higher up' */
   height: 100%;
   padding-left: var(--space-xl);
@@ -142,16 +142,91 @@ body {
 
 .logo-text {
   font-family: var(--font-display);
-  font-size: 56px;
+  font-size: 64px;
   font-weight: 700;
   color: var(--accent-blue);
-  /* Removed harsh gradient for organic feel */
-  margin-bottom: var(--space-sm);
+  margin-bottom: var(--space-xs);
+}
+
+.tagline {
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: var(--space-xl);
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.how-it-works {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-xl);
+  margin-bottom: var(--space-2xl);
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: var(--space-lg);
+  background: var(--bg-glass);
+  backdrop-filter: blur(8px);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border-subtle);
+}
+
+@media (max-width: 768px) {
+  .how-it-works {
+    flex-direction: column;
+    gap: var(--space-md);
+    padding: var(--space-md);
+  }
+}
+
+.how-it-works__step {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-sm);
+}
+
+.how-it-works__number {
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--accent-blue);
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1.5px solid var(--accent-blue);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--space-xs);
+  opacity: 0.7;
+}
+
+.how-it-works__title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 2px;
+}
+
+.how-it-works__desc {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.4;
+  max-width: 220px;
 }
 
 .subtitle {
-  font-size: 18px;
-  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: var(--space-lg);
 }
 
 .mode-cards {
@@ -169,7 +244,8 @@ body {
 }
 
 .mode-card {
-  flex: 1;
+  display: flex;
+  flex-direction: column;
   background: #ffffff;
   /* Solid white card for light theme */
   border: 2px solid var(--bg-secondary);
@@ -206,9 +282,11 @@ body {
 .mode-card__icon {
   display: flex;
   justify-content: center;
+  align-items: center;
+  height: 64px;
+  /* Fixed height to align the titles below */
   margin-bottom: var(--space-md);
   color: var(--card-accent, var(--accent-blue));
-  /* Icons use the card accent color */
 }
 
 .mode-card__image-icon {
@@ -229,6 +307,11 @@ body {
   font-size: 24px;
   font-weight: 600;
   margin-bottom: var(--space-xs);
+  min-height: 2.4em;
+  /* Leave space for 2 lines to keep subtitles aligned */
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .mode-card__subtitle {
@@ -578,7 +661,7 @@ body {
 }
 
 /* ===== Live Transcript Feed ===== */
-.coaching-feed {
+.transcript-feed {
   background: #ffffff;
   border: 1px solid var(--border-subtle);
   box-shadow: 0 2px 8px -2px rgba(0, 0, 0, 0.05);
@@ -594,13 +677,13 @@ body {
 }
 
 @media (max-width: 768px) {
-  .coaching-feed {
+  .transcript-feed {
     margin: var(--space-sm) 0;
     padding: var(--space-sm);
   }
 }
 
-.coaching-feed__title {
+.transcript-feed__title {
   font-family: var(--font-display);
   font-size: 13px;
   color: var(--text-secondary);
@@ -613,7 +696,7 @@ body {
   flex-shrink: 0;
 }
 
-.coaching-feed__live-dot {
+.transcript-feed__live-dot {
   width: 8px;
   height: 8px;
   border-radius: 50%;
@@ -636,7 +719,7 @@ body {
   }
 }
 
-.coaching-feed__list {
+.transcript-feed__list {
   overflow-y: auto;
   flex: 1;
   scroll-behavior: smooth;
@@ -644,20 +727,20 @@ body {
   -webkit-mask-image: linear-gradient(transparent, black 8px, black calc(100% - 8px), transparent);
 }
 
-.coaching-feed__list::-webkit-scrollbar {
+.transcript-feed__list::-webkit-scrollbar {
   width: 4px;
 }
 
-.coaching-feed__list::-webkit-scrollbar-track {
+.transcript-feed__list::-webkit-scrollbar-track {
   background: transparent;
 }
 
-.coaching-feed__list::-webkit-scrollbar-thumb {
+.transcript-feed__list::-webkit-scrollbar-thumb {
   background: var(--border-subtle);
   border-radius: 2px;
 }
 
-.coaching-feed__empty {
+.transcript-feed__empty {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -667,7 +750,7 @@ body {
   font-style: italic;
 }
 
-.coaching-feed__item {
+.transcript-feed__item {
   display: flex;
   gap: var(--space-sm);
   padding: var(--space-xs) var(--space-sm);
@@ -676,7 +759,7 @@ body {
   transition: background 0.3s ease, opacity 0.3s ease;
 }
 
-.coaching-feed__item--latest {
+.transcript-feed__item--latest {
   background: rgba(91, 135, 130, 0.08);
   /* Soft sage highlight */
   border-left: 2px solid var(--accent-blue);
@@ -694,7 +777,7 @@ body {
   }
 }
 
-.coaching-feed__time {
+.transcript-feed__time {
   color: var(--text-muted);
   font-family: var(--font-mono);
   font-size: 11px;
@@ -703,7 +786,7 @@ body {
   padding-top: 2px;
 }
 
-.coaching-feed__text {
+.transcript-feed__text {
   color: var(--text-secondary);
   font-size: 14px;
   line-height: 1.4;

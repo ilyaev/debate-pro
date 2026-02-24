@@ -26,7 +26,7 @@ export interface SessionReport {
   improvement_tips: string[];
 }
 
-export interface CoachingCue {
+export interface TranscriptCue {
   text: string;
   timestamp: number;
 }
