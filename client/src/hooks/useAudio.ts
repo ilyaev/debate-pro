@@ -12,7 +12,7 @@ interface UseAudioReturn {
 export function useAudio(sendBinary: (data: ArrayBuffer) => void): UseAudioReturn {
   const contextRef = useRef<AudioContext | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
-  const workletRef = useRef<AudioWorkletNode | null>(null);
+  // const workletRef = useRef<AudioWorkletNode | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
 
   // Playback state
