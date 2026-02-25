@@ -10,7 +10,7 @@ interface CardProps {
 }
 
 export const PitchPerfectCard = forwardRef<HTMLDivElement, CardProps>(({ report, isOgImage, ogBackgroundImage }, ref) => {
-    const { overall_score, metrics, voiceName, extra, social_share_texts, improvement_tips } = report;
+    const { overall_score, metrics, extra, social_share_texts, improvement_tips } = report;
     const metricsMap = metrics as unknown as Record<string, number | string>;
     const summaryText = social_share_texts?.performance_card_summary || improvement_tips[0];
     const pitchExtra = extra as unknown as PitchPerfectExtra;

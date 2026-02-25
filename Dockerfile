@@ -5,8 +5,9 @@ WORKDIR /app
 
 # Copy root config and package files
 COPY package.json package-lock.json tsconfig.json ./
-# Copy server source code
+# Copy server and client source code (client needed for Satori SSR)
 COPY server/ ./server/
+COPY client/ ./client/
 
 # Install all dependencies (including devDeps like tsc)
 RUN npm ci
