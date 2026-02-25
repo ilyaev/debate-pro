@@ -22,7 +22,9 @@ export const EmpathyTrainerCard = forwardRef<HTMLDivElement, CardProps>(({ repor
                 width: '1080px',
                 height: '1080px',
                 // Simulating a soft, watercolor-like purple gradient landscape
-                background: 'radial-gradient(circle at 15% 15%, #f3e8ff 0%, transparent 50%), radial-gradient(circle at 85% 85%, #d8b4fe 0%, transparent 50%), linear-gradient(135deg, #ede9fe 0%, #f5d0fe 100%)',
+                // background: 'radial-gradient(circle at 15% 15%, #f3e8ff 0%, transparent 50%), radial-gradient(circle at 85% 85%, #d8b4fe 0%, transparent 50%), linear-gradient(135deg, #ede9fe 0%, #f5d0fe 100%)',
+                background: 'url(/cards/bg_empathy.jpg) no-repeat center center',
+                backgroundSize: 'cover',
                 color: '#4c1d95', // Deep purple
                 fontFamily: 'Inter, system-ui, sans-serif',
                 display: 'flex',

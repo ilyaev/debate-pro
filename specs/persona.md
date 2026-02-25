@@ -164,6 +164,37 @@ After defining the config, create a matching React component in `client/src/comp
 
 ---
 
+### Step 7: Create a Scenario-Specific Performance Card (Export)
+
+Each scenario features a distinct visual layout for social sharing (1080x1080 export). These templates are located in `client/src/components/report/cards/`.
+
+1. **Create the Card Component:** Create a new React component (e.g., `client/src/components/report/cards/NegotiatorCard.tsx`).
+   - The card **must** have a fixed `width: '1080px'` by `height: '1080px'` dimension.
+   - It **must** use raw inline CSS for styling to ensure perfect compatibility with `html-to-image` rendering.
+   - Forward the `ref` to the outermost `<div>` so the capture library can target it.
+   - Design a unique visual theme (colors, gradients, metric layouts) that fits the persona's vibe.
+2. **Access Data:** Use `report.extra` for your scenario-specific metrics (e.g., parsed as `NegotiatorExtra`), and import `formatMetricValue` from `../ReportBase` for standard metrics.
+3. **Register in the Router:** Import your new card into `client/src/components/report/PerformanceCard.tsx` and add it to the router switch statement:
+
+```tsx
+// client/src/components/report/PerformanceCard.tsx
+import { NegotiatorCard } from './cards/NegotiatorCard';
+
+export const PerformanceCard = forwardRef<HTMLDivElement, PerformanceCardProps>(({ report }, ref) => {
+    switch (report.mode) {
+        // ... existing cases
+        case 'negotiator':
+            return <NegotiatorCard report={report} ref={ref} />;
+        default:
+            return <PitchPerfectCard report={report} ref={ref} />;
+    }
+});
+```
+
+4. **Verify Layout:** Navigate to `#/cards_sandbox` in the browser to visually test your new card layout without needing to complete a full session.
+
+---
+
 ## 4. Prompt Engineering Best Practices
 
 For the best training experience, ensure your system prompts include:

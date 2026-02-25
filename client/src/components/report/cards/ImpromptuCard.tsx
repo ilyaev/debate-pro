@@ -21,7 +21,9 @@ export const ImpromptuCard = forwardRef<HTMLDivElement, CardProps>(({ report }, 
             style={{
                 width: '1080px',
                 height: '1080px',
-                background: 'linear-gradient(135deg, #f97316 0%, #14b8a6 100%)', // Orange to Teal
+                // background: 'linear-gradient(135deg, #f97316 0%, #14b8a6 100%)', // Orange to Teal
+                background: 'linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.8)),url(/cards/bg_impromptu.jpg) no-repeat center center',
+                backgroundSize: 'cover',
                 color: '#ffffff',
                 fontFamily: 'Inter, system-ui, sans-serif',
                 display: 'flex',
@@ -62,9 +64,9 @@ export const ImpromptuCard = forwardRef<HTMLDivElement, CardProps>(({ report }, 
                         </svg>
                     </div>
                     {/* Partner Info beneath Gauge */}
-                    <div style={{ fontSize: '32px', color: 'rgba(255,255,255,0.9)', fontWeight: 600 }}>
+                    {/* <div style={{ fontSize: '32px', color: 'rgba(255,255,255,0.9)', fontWeight: 600 }}>
                         AI Partner: <span style={{ color: '#ffffff', fontWeight: 'bold' }}>{voiceName || 'Glotti'}</span>
-                    </div>
+                    </div> */}
                 </div>
 
                 {/* Bold Orange Quote Banner */}

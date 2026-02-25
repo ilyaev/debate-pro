@@ -21,6 +21,8 @@ export const VeritalkCard = forwardRef<HTMLDivElement, CardProps>(({ report }, r
                 width: '1080px',
                 height: '1080px',
                 background: 'linear-gradient(180deg, #111827 0%, #172554 100%)', // Very dark slate to deep royal blue
+                // background: 'url(/cards/bg_veritalk.jpg) no-repeat center center',
+                backgroundSize: 'cover',
                 color: '#ffffff',
                 fontFamily: 'Inter, system-ui, sans-serif',
                 display: 'flex',

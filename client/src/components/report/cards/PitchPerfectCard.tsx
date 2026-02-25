@@ -21,7 +21,9 @@ export const PitchPerfectCard = forwardRef<HTMLDivElement, CardProps>(({ report 
             style={{
                 width: '1080px',
                 height: '1080px',
-                background: '#ffffff',
+                // background: '#ffffff',
+                background: 'url(/cards/bg_pitch.jpg) no-repeat center center',
+                backgroundSize: 'cover',
                 color: '#334155', // Slate 700
                 fontFamily: 'Inter, system-ui, sans-serif',
                 display: 'flex',
@@ -44,11 +46,11 @@ export const PitchPerfectCard = forwardRef<HTMLDivElement, CardProps>(({ report 
                             Pitch Perfect<br />Evaluation
                         </h1>
                     </div>
-                    <div style={{ width: '35%', textAlign: 'right', paddingTop: '16px' }}>
+                    {/* <div style={{ width: '35%', textAlign: 'right', paddingTop: '16px' }}>
                         <span style={{ fontSize: '34px', color: '#94a3b8', fontWeight: 600 }}>
                             AI Partner: <span style={{ color: '#0f172a', fontWeight: 'bold' }}>{voiceName || 'Glotti'}</span>
                         </span>
-                    </div>
+                    </div> */}
                 </div>
 
                 {/* Quote Block */}
