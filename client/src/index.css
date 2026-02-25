@@ -513,6 +513,9 @@ body {
 @media (max-width: 768px) {
   .session {
     padding: var(--space-sm);
+    height: 100dvh;
+    overflow: hidden;
+    /* Prevent page scroll, use internal scroll for transcript */
   }
 }
 
@@ -821,9 +824,8 @@ body {
   padding: var(--space-md);
   margin-bottom: var(--space-md);
   flex: 1;
-  min-height: 120px;
-  height: 100%;
-  /* Force fill container */
+  min-height: 0;
+  /* Important for flex-grow to work correctly with overflow */
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -841,8 +843,10 @@ body {
 
 @media (max-width: 768px) {
   .transcript-feed {
-    margin: var(--space-sm) 0;
+    margin: var(--space-xs) 0;
     padding: var(--space-sm);
+    flex: 1;
+    min-height: 0;
   }
 }
 

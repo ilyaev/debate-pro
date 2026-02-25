@@ -11,9 +11,17 @@ export function initGlobalAudio() {
     globalAiAnalyser = globalPlaybackContext.createAnalyser();
     globalAiAnalyser.fftSize = 2048;
   }
+
   if (globalPlaybackContext.state === 'suspended') {
     globalPlaybackContext.resume().catch(console.error);
   }
+
+  // Unlock iOS audio by playing a tiny bit of silence on user gesture
+  const buffer = globalPlaybackContext.createBuffer(1, 1, 24000);
+  const source = globalPlaybackContext.createBufferSource();
+  source.buffer = buffer;
+  source.connect(globalPlaybackContext.destination);
+  source.start(0);
 }
 
 interface UseAudioReturn {
@@ -44,7 +52,7 @@ export function useAudio(sendBinary: (data: ArrayBuffer) => void): UseAudioRetur
     playbackContextRef.current = globalPlaybackContext;
     aiAnalyserRef.current = globalAiAnalyser;
     nextPlayTimeRef.current = 0;
-    console.log('🔊 Playback audio context initialized/resumed');
+    console.log(`🔊 Playback initialized. Context state: ${globalPlaybackContext?.state}`);
   }, []);
 
   const startCapture = useCallback(async () => {
@@ -134,6 +142,11 @@ export function useAudio(sendBinary: (data: ArrayBuffer) => void): UseAudioRetur
   const playChunk = useCallback((audioData: ArrayBuffer) => {
     const ctx = playbackContextRef.current;
     if (!ctx) return;
+
+    // Fallback: resume context if it became suspended (common on mobile if tab backgrounded)
+    if (ctx.state === 'suspended') {
+      ctx.resume().catch(console.error);
+    }
 
     // Convert raw PCM Int16 to Float32 for Web Audio API
     const int16 = new Int16Array(audioData);
