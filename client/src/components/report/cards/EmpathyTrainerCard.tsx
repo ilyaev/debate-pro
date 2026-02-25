@@ -1,13 +1,15 @@
 import { forwardRef } from 'react';
 import type { SessionReport, EmpathyTrainerExtra } from '../../../types';
-import { METRIC_LABELS, formatMetricValue } from '../ReportBase';
+import { METRIC_LABELS, formatMetricValue } from '../ReportUtils';
 import { MessageCircle, Smile, ShieldAlert } from 'lucide-react';
 
 interface CardProps {
     report: SessionReport;
+    isOgImage?: boolean;
+    ogBackgroundImage?: string;
 }
 
-export const EmpathyTrainerCard = forwardRef<HTMLDivElement, CardProps>(({ report }, ref) => {
+export const EmpathyTrainerCard = forwardRef<HTMLDivElement, CardProps>(({ report, isOgImage, ogBackgroundImage }, ref) => {
     const { overall_score, metrics, extra, social_share_texts, improvement_tips } = report;
     const metricsMap = metrics as unknown as Record<string, number | string>;
     const summaryText = social_share_texts?.performance_card_summary || improvement_tips[0];
@@ -23,7 +25,7 @@ export const EmpathyTrainerCard = forwardRef<HTMLDivElement, CardProps>(({ repor
                 height: '1080px',
                 // Simulating a soft, watercolor-like purple gradient landscape
                 // background: 'radial-gradient(circle at 15% 15%, #f3e8ff 0%, transparent 50%), radial-gradient(circle at 85% 85%, #d8b4fe 0%, transparent 50%), linear-gradient(135deg, #ede9fe 0%, #f5d0fe 100%)',
-                background: 'url(/cards/bg_empathy.jpg) no-repeat center center',
+                background: isOgImage ? '#ede9fe' : 'url(/cards/bg_empathy.jpg) no-repeat center center',
                 backgroundSize: 'cover',
                 color: '#4c1d95', // Deep purple
                 fontFamily: 'Inter, system-ui, sans-serif',
@@ -31,20 +33,33 @@ export const EmpathyTrainerCard = forwardRef<HTMLDivElement, CardProps>(({ repor
                 flexDirection: 'column',
                 position: 'relative',
                 boxSizing: 'border-box',
-                borderRadius: '40px',
-                boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.05)',
-                overflow: 'hidden',
-                padding: '80px 0' // We pad Y, but not X so the banner can touch the edges easily
+                borderRadius: isOgImage ? '40px' : '40px',
+                boxShadow: isOgImage ? 'none' : '0 25px 50px -12px rgba(0, 0, 0, 0.05)',
+                overflow: 'hidden'
             }}
         >
+            {/* Background Layer for Satori Data URI */}
+            {isOgImage && ogBackgroundImage && (
+                <div style={{ position: 'absolute', top: 0, right: 0, bottom: 0, left: 0, display: 'flex' }}>
+                    <img
+                        src={ogBackgroundImage}
+                        style={{
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'cover'
+                        }}
+                    />
+                </div>
+            )}
+
             {/* Top Section */}
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '0 80px', flex: 1, justifyContent: 'center' }}>
-                <h1 style={{ fontSize: '48px', fontWeight: '800', lineHeight: 1.1, margin: 0, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#4c1d95', opacity: 0.9 }}>
-                    Empathy Trainer
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: '100px', flex: 1 }}>
+                <h1 style={{ display: 'flex', fontSize: '48px', fontWeight: '800', lineHeight: 1.1, margin: 0, letterSpacing: '0.05em', color: '#4c1d95' }}>
+                    EMPATHY TRAINER
                 </h1>
 
                 {/* Massive Score Text (No Gauge) */}
-                <div style={{ marginTop: '40px', display: 'flex', alignItems: 'baseline', gap: '8px' }}>
+                <div style={{ marginTop: '60px', display: 'flex', alignItems: 'baseline' }}>
                     <span style={{ fontSize: '180px', fontWeight: '800', color: '#6b21a8', lineHeight: 0.8, letterSpacing: '-0.04em' }}>
                         {overall_score}
                     </span>
@@ -65,14 +80,18 @@ export const EmpathyTrainerCard = forwardRef<HTMLDivElement, CardProps>(({ repor
                 fontStyle: 'italic',
                 fontWeight: 500,
                 textAlign: 'center',
-                boxShadow: '0 10px 25px -5px rgba(139, 92, 246, 0.4)',
-                marginBottom: '80px'
+                // boxShadow: isOgImage ? undefined : '0 10px 25px -5px rgba(139, 92, 246, 0.4)',
+                marginBottom: '80px',
+                display: 'flex',
+                flexDirection: 'column'
             }}>
                 "{summaryText}"
             </div>
 
+
+
             {/* Bottom Row Metrics */}
-            <div style={{ display: 'flex', width: '100%', padding: '0 80px', justifyContent: 'space-between' }}>
+            <div style={{ display: 'flex', width: '100%', padding: '0 80px 80px 80px', justifyContent: 'space-between' }}>
 
                 {/* Metric 1 */}
                 <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>

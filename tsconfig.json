@@ -10,14 +10,18 @@
         "skipLibCheck": true,
         "forceConsistentCasingInFileNames": true,
         "resolveJsonModule": true,
-        "declaration": true
+        "declaration": true,
+        "jsx": "react-jsx"
     },
     "include": [
-        "server/**/*.ts"
+        "server/**/*.ts",
+        "server/**/*.tsx",
+        "client/src/components/report/PerformanceCard.tsx",
+        "client/src/components/report/cards/**/*.tsx",
+        "client/src/types.ts"
     ],
     "exclude": [
         "node_modules",
-        "dist",
-        "client"
+        "dist"
     ]
 }

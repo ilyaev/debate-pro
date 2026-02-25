@@ -1,8 +1,6 @@
-import { useState, useRef, useEffect } from 'react';
-import { toPng } from 'html-to-image';
+import { useState } from 'react';
 import { Download, Share2, Twitter, Linkedin, Facebook } from 'lucide-react';
 import type { SessionReport } from '../types';
-import { PerformanceCard } from './report/PerformanceCard';
 
 interface Props {
     url: string;
@@ -12,21 +10,51 @@ interface Props {
 
 export function ShareModal({ url, onClose, report }: Props) {
     const [copied, setCopied] = useState(false);
-    const [isGenerating, setIsGenerating] = useState(false);
-    const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-    const cardRef = useRef<HTMLDivElement>(null);
+    const [copiedFb, setCopiedFb] = useState(false);
+    const [copiedLi, setCopiedLi] = useState(false);
+    const [isDownloading, setIsDownloading] = useState(false);
 
-    const fallbackShareText = `I just scored ${report?.overall_score}/10 on a Glotti ${report?.mode.replace('_', ' ')} session! Check out my performance: \n\n${url}`;
-    const twitterText = report?.social_share_texts?.twitter_template ? `${report.social_share_texts.twitter_template} \n\n${url}` : fallbackShareText;
-    const linkedinText = report?.social_share_texts?.linkedin_template ? `${report.social_share_texts.linkedin_template} \n\n${url}` : fallbackShareText;
-    const facebookText = report?.social_share_texts?.facebook_template ? `${report.social_share_texts.facebook_template} \n\n${url}` : fallbackShareText;
+    const fallbackShareText = `I just scored ${report?.overall_score}/10 on a Glotti ${report?.mode.replace('_', ' ')} session! Check out my performance:`;
+    const twitterText = report?.social_share_texts?.twitter_template || fallbackShareText;
+    const linkedinText = report?.social_share_texts?.linkedin_template || fallbackShareText;
+    const facebookText = report?.social_share_texts?.facebook_template || fallbackShareText;
+
+    // Deriving server-side image URL
+    // URL format expected (from React router): http://domain/#/sessions/:id/:key
+    const match = url.match(/\/sessions\/(.+?)\/(.+?)(?:$|\?)/);
+    const sessionId = match ? match[1] : '';
+    const sessionKey = match ? match[2] : '';
+
+    // Safety check for local dev environments to ensure the 5173 frontend port correctly targets the 8080 API port
+    const apiOrigin = window.location.hostname === 'localhost' ? 'http://localhost:8080' : window.location.origin;
+
+    // Construct the canonical server-side OG image URL
+    const serverImageUrl = sessionId && sessionKey ? `${apiOrigin}/api/sessions/shared/og-image/${sessionId}/${sessionKey}` : null;
+
+    // Construct the actual redirect gateway URL that users should visit
+    const shareGatewayUrl = sessionId && sessionKey ? `${apiOrigin}/api/sessions/shared/og/${sessionId}/${sessionKey}` : url;
 
     const canNativeShare = Boolean(navigator.share);
 
+    const openShareWindow = (targetUrl: string) => {
+        window.open(targetUrl, '_blank', 'noopener,noreferrer');
+    };
+
     const handleCopy = async () => {
-        await navigator.clipboard.writeText(url);
+        await navigator.clipboard.writeText(shareGatewayUrl);
         setCopied(true);
         setTimeout(() => setCopied(false), 2500);
+    };
+
+    const handleCopySocial = async (text: string, type: 'fb' | 'li') => {
+        await navigator.clipboard.writeText(text);
+        if (type === 'fb') {
+            setCopiedFb(true);
+            setTimeout(() => setCopiedFb(false), 2500);
+        } else {
+            setCopiedLi(true);
+            setTimeout(() => setCopiedLi(false), 2500);
+        }
     };
 
     const handleNativeShare = async () => {
@@ -35,7 +63,7 @@ export function ShareModal({ url, onClose, report }: Props) {
             await navigator.share({
                 title: 'Glotti Report',
                 text: fallbackShareText,
-                url: url
+                url: shareGatewayUrl
             });
         } catch (err) {
             console.error('Error sharing natively:', err);
@@ -43,22 +71,24 @@ export function ShareModal({ url, onClose, report }: Props) {
     };
 
     const handleDownloadCard = async () => {
-        if (!cardRef.current || !report) return;
+        if (!serverImageUrl || !report) return;
         try {
-            setIsGenerating(true);
-            const node = cardRef.current;
-            await toPng(node, { cacheBust: true, pixelRatio: 2, skipFonts: true });
-            await new Promise(r => setTimeout(r, 100));
-            const dataUrl = await toPng(node, { cacheBust: true, pixelRatio: 2, skipFonts: true });
+            setIsDownloading(true);
+            const response = await fetch(serverImageUrl);
+            const blob = await response.blob();
+            const downloadUrl = window.URL.createObjectURL(blob);
 
             const link = document.createElement('a');
             link.download = `glotti-${report.mode}-score.png`;
-            link.href = dataUrl;
+            link.href = downloadUrl;
             link.click();
+
+            // Cleanup
+            window.URL.revokeObjectURL(downloadUrl);
         } catch (err) {
-            console.error('Failed to generate image', err);
+            console.error('Failed to download image', err);
         } finally {
-            setIsGenerating(false);
+            setIsDownloading(false);
         }
     };
 
@@ -66,28 +96,9 @@ export function ShareModal({ url, onClose, report }: Props) {
     const handleBackdrop = (e: React.MouseEvent<HTMLDivElement>) => {
         if (e.target === e.currentTarget) onClose();
     };
-    // Generate image on mount
-    useEffect(() => {
-        let mounted = true;
-        if (report && cardRef.current) {
-            // Wait briefly for fonts/layout to settle
-            setTimeout(async () => {
-                try {
-                    const node = cardRef.current!;
-                    // iOS Safari workaround: run toPng once to prime the pump, then again for the real deal
-                    await toPng(node, { cacheBust: true, pixelRatio: 2, skipFonts: true });
-                    await new Promise(r => setTimeout(r, 100));
-                    const dataUrl = await toPng(node, { cacheBust: true, pixelRatio: 2, skipFonts: true });
+    // Removed client-side html-to-image effect
 
-                    if (mounted) setPreviewUrl(dataUrl);
-                } catch (err) {
-                    console.error('Failed to generate preview image', err);
-                }
-            }, 600);
-        }
-        return () => { mounted = false; };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [report]);
+    console.log({ twitterText, facebookText, linkedinText })
 
     return (
         <div className="share-modal__backdrop" onClick={handleBackdrop} style={{ padding: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -103,7 +114,7 @@ export function ShareModal({ url, onClose, report }: Props) {
                 <div className="share-modal__link-row" style={{ alignSelf: 'stretch' }}>
                     <input
                         className="share-modal__link-input"
-                        value={url}
+                        value={shareGatewayUrl}
                         readOnly
                         onFocus={e => e.target.select()}
                     />
@@ -117,34 +128,29 @@ export function ShareModal({ url, onClose, report }: Props) {
 
                 {/* Performance Card Download */}
                 {report && (
-                    <div className="share-modal__card-action" style={{ width: '100%', marginTop: '24px' }}>
-                        {previewUrl ? (
+                    <div className="share-modal__card-action" style={{ width: '100%', marginTop: '0px' }}>
+                        {serverImageUrl ? (
                             <div style={{ marginBottom: '16px', borderRadius: '12px', overflow: 'hidden', border: '1px solid rgba(0,0,0,0.1)', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
-                                <img src={previewUrl} alt="Performance Card Preview" style={{ width: '100%', height: 'auto', display: 'block' }} />
+                                <img src={serverImageUrl} alt="Performance Card Preview" width={400} height={400} style={{ width: '100%', height: 'auto', display: 'block' }} />
                             </div>
                         ) : (
                             <div style={{ marginBottom: '16px', height: '200px', borderRadius: '12px', background: '#f0f0f0', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#888' }}>
-                                Generating preview...
+                                Preview unavailable
                             </div>
                         )}
-                        <button
-                            className="btn btn--outline"
-                            style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
-                            onClick={handleDownloadCard}
-                            disabled={isGenerating || !previewUrl}
-                        >
-                            <Download size={18} />
-                            {isGenerating ? 'Generating...' : 'Download'}
-                        </button>
+
                     </div>
                 )}
 
                 {/* Social sharing buttons */}
-                <div className="share-modal__socials" style={{ display: 'flex', gap: '12px', marginTop: '24px', justifyContent: 'center', flexWrap: 'wrap' }}>
+                <div className="share-modal__socials" style={{ display: 'flex', gap: '12px', marginTop: '14px', justifyContent: 'center', flexWrap: 'wrap' }}>
                     <button
                         className="btn btn--icon"
                         title="Share on Twitter"
-                        onClick={() => window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(twitterText)}`, '_blank')}
+                        onClick={() => {
+                            const twitterUrl = `https://twitter.com/intent/tweet?url=${encodeURIComponent(shareGatewayUrl)}&text=${encodeURIComponent(twitterText)}`;
+                            openShareWindow(twitterUrl);
+                        }}
                         style={{ width: '48px', height: '48px', padding: 0, borderRadius: '50%', display: 'flex', justifyContent: 'center', alignItems: 'center', flexShrink: 0 }}
                     >
                         <Twitter size={20} />
@@ -152,7 +158,10 @@ export function ShareModal({ url, onClose, report }: Props) {
                     <button
                         className="btn btn--icon"
                         title="Share on LinkedIn"
-                        onClick={() => window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}&summary=${encodeURIComponent(linkedinText)}`, '_blank')}
+                        onClick={() => {
+                            const linkedinUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareGatewayUrl)}`;
+                            openShareWindow(linkedinUrl);
+                        }}
                         style={{ width: '48px', height: '48px', padding: 0, borderRadius: '50%', display: 'flex', justifyContent: 'center', alignItems: 'center', flexShrink: 0 }}
                     >
                         <Linkedin size={20} />
@@ -160,7 +169,10 @@ export function ShareModal({ url, onClose, report }: Props) {
                     <button
                         className="btn btn--icon"
                         title="Share on Facebook"
-                        onClick={() => window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&quote=${encodeURIComponent(facebookText)}`, '_blank')}
+                        onClick={() => {
+                            const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareGatewayUrl)}`;
+                            openShareWindow(facebookUrl);
+                        }}
                         style={{ width: '48px', height: '48px', padding: 0, borderRadius: '50%', display: 'flex', justifyContent: 'center', alignItems: 'center', flexShrink: 0 }}
                     >
                         <Facebook size={20} />
@@ -177,17 +189,78 @@ export function ShareModal({ url, onClose, report }: Props) {
                     )}
                 </div>
 
-                <button className="share-modal__dismiss" onClick={onClose} style={{ marginTop: '24px', alignSelf: 'center', padding: '12px 24px' }}>
-                    Close
-                </button>
-            </div>
+                {/* Manual Social Copy Blocks */}
+                {report && (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginTop: '24px', width: '100%' }}>
+                        {/* LinkedIn Post Text */}
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                            <div style={{ fontSize: '13px', fontWeight: 600, color: '#475569', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                <Linkedin size={14} /> LinkedIn Post Text
+                            </div>
+                            <div className="share-modal__link-row" style={{ alignSelf: 'stretch', background: '#f8fafc', borderRadius: '8px', padding: '1px' }}>
+                                <textarea
+                                    className="share-modal__link-input"
+                                    value={linkedinText}
+                                    readOnly
+                                    onFocus={e => e.target.select()}
+                                    style={{ background: 'transparent', border: 'none', resize: 'vertical', minHeight: '60px', overflowY: 'auto', fontSize: '13px', lineHeight: 1.4 }}
+                                />
+                                <button
+                                    className={`share-modal__copy-btn ${copiedLi ? 'share-modal__copy-btn--copied' : ''}`}
+                                    onClick={() => handleCopySocial(linkedinText, 'li')}
+                                    style={{ alignSelf: 'flex-start', margin: '4px' }}
+                                >
+                                    {copiedLi ? '✓ Copied' : 'Copy'}
+                                </button>
+                            </div>
+                        </div>
 
-            {/* Hidden performance card for image generation */}
-            {report && (
-                <div style={{ position: 'fixed', top: '-10000px', left: '-10000px', pointerEvents: 'none', zIndex: -1000 }}>
-                    <PerformanceCard ref={cardRef} report={report} />
+                        {/* Facebook Post Text */}
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                            <div style={{ fontSize: '13px', fontWeight: 600, color: '#475569', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                <Facebook size={14} /> Facebook Post Text
+                            </div>
+                            <div className="share-modal__link-row" style={{ alignSelf: 'stretch', background: '#f8fafc', borderRadius: '8px', padding: '1px' }}>
+                                <textarea
+                                    className="share-modal__link-input"
+                                    value={facebookText}
+                                    readOnly
+                                    onFocus={e => e.target.select()}
+                                    style={{ background: 'transparent', border: 'none', resize: 'vertical', minHeight: '60px', overflowY: 'auto', fontSize: '13px', lineHeight: 1.4 }}
+                                />
+                                <button
+                                    className={`share-modal__copy-btn ${copiedFb ? 'share-modal__copy-btn--copied' : ''}`}
+                                    onClick={() => handleCopySocial(facebookText, 'fb')}
+                                    style={{ alignSelf: 'flex-start', margin: '4px' }}
+                                >
+                                    {copiedFb ? '✓ Copied' : 'Copy'}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* Primary Actions */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '24px', width: '100%' }}>
+                    <button
+                        className="btn btn--outline"
+                        style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', borderRadius: '24px', padding: '12px 24px', fontSize: '15px', fontWeight: 600, height: '48px', color: '#334155', borderColor: '#cbd5e1' }}
+                        onClick={handleDownloadCard}
+                        disabled={isDownloading || !serverImageUrl}
+                    >
+                        <Download size={18} />
+                        {isDownloading ? 'Downloading...' : 'Download Image'}
+                    </button>
+
+                    <button
+                        className="share-modal__dismiss"
+                        onClick={onClose}
+                        style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', alignSelf: 'center', padding: '12px 24px', borderRadius: '24px', fontSize: '15px', fontWeight: 600, height: '48px', color: '#64748b', backgroundColor: 'transparent', border: 'none', cursor: 'pointer' }}
+                    >
+                        Close
+                    </button>
                 </div>
-            )}
+            </div>
         </div>
     );
 }

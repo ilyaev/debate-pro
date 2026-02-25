@@ -1,9 +1,35 @@
 import { Router } from 'express';
 import { createStore } from '../store.js';
 import { createHash } from 'crypto';
+import React from 'react';
+import satori from 'satori';
+import { Resvg } from '@resvg/resvg-js';
+import { PerformanceCard } from '../../client/src/components/report/PerformanceCard';
+import { readFileSync } from 'fs';
+import { join } from 'path';
 
 const router = Router();
 const store = createStore();
+
+let interRegular: Buffer | null = null;
+let interBold: Buffer | null = null;
+let interItalic: Buffer | null = null;
+let interMediumItalic: Buffer | null = null;
+const bgImages: Record<string, string> = {};
+
+try {
+    interRegular = readFileSync(join(process.cwd(), 'server/assets/Inter-Regular.ttf'));
+    interBold = readFileSync(join(process.cwd(), 'server/assets/Inter-Bold.ttf'));
+    interItalic = readFileSync(join(process.cwd(), 'server/assets/Inter-Italic.ttf'));
+    interMediumItalic = readFileSync(join(process.cwd(), 'server/assets/Inter-MediumItalic.ttf'));
+
+    const loadBg = (name: string) => `data:image/jpeg;base64,${readFileSync(join(process.cwd(), `client/public/cards/${name}`)).toString('base64')}`;
+    bgImages['pitch_perfect'] = loadBg('bg_pitch.jpg');
+    bgImages['empathy_trainer'] = loadBg('bg_empathy.jpg');
+    bgImages['impromptu'] = loadBg('bg_impromptu.jpg');
+} catch (e) {
+    console.warn("Could not load assets for Satori:", e);
+}
 
 // GET /api/sessions?userId=<id> — list summary for a user
 router.get('/', async (req, res) => {
@@ -114,6 +140,9 @@ router.get('/shared/og/:id/:key', async (req, res) => {
     <meta property="og:description" content="I just completed an AI-powered coaching session. See how I performed!" />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://glotti.app/sessions/${id}/${key}" />
+    <meta property="og:image" content="${req.protocol}://${req.get('host')}/api/shared/og-image/${id}/${key}" />
+    <meta property="og:image:width" content="1080" />
+    <meta property="og:image:height" content="1080" />
     <!-- Redirect to the actual app -->
     <meta http-equiv="refresh" content="0; url=/#/sessions/${id}/${key}" />
 </head>
@@ -127,6 +156,62 @@ router.get('/shared/og/:id/:key', async (req, res) => {
     } catch (err) {
         console.error(`GET /api/shared/og/${id}/${key} error:`, err);
         res.status(500).send('Internal Server Error');
+    }
+});
+
+// GET /api/shared/og-image/:id/:key — Renders the OG image using Satori
+router.get('/shared/og-image/:id/:key', async (req, res) => {
+    const { id, key } = req.params;
+
+    try {
+        const session = await store.get(id);
+        if (!session || !session.report) {
+            res.status(404).send('Not Found');
+            return;
+        }
+
+        const expected = createHash('sha256').update(session.id + session.userId).digest('hex').slice(0, 24);
+        if (key !== expected) {
+            res.status(403).send('Forbidden');
+            return;
+        }
+
+        if (!interRegular || !interBold || !interItalic || !interMediumItalic) {
+            res.status(500).send('Fonts not loaded server-side');
+            return;
+        }
+
+        const svg = await satori(
+            React.createElement(PerformanceCard, {
+                report: session.report,
+                isOgImage: true,
+                ogBackgroundImage: bgImages[session.mode]
+            }),
+            {
+                width: 1080,
+                height: 1080,
+                fonts: [
+                    { name: 'Inter', data: interRegular, weight: 400, style: 'normal' },
+                    { name: 'Inter', data: interBold, weight: 700, style: 'normal' },
+                    { name: 'Inter', data: interItalic, weight: 400, style: 'italic' },
+                    { name: 'Inter', data: interMediumItalic, weight: 500, style: 'italic' }
+                ],
+            }
+        );
+
+        const resvg = new Resvg(svg, {
+            fitTo: { mode: 'width', value: 1080 }
+        });
+        const pngData = resvg.render();
+        const pngBuffer = pngData.asPng();
+
+        res.setHeader('Content-Type', 'image/png');
+        res.setHeader('Cache-Control', 'public, max-age=86400');
+        res.send(pngBuffer);
+
+    } catch (err) {
+        console.error(`GET /api/shared/og-image/${id}/${key} error:`, err);
+        res.status(500).send((err as Error).stack || String(err));
     }
 });
 

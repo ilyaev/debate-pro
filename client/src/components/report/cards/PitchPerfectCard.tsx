@@ -1,13 +1,15 @@
 import { forwardRef } from 'react';
 import type { SessionReport, PitchPerfectExtra } from '../../../types';
-import { formatMetricValue } from '../ReportBase';
+import { formatMetricValue } from '../ReportUtils';
 import { Users, Clock, FileText } from 'lucide-react';
 
 interface CardProps {
     report: SessionReport;
+    isOgImage?: boolean;
+    ogBackgroundImage?: string;
 }
 
-export const PitchPerfectCard = forwardRef<HTMLDivElement, CardProps>(({ report }, ref) => {
+export const PitchPerfectCard = forwardRef<HTMLDivElement, CardProps>(({ report, isOgImage, ogBackgroundImage }, ref) => {
     const { overall_score, metrics, voiceName, extra, social_share_texts, improvement_tips } = report;
     const metricsMap = metrics as unknown as Record<string, number | string>;
     const summaryText = social_share_texts?.performance_card_summary || improvement_tips[0];
@@ -22,7 +24,7 @@ export const PitchPerfectCard = forwardRef<HTMLDivElement, CardProps>(({ report 
                 width: '1080px',
                 height: '1080px',
                 // background: '#ffffff',
-                background: 'url(/cards/bg_pitch.jpg) no-repeat center center',
+                background: isOgImage ? '#ffffff' : 'url(/cards/bg_pitch.jpg) no-repeat center center',
                 backgroundSize: 'cover',
                 color: '#334155', // Slate 700
                 fontFamily: 'Inter, system-ui, sans-serif',
@@ -31,18 +33,33 @@ export const PitchPerfectCard = forwardRef<HTMLDivElement, CardProps>(({ report 
                 position: 'relative',
                 boxSizing: 'border-box',
                 border: '1px solid #e2e8f0', // Light slate border matching the soft card edge
-                boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.05)',
+                boxShadow: isOgImage ? 'none' : '0 25px 50px -12px rgba(0, 0, 0, 0.05)',
                 borderRadius: '40px',
                 overflow: 'hidden'
             }}
         >
+            {/* Background Layer for Satori Data URI */}
+            {isOgImage && ogBackgroundImage && (
+                <img
+                    src={ogBackgroundImage}
+                    style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover'
+                    }}
+                />
+            )}
+
             {/* Top / Main Body Padding */}
             <div style={{ padding: '80px 80px 0 80px', flex: 1, display: 'flex', flexDirection: 'column' }}>
 
                 {/* Header Row */}
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '40px' }}>
-                    <div style={{ width: '60%' }}>
-                        <h1 style={{ fontSize: '64px', fontWeight: '800', color: '#64748b', lineHeight: 1.1, margin: 0, letterSpacing: '-0.02em' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', width: '60%' }}>
+                        <h1 style={{ display: 'flex', flexDirection: 'column', fontSize: '64px', fontWeight: '800', color: '#64748b', lineHeight: 1.1, margin: 0, letterSpacing: '-0.02em' }}>
                             Pitch Perfect<br />Evaluation
                         </h1>
                     </div>
@@ -61,6 +78,8 @@ export const PitchPerfectCard = forwardRef<HTMLDivElement, CardProps>(({ report 
                     fontStyle: 'italic',
                     marginBottom: '40px',
                     fontWeight: 500,
+                    display: 'flex',
+                    flexDirection: 'column'
                     // maxWidth: '90%'
                 }}>
                     "{summaryText}"
@@ -70,7 +89,7 @@ export const PitchPerfectCard = forwardRef<HTMLDivElement, CardProps>(({ report 
                 <div style={{ display: 'flex', flex: 1, justifyContent: 'space-between' }}>
 
                     {/* Visual Score Gauge (Left Side) */}
-                    <div style={{ position: 'relative', width: '400px', height: '400px', alignSelf: 'center', marginLeft: '20px' }}>
+                    <div style={{ display: 'flex', position: 'relative', width: '400px', height: '400px', alignSelf: 'center', marginLeft: '20px' }}>
                         <svg viewBox="0 0 120 120" style={{ width: '100%', height: '100%' }}>
                             <defs>
                                 <linearGradient id="pitchScoreGradient" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -79,45 +98,47 @@ export const PitchPerfectCard = forwardRef<HTMLDivElement, CardProps>(({ report 
                                     <stop offset="100%" stopColor="#3b82f6" />
                                 </linearGradient>
                             </defs>
-                            <circle cx="50%" cy="50%" r="52" fill="none" stroke="#f1f5f9" strokeWidth="12" />
+                            <circle cx="50%" cy="50%" r="52" fill="none" stroke="#ffffff" strokeWidth="12" />
                             <circle
                                 cx="50%" cy="50%" r="52"
                                 fill="none"
-                                stroke="url(#pitchScoreGradient)"
+                                stroke={isOgImage ? '#2563eb' : 'url(#pitchScoreGradient)'}
                                 strokeWidth="12"
                                 strokeLinecap="round"
                                 strokeDasharray={`${(overall_score / 10) * 327} 327`}
                                 transform="rotate(-90 60 60)"
                             />
-                            <text x="50%" y="54%" textAnchor="middle" dominantBaseline="middle" fill="#0f172a">
-                                <tspan style={{ fontSize: '38px', fontWeight: '800', letterSpacing: '-0.03em' }}>{overall_score}</tspan>
-                                <tspan style={{ fontSize: '22px', fill: '#64748b', fontWeight: 600 }}>/10</tspan>
-                            </text>
                         </svg>
+                        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', paddingTop: '4%' }}>
+                            <div style={{ display: 'flex', alignItems: 'baseline', color: '#0f172a' }}>
+                                <span style={{ fontSize: '140px', fontWeight: '800', letterSpacing: '-0.03em' }}>{overall_score}</span>
+                                <span style={{ fontSize: '80px', fill: '#64748b', color: '#64748b', fontWeight: 600, marginLeft: '8px' }}>/10</span>
+                            </div>
+                        </div>
                     </div>
 
                     {/* Stacked Vertical Metrics (Right Side) */}
                     <div style={{ display: 'flex', flexDirection: 'column', width: '45%', gap: '40px', justifyContent: 'center', paddingRight: '20px' }}>
 
                         {/* Filler Words Metric */}
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '32px', borderBottom: '2px solid #f1f5f9', paddingBottom: '24px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '32px', borderBottom: '2px solid rgba(100, 116, 139, 0.15)', paddingBottom: '24px' }}>
                             <div style={{ width: '72px', height: '72px', background: '#e0e7ff', borderRadius: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#1d4ed8' }}>
                                 <Users size={36} strokeWidth={2.5} />
                             </div>
-                            <div>
+                            <div style={{ display: 'flex', flexDirection: 'column' }}>
                                 <div style={{ fontSize: '32px', color: '#64748b', fontWeight: 600, letterSpacing: '0.02em' }}>Filler Words</div>
-                                <div style={{ fontSize: '48px', fontWeight: '800', color: '#0f172a', lineHeight: 1 }}>{formatMetricValue('total_filler_words', metricsMap['total_filler_words'])}</div>
+                                <div style={{ display: 'flex', fontSize: '48px', fontWeight: '800', color: '#0f172a', lineHeight: 1 }}>{formatMetricValue('total_filler_words', metricsMap['total_filler_words'])}</div>
                             </div>
                         </div>
 
                         {/* WPM Metric */}
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '32px', borderBottom: '2px solid #f1f5f9', paddingBottom: '24px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '32px', borderBottom: '2px solid rgba(100, 116, 139, 0.15)', paddingBottom: '24px' }}>
                             <div style={{ width: '72px', height: '72px', background: '#e0f2fe', borderRadius: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#0369a1' }}>
                                 <Clock size={36} strokeWidth={2.5} />
                             </div>
-                            <div>
+                            <div style={{ display: 'flex', flexDirection: 'column' }}>
                                 <div style={{ fontSize: '32px', color: '#64748b', fontWeight: 600, letterSpacing: '0.02em' }}>WPM</div>
-                                <div style={{ fontSize: '48px', fontWeight: '800', color: '#0f172a', lineHeight: 1 }}>{formatMetricValue('avg_words_per_minute', metricsMap['avg_words_per_minute'])}</div>
+                                <div style={{ display: 'flex', fontSize: '48px', fontWeight: '800', color: '#0f172a', lineHeight: 1 }}>{formatMetricValue('avg_words_per_minute', metricsMap['avg_words_per_minute'])}</div>
                             </div>
                         </div>
 
@@ -126,9 +147,12 @@ export const PitchPerfectCard = forwardRef<HTMLDivElement, CardProps>(({ report 
                             <div style={{ width: '72px', height: '72px', background: '#e0e7ff', borderRadius: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#312e81' }}>
                                 <FileText size={36} strokeWidth={2.5} />
                             </div>
-                            <div>
+                            <div style={{ display: 'flex', flexDirection: 'column' }}>
                                 <div style={{ fontSize: '32px', color: '#64748b', fontWeight: 600, letterSpacing: '0.02em' }}>Structure Score</div>
-                                <div style={{ fontSize: '48px', fontWeight: '800', color: '#0f172a', lineHeight: 1 }}>{pitchExtra?.pitch_structure_score || 'N/A'}<span style={{ fontSize: '28px', color: '#64748b' }}>/10</span></div>
+                                <div style={{ display: 'flex', alignItems: 'baseline', fontSize: '48px', fontWeight: '800', color: '#0f172a', lineHeight: 1 }}>
+                                    {pitchExtra?.pitch_structure_score || 'N/A'}
+                                    <span style={{ fontSize: '30px', color: '#64748b', marginLeft: '8px' }}>/10</span>
+                                </div>
                             </div>
                         </div>
 

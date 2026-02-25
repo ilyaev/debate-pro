@@ -1,13 +1,15 @@
 import { forwardRef } from 'react';
 import type { SessionReport, ImpromptuExtra } from '../../../types';
-import { formatMetricValue } from '../ReportBase';
+import { formatMetricValue } from '../ReportUtils';
 import { Users, Clock, Zap } from 'lucide-react';
 
 interface CardProps {
     report: SessionReport;
+    isOgImage?: boolean;
+    ogBackgroundImage?: string;
 }
 
-export const ImpromptuCard = forwardRef<HTMLDivElement, CardProps>(({ report }, ref) => {
+export const ImpromptuCard = forwardRef<HTMLDivElement, CardProps>(({ report, isOgImage, ogBackgroundImage }, ref) => {
     const { overall_score, metrics, voiceName, extra, social_share_texts, improvement_tips } = report;
     const metricsMap = metrics as unknown as Record<string, number | string>;
     const summaryText = social_share_texts?.performance_card_summary || improvement_tips[0];
@@ -22,7 +24,7 @@ export const ImpromptuCard = forwardRef<HTMLDivElement, CardProps>(({ report }, 
                 width: '1080px',
                 height: '1080px',
                 // background: 'linear-gradient(135deg, #f97316 0%, #14b8a6 100%)', // Orange to Teal
-                background: 'linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.8)),url(/cards/bg_impromptu.jpg) no-repeat center center',
+                background: isOgImage ? '#f97316' : 'linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.8)),url(/cards/bg_impromptu.jpg) no-repeat center center',
                 backgroundSize: 'cover',
                 color: '#ffffff',
                 fontFamily: 'Inter, system-ui, sans-serif',
@@ -31,22 +33,47 @@ export const ImpromptuCard = forwardRef<HTMLDivElement, CardProps>(({ report }, 
                 position: 'relative',
                 boxSizing: 'border-box',
                 borderRadius: '40px',
-                boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.2)',
-                overflow: 'hidden',
-                padding: '60px 80px 80px 80px' // Less top padding to fit the bold title
+                ...(isOgImage ? {} : { boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.2)' }),
+                overflow: 'hidden'
             }}
         >
-            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between' }}>
+            {/* Background Layer for Satori Data URI */}
+            {isOgImage && ogBackgroundImage && (
+                <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, display: 'flex' }}>
+                    <img
+                        src={ogBackgroundImage}
+                        style={{
+                            position: 'absolute',
+                            top: 0,
+                            left: 0,
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'cover'
+                        }}
+                    />
+                    {/* Dark gradient overlay */}
+                    <div style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        background: 'linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.8))'
+                    }} />
+                </div>
+            )}
+
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between', padding: '60px 80px 80px 80px' }}>
 
                 {/* Title */}
-                <h1 style={{ fontSize: '56px', fontWeight: '800', lineHeight: 1.1, margin: 0, textShadow: '0 2px 10px rgba(0,0,0,0.1)' }}>
+                <h1 style={{ display: 'flex', flexDirection: 'column', fontSize: '56px', fontWeight: '800', lineHeight: 1.1, margin: 0, ...(isOgImage ? {} : { textShadow: '0 2px 10px rgba(0,0,0,0.1)' }) }}>
                     Impromptu Evaluation
                 </h1>
 
                 {/* Centered White Gauge */}
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px', marginTop: '40px' }}>
-                    <div style={{ position: 'relative', width: '340px', height: '340px' }}>
-                        <svg viewBox="0 0 120 120" style={{ width: '100%', height: '100%', filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.1))' }}>
+                    <div style={{ display: 'flex', position: 'relative', width: '340px', height: '340px' }}>
+                        <svg viewBox="0 0 120 120" style={{ width: '100%', height: '100%', ...(isOgImage ? {} : { filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.1))' }) }}>
                             <circle cx="50%" cy="50%" r="52" fill="none" stroke="rgba(255,255,255,0.3)" strokeWidth="8" />
                             <circle
                                 cx="50%" cy="50%" r="52"
@@ -57,11 +84,13 @@ export const ImpromptuCard = forwardRef<HTMLDivElement, CardProps>(({ report }, 
                                 strokeDasharray={`${(overall_score / 10) * 327} 327`}
                                 transform="rotate(-90 60 60)"
                             />
-                            <text x="50%" y="54%" textAnchor="middle" dominantBaseline="middle" fill="#ffffff">
-                                <tspan style={{ fontSize: '32px', fontWeight: '800' }}>{overall_score}</tspan>
-                                <tspan style={{ fontSize: '16px', fill: 'rgba(255,255,255,0.8)' }}> / 10</tspan>
-                            </text>
                         </svg>
+                        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', paddingTop: '4%' }}>
+                            <div style={{ display: 'flex', alignItems: 'baseline', color: '#ffffff' }}>
+                                <span style={{ fontSize: '140px', fontWeight: '800' }}>{overall_score}</span>
+                                <span style={{ fontSize: '40px', color: 'rgba(255,255,255,0.8)', marginLeft: '0px' }}> / 10</span>
+                            </div>
+                        </div>
                     </div>
                     {/* Partner Info beneath Gauge */}
                     {/* <div style={{ fontSize: '32px', color: 'rgba(255,255,255,0.9)', fontWeight: 600 }}>
@@ -71,18 +100,20 @@ export const ImpromptuCard = forwardRef<HTMLDivElement, CardProps>(({ report }, 
 
                 {/* Bold Orange Quote Banner */}
                 <div style={{
-                    width: 'calc(100% + 160px)', // Bleed out of the padding constraints
-                    padding: '26px 70px',
+                    width: '1080px', // Safely span the total width because Satori doesn't support calc
+                    padding: '16px 30px',
                     background: '#ea580c', // Darker bold orange
-                    fontSize: '38px',
+                    fontSize: '30px',
                     lineHeight: 1.4,
                     color: '#ffffff',
                     fontStyle: 'italic',
                     fontWeight: 600,
                     textAlign: 'center',
-                    boxShadow: '0 10px 25px -5px rgba(234, 88, 12, 0.4)',
+                    ...(isOgImage ? {} : { boxShadow: '0 10px 25px -5px rgba(234, 88, 12, 0.4)' }),
                     marginTop: '30px',
-                    marginBottom: '40px'
+                    marginBottom: '40px',
+                    display: 'flex',
+                    flexDirection: 'column'
                 }}>
                     "{summaryText}"
                 </div>
@@ -96,13 +127,13 @@ export const ImpromptuCard = forwardRef<HTMLDivElement, CardProps>(({ report }, 
                         background: '#ffffff',
                         color: '#334155', // Slate shadow text
                         display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px',
-                        boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)'
+                        ...(isOgImage ? {} : { boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)' })
                     }}>
-                        <div style={{ padding: '16px', borderRadius: '16px', background: '#e0f2fe', color: '#0284c7' }}>
+                        <div style={{ padding: '16px', borderRadius: '16px', background: '#e0f2fe', color: '#0284c7', display: 'flex' }}>
                             <Users size={32} strokeWidth={2.5} />
                         </div>
-                        <div style={{ fontSize: '28px', color: '#64748b', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                            Filler
+                        <div style={{ display: 'flex', flexDirection: 'column', fontSize: '28px', color: '#64748b', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                            <span>Filler</span>
                         </div>
                         <div style={{ fontSize: '48px', fontWeight: '800', color: '#ea580c', lineHeight: 1 }}>{formatMetricValue('total_filler_words', metricsMap['total_filler_words'])}</div>
                     </div>
@@ -113,13 +144,13 @@ export const ImpromptuCard = forwardRef<HTMLDivElement, CardProps>(({ report }, 
                         background: '#ffffff',
                         color: '#334155',
                         display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px',
-                        boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)'
+                        ...(isOgImage ? {} : { boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)' })
                     }}>
-                        <div style={{ padding: '16px', borderRadius: '16px', background: '#ccfbf1', color: '#0f766e' }}>
+                        <div style={{ padding: '16px', borderRadius: '16px', background: '#ccfbf1', color: '#0f766e', display: 'flex' }}>
                             <Clock size={32} strokeWidth={2.5} />
                         </div>
-                        <div style={{ fontSize: '28px', color: '#64748b', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                            WPM
+                        <div style={{ display: 'flex', flexDirection: 'column', fontSize: '28px', color: '#64748b', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                            <span>Pacing</span>
                         </div>
                         <div style={{ fontSize: '48px', fontWeight: '800', color: '#ea580c', lineHeight: 1 }}>{formatMetricValue('avg_words_per_minute', metricsMap['avg_words_per_minute'])}</div>
                     </div>
@@ -130,13 +161,13 @@ export const ImpromptuCard = forwardRef<HTMLDivElement, CardProps>(({ report }, 
                         background: '#ffffff',
                         color: '#334155',
                         display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px',
-                        boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)'
+                        ...(isOgImage ? {} : { boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)' })
                     }}>
-                        <div style={{ padding: '16px', borderRadius: '16px', background: '#ffedd5', color: '#c2410c' }}>
+                        <div style={{ padding: '16px', borderRadius: '16px', background: '#ffedd5', color: '#c2410c', display: 'flex' }}>
                             <Zap size={32} strokeWidth={2.5} />
                         </div>
-                        <div style={{ fontSize: '28px', color: '#64748b', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                            Topic
+                        <div style={{ display: 'flex', flexDirection: 'column', fontSize: '28px', color: '#64748b', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                            <span>Topic</span>
                         </div>
                         <div style={{ fontSize: '20px', fontWeight: '800', color: '#ea580c', lineHeight: 1.2, textAlign: 'center', paddingTop: '8px' }}>{impromptuExtra?.assigned_topic || 'N/A'}</div>
                     </div>
