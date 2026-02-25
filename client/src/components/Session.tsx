@@ -40,7 +40,8 @@ export function Session({ mode, userId, onEnd }: Props) {
                     case 'session_started':
                         console.log(`✅ [Session] Session started: ${msg.sessionId}`);
                         initPlayback(); // Initialize ear piece (speakers) immediately
-                        setStatus('connecting'); // Wait for AI intro to finish before opening mic
+                        startCapture().catch(err => console.error('Failed to start capture:', err));
+                        setStatus('connecting'); // Wait for AI intro to finish before showing listening status
                         break;
                     case 'interrupted':
                         setStatus('interrupted');
@@ -56,8 +57,7 @@ export function Session({ mode, userId, onEnd }: Props) {
                         break;
                     case 'turn_complete':
                         if (!timerRef.current) {
-                            console.log('🎤 [Session] AI intro finished, starting mic and timer');
-                            startCapture();
+                            console.log('🎤 [Session] AI intro finished, starting timer');
                             timerRef.current = window.setInterval(() => {
                                 setElapsed(prev => prev + 1);
                             }, 1000);
