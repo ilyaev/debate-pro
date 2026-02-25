@@ -4,7 +4,7 @@ import { createHash } from 'crypto';
 import React from 'react';
 import satori from 'satori';
 import { Resvg } from '@resvg/resvg-js';
-import { PerformanceCard } from '../../client/src/components/report/PerformanceCard';
+import { PerformanceCard } from '../../client/src/components/report/PerformanceCard.js';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 
@@ -151,8 +151,10 @@ router.get('/shared/og/:id/:key', async (req, res) => {
 </body>
 </html>`;
 
-        res.setHeader('Content-Type', 'text/html');
-        res.send(html);
+        const htmlBuffer = Buffer.from(html, 'utf-8');
+        res.setHeader('Content-Type', 'text/html; charset=utf-8');
+        res.setHeader('Content-Length', htmlBuffer.length);
+        res.status(200).end(htmlBuffer);
     } catch (err) {
         console.error(`GET /api/shared/og/${id}/${key} error:`, err);
         res.status(500).send('Internal Server Error');

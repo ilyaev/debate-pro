@@ -1,6 +1,6 @@
 import { forwardRef } from 'react';
 import type { SessionReport, ImpromptuExtra } from '../../../types';
-import { formatMetricValue } from '../ReportUtils';
+import { formatMetricValue } from '../ReportUtils.js';
 import { Users, Clock, Zap } from 'lucide-react';
 
 interface CardProps {

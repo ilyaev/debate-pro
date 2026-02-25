@@ -13,6 +13,7 @@ import sessionsRouter from './api/sessions.js';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const app = express();
+app.set('trust proxy', 1);
 app.use(cors());
 app.use(express.json());
 

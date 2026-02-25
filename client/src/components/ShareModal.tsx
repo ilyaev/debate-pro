@@ -25,8 +25,11 @@ export function ShareModal({ url, onClose, report }: Props) {
     const sessionId = match ? match[1] : '';
     const sessionKey = match ? match[2] : '';
 
-    // Safety check for local dev environments to ensure the 5173 frontend port correctly targets the 8080 API port
-    const apiOrigin = window.location.hostname === 'localhost' ? 'http://localhost:8080' : window.location.origin;
+    // Safety check: prioritize VITE_API_URL for production (Cloud Run), fallback to local 8080 for dev, else use origin.
+    // Ensure we remove any trailing slashes from the environment variable if present.
+    const rawApiUrl = import.meta.env.VITE_API_URL;
+    const cleanApiUrl = rawApiUrl ? rawApiUrl.replace(/\/$/, '') : null;
+    const apiOrigin = cleanApiUrl || (window.location.hostname === 'localhost' ? 'http://localhost:8080' : window.location.origin);
 
     // Construct the canonical server-side OG image URL
     const serverImageUrl = sessionId && sessionKey ? `${apiOrigin}/api/sessions/shared/og-image/${sessionId}/${sessionKey}` : null;
@@ -200,14 +203,14 @@ export function ShareModal({ url, onClose, report }: Props) {
                             <div className="share-modal__link-row" style={{ alignSelf: 'stretch', background: '#f8fafc', borderRadius: '8px', padding: '1px' }}>
                                 <textarea
                                     className="share-modal__link-input"
-                                    value={linkedinText}
+                                    value={`${linkedinText}\n\n${shareGatewayUrl}`}
                                     readOnly
                                     onFocus={e => e.target.select()}
-                                    style={{ background: 'transparent', border: 'none', resize: 'vertical', minHeight: '60px', overflowY: 'auto', fontSize: '13px', lineHeight: 1.4 }}
+                                    style={{ background: 'transparent', border: 'none', resize: 'vertical', minHeight: '80px', overflowY: 'auto', fontSize: '13px', lineHeight: 1.4 }}
                                 />
                                 <button
                                     className={`share-modal__copy-btn ${copiedLi ? 'share-modal__copy-btn--copied' : ''}`}
-                                    onClick={() => handleCopySocial(linkedinText, 'li')}
+                                    onClick={() => handleCopySocial(`${linkedinText}\n\n${shareGatewayUrl}`, 'li')}
                                     style={{ alignSelf: 'flex-start', margin: '4px' }}
                                 >
                                     {copiedLi ? '✓ Copied' : 'Copy'}
@@ -223,14 +226,14 @@ export function ShareModal({ url, onClose, report }: Props) {
                             <div className="share-modal__link-row" style={{ alignSelf: 'stretch', background: '#f8fafc', borderRadius: '8px', padding: '1px' }}>
                                 <textarea
                                     className="share-modal__link-input"
-                                    value={facebookText}
+                                    value={`${facebookText}\n\n${shareGatewayUrl}`}
                                     readOnly
                                     onFocus={e => e.target.select()}
-                                    style={{ background: 'transparent', border: 'none', resize: 'vertical', minHeight: '60px', overflowY: 'auto', fontSize: '13px', lineHeight: 1.4 }}
+                                    style={{ background: 'transparent', border: 'none', resize: 'vertical', minHeight: '80px', overflowY: 'auto', fontSize: '13px', lineHeight: 1.4 }}
                                 />
                                 <button
                                     className={`share-modal__copy-btn ${copiedFb ? 'share-modal__copy-btn--copied' : ''}`}
-                                    onClick={() => handleCopySocial(facebookText, 'fb')}
+                                    onClick={() => handleCopySocial(`${facebookText}\n\n${shareGatewayUrl}`, 'fb')}
                                     style={{ alignSelf: 'flex-start', margin: '4px' }}
                                 >
                                     {copiedFb ? '✓ Copied' : 'Copy'}

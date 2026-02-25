@@ -1,6 +1,6 @@
 import { forwardRef } from 'react';
 import type { SessionReport, VeritalkExtra } from '../../../types';
-import { METRIC_LABELS, formatMetricValue } from '../ReportUtils';
+import { METRIC_LABELS, formatMetricValue } from '../ReportUtils.js';
 
 interface CardProps {
     report: SessionReport;

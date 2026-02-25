@@ -1,6 +1,6 @@
 import { forwardRef } from 'react';
 import type { SessionReport, EmpathyTrainerExtra } from '../../../types';
-import { METRIC_LABELS, formatMetricValue } from '../ReportUtils';
+import { METRIC_LABELS, formatMetricValue } from '../ReportUtils.js';
 import { MessageCircle, Smile, ShieldAlert } from 'lucide-react';
 
 interface CardProps {

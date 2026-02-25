@@ -1,9 +1,9 @@
 import { forwardRef } from 'react';
 import type { SessionReport } from '../../types';
-import { PitchPerfectCard } from './cards/PitchPerfectCard';
-import { EmpathyTrainerCard } from './cards/EmpathyTrainerCard';
-import { VeritalkCard } from './cards/VeritalkCard';
-import { ImpromptuCard } from './cards/ImpromptuCard';
+import { PitchPerfectCard } from './cards/PitchPerfectCard.js';
+import { EmpathyTrainerCard } from './cards/EmpathyTrainerCard.js';
+import { VeritalkCard } from './cards/VeritalkCard.js';
+import { ImpromptuCard } from './cards/ImpromptuCard.js';
 
 interface PerformanceCardProps {
     report: SessionReport;
