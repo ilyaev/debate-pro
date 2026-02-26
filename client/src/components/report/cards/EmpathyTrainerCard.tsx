@@ -28,16 +28,16 @@ export const EmpathyTrainerCard = forwardRef<HTMLDivElement, CardProps>(({ repor
     const triggerCount = empathyExtra?.trigger_moments?.length || 0;
     const goldenPhraseCount = empathyExtra?.golden_phrases?.length || 0;
 
-    // 2. DESIGN CONSTANTS (Emerald Green Theme)
+    // 2. DESIGN CONSTANTS (Lavender/Purple Theme)
     const THEME = {
-        bg: '#ecfdf5', // emerald-50
-        textMain: '#064e3b', // emerald-900
-        textSecondary: '#047857', // emerald-700
-        accent: '#10b981', // emerald-500
-        bannerBg: '#059669', // emerald-600
+        bg: '#faf5ff', // purple-50
+        textMain: '#581c87', // purple-900
+        textSecondary: '#7e22ce', // purple-700
+        accent: '#a855f7', // purple-500
+        bannerBg: '#9333ea', // purple-600
         bannerText: '#ffffff',
-        iconBg: '#d1fae5', // emerald-100
-        scoreColor: '#065f46', // emerald-800
+        iconBg: '#f3e8ff', // purple-100
+        scoreColor: '#6b21a8', // purple-800
     };
 
     // 3. RENDER
@@ -115,23 +115,10 @@ export const EmpathyTrainerCard = forwardRef<HTMLDivElement, CardProps>(({ repor
                         /10
                     </span>
                 </div>
-                <div style={{ fontSize: '32px', fontWeight: 600, color: THEME.textSecondary, marginTop: '10px', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+                {/* <div style={{ fontSize: '32px', fontWeight: 600, color: THEME.textSecondary, marginTop: '10px', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
                     Empathy Score
-                </div>
+                </div> */}
                 
-                {/* BRANDING FOOTER (MOVED UP) */}
-                <div style={{ 
-                    textAlign: 'center', 
-                    fontSize: '24px', 
-                    fontWeight: 600, 
-                    color: THEME.textSecondary, 
-                    opacity: 0.6,
-                    letterSpacing: '0.1em',
-                    textTransform: 'uppercase',
-                    marginTop: '20px'
-                }}>
-                    Gemili.app
-                </div>
             </div>
 
             {/* QUOTE BANNER */}

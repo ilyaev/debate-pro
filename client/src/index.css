@@ -1378,7 +1378,7 @@ body {
 }
 
 .timeline__note {
-  font-size: 14px;
+  font-size: 15px;
   color: var(--text-secondary);
 }
 
@@ -1390,7 +1390,7 @@ body {
 
 .report__tips li {
   padding: var(--space-sm) 0;
-  font-size: 14px;
+  font-size: 16px;
   color: var(--text-secondary);
   line-height: 1.5;
 }
@@ -1502,6 +1502,11 @@ body {
   background: rgba(79, 140, 255, 0.04);
 }
 
+.report__extra-card--investment {
+  border-color: rgba(196, 154, 108, 0.25);
+  background: rgba(196, 154, 108, 0.04);
+}
+
 .report__fixes-list {
   margin: 0;
   padding-left: var(--space-lg);
@@ -1517,8 +1522,26 @@ body {
   margin-bottom: 0;
 }
 
+.report__asset-text {
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.report__asset-text--strong {
+  color: #15803d; /* Darker green for text */
+  font-weight: 500;
+}
+
+.report__asset-text--weak {
+  color: #b91c1c; /* Darker red for text */
+  font-weight: 500;
+}
+
 /* Half-width cards in a row (Veritalk) */
-.report__highlight-row {
+.report__highlight-row,
+.report__grid-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: var(--space-md);
@@ -1530,7 +1553,8 @@ body {
 }
 
 @media (max-width: 768px) {
-  .report__highlight-row {
+  .report__highlight-row,
+  .report__grid-row {
     grid-template-columns: 1fr;
   }
 }
