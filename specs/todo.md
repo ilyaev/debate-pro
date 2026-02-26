@@ -65,3 +65,9 @@
 - [x] Implement FeedbackModal with live audio & early barge-in
 - [x] Fix audio context synchronization for interruptions
 - [x] Optimize report layout for mobile responsiveness
+
+## Phase 9: Social Sharing & Polish
+- [x] Implement report sharing via public link (ShareModal, copy link)
+- [x] Add social share cards for LinkedIn/Facebook previews
+- [x] Refine mobile layout for standard sessions (fixed headers, loader)
+- [x] Refine mobile layout for shared reports (scrolling header)

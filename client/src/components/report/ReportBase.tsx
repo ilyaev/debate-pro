@@ -1,7 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { ChevronDown, Share2 } from 'lucide-react';
 import type { SessionReport } from '../../types';
-
-
 import { METRIC_LABELS, scoreColor, formatMetricValue } from './ReportUtils';
 
 // Re-export for any existing external dependencies that might rely on them via ReportBase
@@ -134,13 +133,21 @@ export function PartnerInfo({ voiceName, roleHint }: { voiceName?: string; roleH
 
 export function Transcript({ lines, aiName }: { lines?: string[]; aiName?: string }) {
     if (!lines || lines.length === 0) return null;
+
+    const [expanded, setExpanded] = useState(false);
+    
+    // If more than 10 messages, show only first 8 unless expanded
+    const shouldTruncate = lines.length > 10;
+    const visibleLines = shouldTruncate && !expanded ? lines.slice(0, 8) : lines;
+    const remainingCount = lines.length - 8;
+
     return (
         <div className="session-detail__transcript">
             <h2 className="session-detail__transcript-title">Full Transcript</h2>
             <div className="session-detail__transcript-lines">
-                {lines.map((line, i) => {
+                {visibleLines.map((line, i) => {
                     const isUser = line.startsWith('[User]');
-                    const text = line.replace(/^\[(User|AI)\]\s*/, '');
+                    const text = line.replace(/^(?:\[User\]|\[AI\]|\[Assistant\])\s*/i, '');
                     return (
                         <div key={i} className={`session-detail__line ${isUser ? 'session-detail__line--user' : 'session-detail__line--ai'}`}>
                             <span className="session-detail__line-role">{isUser ? 'You' : (aiName || 'AI')}</span>
@@ -149,6 +156,19 @@ export function Transcript({ lines, aiName }: { lines?: string[]; aiName?: strin
                     );
                 })}
             </div>
+
+            {shouldTruncate && !expanded && (
+                <div className="session-detail__transcript-mask">
+                    <div className="session-detail__transcript-fade"></div>
+                    <button 
+                        className="session-detail__transcript-more-btn"
+                        onClick={() => setExpanded(true)}
+                    >
+                        <span>Show {remainingCount} more rows</span>
+                        <ChevronDown size={16} />
+                    </button>
+                </div>
+            )}
         </div>
     );
 }
@@ -222,7 +242,12 @@ export function ReportActions({ onRestart, sessionId, userId, isShared, report }
         <>
             <div className="report__actions">
                 {!isShared && sessionId && userId && (
-                    <button className="btn btn--outline report__share-btn" onClick={handleShare}>
+                    <button 
+                        className="btn btn--outline report__share-btn" 
+                        onClick={handleShare}
+                        style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
+                    >
+                        <Share2 size={18} />
                         Share
                     </button>
                 )}

@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import type { SessionSummary } from '../types';
 import { navigateTo } from '../App';
-import { Target, Handshake, Swords, Zap, MessageSquareText, ChevronRight, User } from 'lucide-react';
+import { Target, Handshake, Swords, Zap, MessageSquareText, ChevronRight, User, ArrowLeft } from 'lucide-react';
+import { FullscreenLoader } from './FullscreenLoader';
 
 const MODE_LABELS: Record<string, string> = {
     pitch_perfect: 'Pitch Perfect',
@@ -79,7 +80,7 @@ export function SessionsList({ userId }: Props) {
                         <img className="logo-img--small" src="/glotti_logo.png" alt="Glotti" />
                     </button>
                     <button className="sessions-back-btn" onClick={() => { window.location.hash = ''; }}>
-                        ← Back
+                        <ArrowLeft size={16} /> <span>Back</span>
                     </button>
                     <h1 className="sessions-page__title">Past Sessions</h1>
                     <span className="sessions-page__count">
@@ -90,10 +91,7 @@ export function SessionsList({ userId }: Props) {
 
             {/* States */}
             {loading && (
-                <div className="sessions-page__state">
-                    <div className="sessions-spinner" />
-                    <p>Loading sessions…</p>
-                </div>
+                <FullscreenLoader message="Loading sessions..." />
             )}
 
             {error && (

@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import type { SessionFull } from '../types';
 import { Report } from './Report';
 import { navigateTo } from '../App';
+import { FullscreenLoader } from './FullscreenLoader';
+import { ArrowLeft } from 'lucide-react';
 
 interface Props {
     sessionId: string;
@@ -40,7 +42,7 @@ export function SessionDetail({ sessionId, userId, shareKey, onRestart }: Props)
     }, [sessionId, userId, shareKey]);
 
     return (
-        <div className="session-detail">
+        <div className={`session-detail ${shareKey ? 'session-detail--shared' : ''}`}>
             <div className={`session-detail__nav ${shareKey ? 'session-detail__nav--shared' : ''}`}>
                 <div className="session-detail__nav-inner">
                     <a
@@ -51,7 +53,7 @@ export function SessionDetail({ sessionId, userId, shareKey, onRestart }: Props)
                     </a>
                     {!shareKey && (
                         <button className="sessions-back-btn" onClick={() => navigateTo('sessions')}>
-                            ← All Sessions
+                            <ArrowLeft size={16} /> <span>All Sessions</span>
                         </button>
                     )}
                     {session && !shareKey && (
@@ -63,10 +65,7 @@ export function SessionDetail({ sessionId, userId, shareKey, onRestart }: Props)
             </div>
 
             {loading && (
-                <div className="sessions-page__state">
-                    <div className="sessions-spinner" />
-                    <p>Loading session…</p>
-                </div>
+                <FullscreenLoader message="Loading session..." />
             )}
 
             {error && (
