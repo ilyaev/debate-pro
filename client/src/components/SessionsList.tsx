@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { SessionSummary } from '../types';
 import { navigateTo } from '../App';
-import { Target, Handshake, Swords, Zap, MessageSquareText, ChevronRight, User, ArrowLeft } from 'lucide-react';
+import { Target, Handshake, Swords, Zap, MessageSquareText, ChevronRight, User, ArrowLeft, MessageSquareDashed } from 'lucide-react';
 import { FullscreenLoader } from './FullscreenLoader';
 
 const MODE_LABELS: Record<string, string> = {
@@ -102,8 +102,11 @@ export function SessionsList({ userId }: Props) {
             )}
 
             {!loading && !error && sessions.length === 0 && (
-                <div className="sessions-page__state">
-                    <p className="sessions-page__empty-title">No sessions yet</p>
+                <div className="sessions-page__state sessions-page__state--empty">
+                    <div className="sessions-page__empty-icon">
+                        <MessageSquareDashed size={48} strokeWidth={1.5} />
+                    </div>
+                    <h2 className="sessions-page__empty-title">No sessions yet</h2>
                     <p className="sessions-page__empty-sub">Complete a training session to see your history here.</p>
                     <button className="btn btn--primary" onClick={() => { window.location.hash = ''; }}>
                         Start a Session

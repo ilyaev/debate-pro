@@ -16,7 +16,7 @@ const modes = [
         subtitle: 'Investor Pitch',
         description: 'Face a skeptical VC who will challenge every claim you make.',
         icon: <Target size={48} strokeWidth={1.5} />,
-        iconUrl: '/icons/pitch_perfect.png',
+        iconUrl: '/icons/icon_pitch.png',
         color: '#4f8cff',
     },
     {
@@ -25,7 +25,7 @@ const modes = [
         subtitle: 'Difficult Conversations',
         description: 'Practice handling upset customers, struggling employees, and tense situations.',
         icon: <Handshake size={48} strokeWidth={1.5} />,
-        iconUrl: '/icons/empathy_trainer.png',
+        iconUrl: '/icons/icon_empathy.png',
         color: '#22c55e',
     },
     {
@@ -34,7 +34,7 @@ const modes = [
         subtitle: 'Debate Sparring',
         description: 'Defend your thesis against real-time fact-checks and logical traps.',
         icon: <Swords size={48} strokeWidth={1.5} />,
-        iconUrl: '/icons/veritalk.png',
+        iconUrl: '/icons/icon_veritalk.png',
         color: '#8b5cf6',
     },
     {
@@ -43,7 +43,7 @@ const modes = [
         subtitle: 'Think on Your Feet',
         description: 'Get a random topic and speak for 2 minutes — no prep, no safety net.',
         icon: <Zap size={48} strokeWidth={1.5} />,
-        iconUrl: '/icons/impromptu.png',
+        iconUrl: '/icons/icon_impromptu.png',
         color: '#f59e0b',
     },
 ];
@@ -135,7 +135,7 @@ export function ModeSelect({ onStart, userId }: Props) {
                         className="home-sessions-btn"
                         onClick={() => navigateTo('sessions')}
                     >
-                        <span className="home-sessions-btn__label">Past Sessions</span>
+                        <span className="home-sessions-btn__label">Dashboard</span>
                         <span className="home-sessions-btn__count">{sessionCount}</span>
                     </button>
                 </div>

@@ -360,7 +360,7 @@ body {
   }
 
   .home-sessions-btn {
-    width: 100%;
+    width: 95%;
     justify-content: center;
     padding: var(--space-md);
     background: #ffffff; /* Solid white for better readability on mobile bg */
@@ -444,8 +444,8 @@ body {
 }
 
 .mode-card__image-icon {
-  width: 48px;
-  height: 48px;
+  /* width: 48px; */
+  height: 100px;
   object-fit: contain;
 }
 
@@ -2041,6 +2041,56 @@ body {
   }
 }
 
+/* Empty State & Error State */
+.sessions-page__state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-2xl) var(--space-xl);
+  text-align: center;
+  background: white;
+  border-radius: var(--radius-xl);
+  border: 1px dashed var(--border-subtle);
+  margin-top: var(--space-xl);
+  min-height: 400px;
+}
+
+.sessions-page__empty-icon {
+  width: 96px;
+  height: 96px;
+  background: var(--bg-secondary);
+  border-radius: 50%;
+  border: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  margin-bottom: var(--space-lg);
+}
+
+.sessions-page__empty-title {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 var(--space-sm);
+}
+
+.sessions-page__empty-sub {
+  font-size: 16px;
+  color: var(--text-secondary);
+  margin: 0 0 var(--space-xl);
+  max-width: 400px;
+  line-height: 1.5;
+}
+
+.sessions-page__state--error {
+  min-height: 200px;
+  border-color: var(--accent-orange);
+  background: rgba(251, 146, 60, 0.05);
+  color: var(--accent-orange);
+}
 
 /* Sessions list cards */
 .sessions-list {
@@ -2794,6 +2844,7 @@ body {
   justify-content: center;
   padding-top: var(--space-xl);
   margin-top: -40px;
+  padding-bottom: 15px;
   z-index: 5;
 }
 
