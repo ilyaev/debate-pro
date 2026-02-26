@@ -2412,6 +2412,27 @@ body {
   border: 1px solid var(--border-subtle);
 }
 
+.share-modal__social-box--preview {
+  background: #ffffff;
+  padding: var(--space-md);
+  gap: var(--space-sm);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
+}
+
+.share-modal__post-content {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-primary);
+  white-space: pre-wrap;
+  font-family: var(--font-body);
+}
+
+.share-modal__post-link {
+  color: var(--accent-blue);
+  word-break: break-all;
+  font-weight: 500;
+}
+
 .share-modal__social-textarea {
   background: transparent;
   border: none;
@@ -2426,6 +2447,12 @@ body {
 .share-modal__social-copy {
   margin: 4px;
   align-self: flex-end;
+}
+
+/* Make the copy button inside preview a bit more subtle/integrated if desired, or keep as is */
+.share-modal__social-box--preview .share-modal__social-copy {
+  margin: 0;
+  margin-top: var(--space-xs);
 }
 
 .share-modal__dismiss {
