@@ -8,7 +8,7 @@ import { fileURLToPath } from 'url';
 import { config } from './config.js';
 import { handleConnection, setDependencies } from './ws-handler.js';
 import { createStore } from './store.js';
-import sessionsRouter from './api/sessions.js';
+import { createSessionsRouter } from './api/sessions.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -40,7 +40,7 @@ app.use('/api', limiter);
 app.get('/health', (_, res) => res.json({ status: 'ok', mode: config.isDev ? 'development' : 'production' }));
 
 // ─── API Routes ───────────────────────────────────────────────────────────────
-app.use('/api/sessions', sessionsRouter);
+app.use('/api/sessions', createSessionsRouter(store));
 
 
 // ─── For development, serve the Vite-built client files ───────────────────────

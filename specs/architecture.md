@@ -263,6 +263,16 @@ gemili/
 │   ├── main.ts                  # Express app entrypoint, injects shared store
 │   ├── ws-handler.ts            # WebSocket orchestrator (~120 LOC)
 │   ├── ws-handler-legacy.ts     # Legacy backup (original monolith)
+│   ├── api/
+│   │   └── sessions.ts          # REST API router (DI factory, delegates to services)
+│   ├── middleware/
+│   │   └── session-auth.ts      # Auth middleware (owner / share key verification)
+│   ├── services/
+│   │   ├── og-renderer.ts       # Satori + Resvg OG image rendering + LRU cache
+│   │   └── og-html.ts           # OG HTML template builder with HTML escaping
+│   ├── utils/
+│   │   ├── share-key.ts         # SHA-256 share key computation & validation
+│   │   └── dates.ts             # Date normalization helper
 │   ├── session/                 # Modular session logic (extracted from ws-handler)
 │   │   ├── constants.ts         # Tunable thresholds, filler word list
 │   │   ├── state.ts             # SessionState type + factory + helpers

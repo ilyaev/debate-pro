@@ -37,6 +37,16 @@ gemili/
 │   ├── main.ts
 │   ├── ws-handler.ts             # Slim orchestrator
 │   ├── ws-handler-legacy.ts      # Legacy backup
+│   ├── api/
+│   │   └── sessions.ts           # REST API router (DI factory)
+│   ├── middleware/
+│   │   └── session-auth.ts       # Auth middleware (owner / share key)
+│   ├── services/
+│   │   ├── og-renderer.ts        # Satori + Resvg OG image rendering + LRU cache
+│   │   └── og-html.ts            # OG HTML template builder with escaping
+│   ├── utils/
+│   │   ├── share-key.ts          # SHA-256 share key computation & validation
+│   │   └── dates.ts              # Date normalization helper
 │   ├── session/                   # Modular session logic
 │   │   ├── constants.ts
 │   │   ├── state.ts
@@ -244,7 +254,7 @@ export function loadPrompt(mode: Mode): string {
 
 ### Step 2.2 — `server/main.ts`
 
-Create Express app with WebSocket upgrade:
+Create Express app with WebSocket upgrade and dependency-injected routes:
 
 ```typescript
 import express from 'express';
@@ -252,13 +262,19 @@ import { createServer } from 'http';
 import { WebSocketServer } from 'ws';
 import { config } from './config.js';
 import { handleConnection } from './ws-handler.js';
+import { createStore } from './store.js';
+import { createSessionsRouter } from './api/sessions.js';
 
 const app = express();
 const server = createServer(app);
 const wss = new WebSocketServer({ server });
+const store = createStore();
 
 // Health check
 app.get('/health', (_, res) => res.json({ status: 'ok' }));
+
+// API routes — store injected via factory
+app.use('/api/sessions', createSessionsRouter(store));
 
 // Serve static client files (production: built Vite output)
 app.use(express.static('client-dist'));

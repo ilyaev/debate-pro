@@ -57,7 +57,15 @@ A beautiful, auto-generated image optimized for sharing.
 When a report link is pasted into Slack, Discord, or LinkedIn, it should expand into a rich preview.
 *   **Title:** Glotti Report: [Scenario] - [Score]/10
 *   **Description:** "I just completed an AI-powered coaching session. See how I performed!"
-*   **Image:** A static branded cover, or an image uploaded to Google Cloud Storage after client-side generation.
+*   **Image:** Server-side rendered PNG via Satori + Resvg from the `PerformanceCard` React component.
+
+**Implementation (completed):**
+*   OG HTML page served at `/api/sessions/shared/og/:id/:key` with all meta tags (Open Graph + Twitter Card).
+*   OG image dynamically rendered at `/api/sessions/shared/og-image/:id/:key` — uses `server/services/og-renderer.ts`.
+*   Server-side LRU cache (100 entries) avoids re-rendering the same image on repeated scraper hits.
+*   All interpolated values in the HTML template are HTML-escaped (`server/services/og-html.ts`).
+*   Auth via share key middleware (`server/middleware/session-auth.ts`) — same key scheme as public report links.
+*   Mode-specific background images: pitch, empathy, impromptu, veritalk (loaded as base64 data URIs at startup).
 
 ### 3.3 Enhanced Share Modal
 Upgrade the existing `ShareModal.tsx` to include:
@@ -74,9 +82,12 @@ Upgrade the existing `ShareModal.tsx` to include:
 *   Hide "Sensitive" data (like full user profile) from public views.
 *   Add a "Start your own session" CTA button for non-users.
 
-### Phase 2: SEO & Meta Tags (Backend)
-*   Implement a server-side route (Express) that reads session data from Firestore and populates `<meta property="og:..." />` tags.
-*   This ensures links look premium even before they are clicked.
+### Phase 2: SEO & Meta Tags (Backend) ✅
+*   Server-side OG routes implemented in `server/api/sessions.ts`.
+*   OG HTML template built by `server/services/og-html.ts` with proper HTML escaping.
+*   OG image rendered server-side by `server/services/og-renderer.ts` (Satori → Resvg → PNG).
+*   Share key validation handled by `server/middleware/session-auth.ts`.
+*   LRU cache (100 entries) prevents redundant renders on repeated scraper requests.
 
 ### Phase 3: Dynamic Card Generation
 *   Create a hidden `<PerformanceCard />` component in React.
