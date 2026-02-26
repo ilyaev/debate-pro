@@ -205,6 +205,8 @@ export class FirestoreStore implements SessionStore {
           startedAt: new Date(data.startedAt),
           duration_seconds: data.report?.duration_seconds ?? 0,
           overall_score: data.report?.overall_score ?? 0,
+          preview_text: data.report?.social_share_texts?.performance_card_summary ?? '',
+          voiceName: data.voiceName ?? 'AI Coach',
         };
       });
       console.log(`📦 [Firestore] ✅ Found ${results.length} sessions for user ${userId}.`);

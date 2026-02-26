@@ -181,7 +181,7 @@ export function ShareModal({ sessionId, userId, onClose, report }: Props) {
                 {report && (
                     <div className="share-modal__card-preview">
                         {serverImageUrl ? (
-                            <img src={serverImageUrl} alt="Performance Card Preview" style={{width: '100%', paddingTop: '20px', paddingBottom: '20px'}} />
+                            <img src={serverImageUrl} alt="Performance Card Preview" style={{width: '90%', paddingTop: '20px', paddingBottom: '20px'}} />
                         ) : (
                             <div className="share-modal__preview-placeholder">
                                 {sessionId && !sessionKey ? 'Generating preview...' : 'Preview unavailable'}
