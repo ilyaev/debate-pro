@@ -1,5 +1,5 @@
 import { forwardRef } from 'react';
-import type { SessionReport, PitchPerfectExtra } from '../../../types';
+import type { SessionReport } from '../../../types';
 import { formatMetricValue } from '../ReportUtils.js';
 import { Users, Clock, TrendingUp } from 'lucide-react';
 
@@ -10,10 +10,10 @@ interface CardProps {
 }
 
 export const PitchPerfectCard = forwardRef<HTMLDivElement, CardProps>(({ report, isOgImage, ogBackgroundImage }, ref) => {
-    const { overall_score, metrics, extra, social_share_texts, improvement_tips } = report;
+    const { overall_score, metrics, social_share_texts, improvement_tips } = report;
     const metricsMap = metrics as unknown as Record<string, number | string>;
     const summaryText = social_share_texts?.performance_card_summary || improvement_tips[0];
-    const pitchExtra = extra as unknown as PitchPerfectExtra;
+    // const pitchExtra = extra as unknown as PitchPerfectExtra;
 
     // Top right design style: White background, asymmetrical layout, clean borders
     return (

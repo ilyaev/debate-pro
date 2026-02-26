@@ -37,7 +37,7 @@ export function ClassicWaveform({ userAnalyserRef, aiAnalyserRef, status }: Visu
 
             if (!ctx) return;
 
-            const bufferLength = userAnalyser ? userAnalyser.fftSize : (aiAnalyser ? aiAnalyser.fftSize : 2048);
+            // const bufferLength = userAnalyser ? userAnalyser.fftSize : (aiAnalyser ? aiAnalyser.fftSize : 2048);
             
             // Note: We don't actually use bufferLength to create buffers here 
             // because we are getting time domain data inside getVolume
