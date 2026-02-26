@@ -57,13 +57,13 @@ Practice building structure on the fly with surprise topics. Evaluated on clarit
 
 ```mermaid
 graph LR
-    Client["Browser Client\nReact + Vite"] <-->|"WebSocket\naudio PCM / JSON"| Backend["Node.js Backend\nExpress + ws"]
-    Backend <-->|"Gemini Live API\naudio / transcript"| Gemini["Gemini\n2.5 Flash"]
+    Client["Browser Client<br/>React + Vite"] <-->|"WebSocket<br/>audio PCM / JSON"| Backend["Node.js Backend<br/>Express + ws"]
+    Backend <-->|"Gemini Live API<br/>audio / transcript"| Gemini["Gemini<br/>2.5 Flash"]
 
-    Backend --- Persona["Persona Agent\n(persona-driven conversation)"]
-    Backend --- Analytics["Analytics Agent\n(real-time metrics)"]
-    Backend --- Tone["Tone Analyzer\n(background LLM analysis)"]
-    Backend --- Firestore["Firestore\n(session persistence & reports)"]
+    Backend --- Persona["Persona Agent<br/>(persona-driven conversation)"]
+    Backend --- Analytics["Analytics Agent<br/>(real-time metrics)"]
+    Backend --- Tone["Tone Analyzer<br/>(background LLM analysis)"]
+    Backend --- Firestore["Firestore<br/>(session persistence & reports)"]
 ```
 
 ### Key Technical Decisions
