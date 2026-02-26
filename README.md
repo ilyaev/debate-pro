@@ -112,8 +112,8 @@ graph LR
 
 ```bash
 # Clone the repository
-git clone https://github.com/ilyaev/debate-pro.git
-cd debate-pro
+git clone https://github.com/ilyaev/glotti.git
+cd glotti
 
 # Install dependencies
 npm install
