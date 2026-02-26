@@ -10,7 +10,8 @@
   <a href="#scenario-modes">Modes</a> •
   <a href="#architecture">Architecture</a> •
   <a href="#getting-started">Getting Started</a> •
-  <a href="#deployment">Deployment</a>
+  <a href="#deployment">Deployment</a> •
+  <a href="https://glotti.pbartz.net/">Try It Live</a>
 </p>
 
 ---
@@ -70,10 +71,8 @@ graph LR
 | Decision | Rationale |
 |---|---|
 | **WebSocket proxy pattern** | The backend sits between browser and Gemini Live API — pipes audio bidirectionally while simultaneously extracting metrics and managing session state. This enables server-side analytics without adding client latency. |
-| **Modular session architecture** | The WebSocket handler (`ws-handler.ts`) is a thin orchestrator (~120 LOC) that delegates to focused modules: `state.ts`, `gemini-bridge.ts`, `protocol.ts`, `metrics.ts`, `transcript-buffer.ts`, `tone-analyzer.ts`. Each module has a single responsibility. |
-| **Dependency injection** | `ws-handler.ts` exports `setDependencies()` for injecting `GoogleGenAI` and `SessionStore` instances, eliminating duplicate instantiation and enabling testability. |
-| **Heuristic + LLM hybrid metrics** | Filler words and WPM are calculated via zero-latency regex/math heuristics. Tone analysis uses periodic background Gemini Flash calls for semantic accuracy — combining speed with intelligence. |
-| **PCM audio format** | Client sends raw PCM 16-bit 16kHz (mic capture). Client receives PCM 16-bit 24kHz from Gemini. No codec overhead — minimal latency for real-time voice interaction. |
+| **Gemini Live API** | Bidirectional audio streaming with barge-in support. The agent can interrupt the user mid-sentence and the user can interrupt the agent — enabling natural, pressure-testing conversation flow. |
+| **Google Cloud native** | Cloud Run for containerized hosting (scales to zero), Firestore for session persistence, Secret Manager for API keys. Single `npm run deploy` command. |
 | **Persona-as-prompt** | Each scenario is defined by a markdown system prompt in `server/agents/prompts/`. Adding a new mode requires only writing a prompt file and registering it in config — no code changes to the core engine. |
 | **Server-side OG image generation** | Social share previews use Satori + Resvg to render React components to PNG on the server, ensuring rich link previews on LinkedIn, X, Slack, and Discord. |
 | **Multi-stage Docker build** | Production image uses a two-stage Dockerfile — build stage compiles TypeScript, runtime stage copies only compiled output and production deps for a minimal container. |
