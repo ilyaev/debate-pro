@@ -6,7 +6,7 @@ import { WebSocketServer } from 'ws';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { config } from './config.js';
-import { handleConnection } from './ws-handler.js';
+import { handleConnection, setDependencies } from './ws-handler.js';
 import { createStore } from './store.js';
 import sessionsRouter from './api/sessions.js';
 
@@ -20,6 +20,9 @@ app.use(express.json());
 const server = createServer(app);
 const wss = new WebSocketServer({ server });
 const store = createStore();
+
+// Wire shared store into websocket handler
+setDependencies({ store });
 
 // ─── Rate Limiting ────────────────────────────────────────────────────────────
 // Limit each IP to 100 requests per 15 minutes for /api endpoints

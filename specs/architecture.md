@@ -259,9 +259,19 @@ gemili/
 │           ├── useWebSocket.ts   # WebSocket connection hook
 │           ├── useAudio.ts       # Audio capture/playback hook
 │           └── useVideo.ts       # Webcam capture hook
-├── server/                       # Node.js + Express + ADK
-│   ├── main.ts                  # Express app entrypoint
-│   ├── ws-handler.ts            # WebSocket endpoint logic
+├── server/                       # Node.js + Express
+│   ├── main.ts                  # Express app entrypoint, injects shared store
+│   ├── ws-handler.ts            # WebSocket orchestrator (~120 LOC)
+│   ├── ws-handler-legacy.ts     # Legacy backup (original monolith)
+│   ├── session/                 # Modular session logic (extracted from ws-handler)
+│   │   ├── constants.ts         # Tunable thresholds, filler word list
+│   │   ├── state.ts             # SessionState type + factory + helpers
+│   │   ├── gemini-bridge.ts     # Gemini Live API connection + message dispatch
+│   │   ├── transcript-buffer.ts # TranscriptBuffer class (user/AI flush logic)
+│   │   ├── metrics.ts           # extractMetrics() pure function
+│   │   ├── tone-analyzer.ts     # Background LLM tone analysis
+│   │   ├── protocol.ts          # Binary parsing + client message helpers
+│   │   └── feedback-context.ts  # Feedback mode context injection
 │   ├── agents/
 │   │   ├── coaching-agent.ts    # ADK Coaching Agent definition
 │   │   ├── analytics-agent.ts   # ADK Analytics Agent definition
@@ -271,7 +281,7 @@ gemili/
 │   │       └── veritalk.md
 │   ├── tools/
 │   │   └── search-tool.ts       # Google Search grounding wrapper
-│   ├── store.ts                 # Session store interface (in-memory / Firestore)
+│   ├── store.ts                 # Session store interface (FileStore / Firestore)
 │   ├── report.ts                # Post-session report generation
 │   └── config.ts                # Environment config, constants
 ├── Dockerfile

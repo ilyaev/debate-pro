@@ -35,7 +35,17 @@ gemili/
 │           └── useVideo.ts
 ├── server/
 │   ├── main.ts
-│   ├── ws-handler.ts
+│   ├── ws-handler.ts             # Slim orchestrator
+│   ├── ws-handler-legacy.ts      # Legacy backup
+│   ├── session/                   # Modular session logic
+│   │   ├── constants.ts
+│   │   ├── state.ts
+│   │   ├── gemini-bridge.ts
+│   │   ├── transcript-buffer.ts
+│   │   ├── metrics.ts
+│   │   ├── tone-analyzer.ts
+│   │   ├── protocol.ts
+│   │   └── feedback-context.ts
 │   ├── agents/
 │   │   ├── coaching-agent.ts
 │   │   ├── analytics-agent.ts
@@ -267,6 +277,9 @@ server.listen(config.port, () => {
 ```
 
 ### Step 2.3 — `server/ws-handler.ts`
+
+> **Note:** This file has been refactored from a ~320 LOC monolith into a slim ~120 LOC orchestrator.
+> Session logic is now split across modules in `server/session/`. See `specs/voice_agent_websockets.md` for full details.
 
 This is the core real-time handler. Implement:
 

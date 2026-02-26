@@ -30,12 +30,11 @@ The "Partner Feedback" feature allows users to receive immediate, spoken feedbac
 - **Mode Definition**: Add a new mode `feedback` to `MODES` in `server/config.ts`.
 - **System Prompt**: Create `server/agents/prompts/feedback.md`.
   - Instruction: "You are the AI partner from the session that just occurred. Provide brief (30s), constructive, and encouraging feedback in your specific persona. Reference the transcript provided. Allow the user to ask questions."
-- **WebSocket Handler (`server/ws-handler.ts`)**:
-  - Update `handleConnection` to support `mode=feedback`.
+- **WebSocket Handler (`server/ws-handler.ts` + `server/session/feedback-context.ts`)**:
+  - `handleConnection` in `ws-handler.ts` detects `mode=feedback` and delegates to `injectFeedbackContext()` in `server/session/feedback-context.ts`.
   - If `mode=feedback`, the client must also send an `originalSessionId`.
-  - The backend retrieves the `originalSessionId` from the store (transcript, metrics, voiceName).
-  - The system prompt for the Live session is augmented with the original session's data.
-  - Set a hard 60s timeout for the socket connection in this mode.
+  - `injectFeedbackContext()` retrieves the original session from the store (transcript, metrics, voiceName) and injects context into the system prompt.
+  - Set a hard 60s timeout for the socket connection in this mode (constant in `server/session/constants.ts`).
   - Use the original `voiceName` for consistency.
 
 ### 3.2 Client Changes

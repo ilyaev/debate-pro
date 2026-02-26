@@ -79,3 +79,21 @@
 - [x] Implement TidesVisualizer (Clash & Overlay modes)
 - [x] Update config to map modes to visualization types
 
+## Phase 11: Server WebSocket Handler Refactoring
+- [x] Analyze ws-handler.ts and create specs/voice_agent_websockets.md
+- [x] Backup original to ws-handler-legacy.ts
+- [x] Extract constants.ts (magic numbers, filler word list)
+- [x] Extract metrics.ts (pure function, fix regex bug)
+- [x] Extract transcript-buffer.ts (TranscriptBuffer class)
+- [x] Extract protocol.ts (binary parsing + message helpers)
+- [x] Extract tone-analyzer.ts (ToneAnalyzer class)
+- [x] Create state.ts (SessionState type + factory)
+- [x] Extract feedback-context.ts (feedback mode injection)
+- [x] Extract gemini-bridge.ts (Gemini Live connection + handlers)
+- [x] Rewrite ws-handler.ts as slim orchestrator (~120 LOC)
+- [x] Add dependency injection via setDependencies() in main.ts
+- [x] Remove debug monkey-patch (globalThis.WebSocket.prototype.send)
+- [x] Fix duplicate createStore() bug
+- [x] Verify clean TypeScript compilation
+- [x] Update spec documentation to reflect changes
+
