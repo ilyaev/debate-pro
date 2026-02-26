@@ -84,15 +84,37 @@ When optimizing React components:
 
 To apply this skill:
 
-1.  **Audit & Plan:**
-    *   Read the code and analyze it against the Analysis Framework (Section 1).
-    *   **Create a Refactoring Plan**: Create a new file `specs/[source_file_name]_refactoring.md` (e.g., `specs/ws_handler_refactoring.md`).
-    *   Document all findings, violations, and the step-by-step refactoring plan in this file.
-2.  **Backup:** Copy the original file to a `-legacy.ts` variant before major refactoring (e.g., `ws-handler-legacy.ts`). This allows instant rollback.
-3.  **Refactor:** Execute the plan from step 1, following the extraction order in Section 2A. Start with zero-risk extractions (constants, pure functions) and progress to higher-risk changes. Apply changes iteratively.
-4.  **Verify Iteratively:** After each extraction, verify `npx tsc --noEmit` passes to ensure incremental correctness.
-5.  **Final Verification:** Run `npx tsc --noEmit` for a clean build. All imports must use `.js` extensions (ESNext modules).
-6.  **Document:** Update relevant `specs/*.md` files to reflect the new file structure and patterns.
+1.  **Initialize Workflow:**
+    *   **Check for Existing Plan:** Check if a refactoring log exists at `specs/[source_file_name]_refactoring.md` (e.g., `specs/ws_handler_refactoring.md`).
+    *   **If Plan Exists (Incremental Mode):**
+        *   Read the file to understand the context and current status.
+        *   **Condition A (Ongoing):** If unchecked items remain, resume refactoring from the next pending item.
+        *   **Condition B (New Changes):** If all items are checked but the file has been modified since or new issues are found:
+            *   Re-analyze the current file against the Analysis Framework (Section 1).
+            *   Append a new section (e.g., `## [Date] Additional Refactoring`) to the existing log.
+            *   Add new checklist items for the new findings.
+    *   **If No Plan Exists (Start New):**
+        *   Read the code and analyze it against the Analysis Framework (Section 1).
+        *   Create `specs/[source_file_name]_refactoring.md`.
+        *   Document findings, violations, and a step-by-step refactoring plan with a checklist.
+
+2.  **Backup (If New):** If starting fresh, copy the original file to a `-legacy.ts` variant (e.g., `ws-handler-legacy.ts`) to allow safe rollback.
+
+3.  **Refactor (Iterative):**
+    *   Execute the next step(s) from the plan.
+    *   Follow the extraction order in Section 2A (constants -> pure functions -> state -> etc.).
+    *   Apply changes incrementally.
+
+4.  **Update Log:**
+    *   After completing a step, **immediately** update `specs/[source_file_name]_refactoring.md`.
+    *   Mark completed items with `[x]`.
+    *   Add notes about any deviations or new discoveries.
+
+5.  **Verify Iteratively:** After each extraction, verify `npx tsc --noEmit` passes to ensure incremental correctness.
+
+6.  **Final Verification:** Run `npx tsc --noEmit` for a clean build. All imports must use `.js` extensions (ESNext modules).
+
+7.  **Document:** Update relevant `specs/*.md` files to reflect the new file structure and patterns.
 
 ## 4. Specific Considerations for Glotti
 

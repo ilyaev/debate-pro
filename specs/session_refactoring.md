@@ -65,3 +65,41 @@ client/src/
       SessionStatus.tsx   (NEW)
       TranscriptFeed.tsx  (NEW)
 ```
+
+## [2026-02-26] Additional Refactoring: Celebration Logic Extraction
+
+### Analysis
+The `Session.tsx` component still contains business logic related to session celebrations (first session, milestones, high scores) and direct API calls. This violates the Single Responsibility Principle and makes the component harder to test and maintain.
+
+### Violations Found
+| # | Issue | Category |
+|---|-------|----------|
+| 1 | Logic for checking first session, milestones, and high scores is mixed with UI rendering. | Responsibility |
+| 2 | Inline `fetch` call for milestone checks. | API / Side Effects |
+| 3 | Magic strings/numbers (`glotti_first_session_celebrated`, `8`, `MILESTONE_THRESHOLDS`). | Code Smell |
+
+### Refactoring Steps
+
+#### Step 1: Create `client/src/hooks/useCelebration.ts`
+Extract the celebration state management and logic into a custom hook.
+- Move `celebration` state and `pendingReportRef` logic.
+- Move `useEffect` with the fetch call into the hook.
+- Validates inputs (userId).
+
+#### Step 2: Use Constants
+- Move `MILESTONE_THRESHOLDS` to a shared constants file or keep inside the hook if only used there.
+- Define storage keys and threshold values as constants.
+
+#### Step 3: Update `Session.tsx`
+- Replace the inline logic with `useCelebration`.
+- Pass necessary props (userId, mode, onEnd) to the hook.
+- The component should only handle rendering the `CongratulationsOverlay` based on the hook's return value.
+
+#### Step 4: Verify
+- Ensure celebrations still trigger correctly (mocking or manual test).
+- Check that `Session.tsx` is significantly cleaner.
+
+### [2026-02-26] Completion Status
+- [x] Extracted celebration logic to `client/src/hooks/useCelebration.ts`
+- [x] Removed inline API calls and magic numbers from `Session.tsx`
+- [x] Verified build with `tsc --noEmit`
