@@ -93,8 +93,22 @@ export interface SessionFull {
 
 export type VisualizationType = 'classic' | 'tides_overlay' | 'tides_clash';
 
+export type SessionStatus = 'connecting' | 'listening' | 'speaking' | 'interrupted' | 'ending' | 'disconnected';
+
 export interface VisualizerProps {
     userAnalyserRef: React.RefObject<AnalyserNode | null>;
     aiAnalyserRef: React.RefObject<AnalyserNode | null>;
-    status: 'connecting' | 'listening' | 'speaking' | 'interrupted' | 'ending' | 'disconnected';
+    status: SessionStatus;
 }
+
+// ─── WebSocket message types (server → client) ──────────────────────────────
+
+export type ServerMessage =
+  | { type: 'session_started'; sessionId: string; mode: string }
+  | { type: 'interrupted' }
+  | { type: 'metrics'; data: MetricSnapshot }
+  | { type: 'transcript_cue'; text: string; timestamp: number }
+  | { type: 'turn_complete' }
+  | { type: 'report'; data: SessionReport }
+  | { type: 'error'; message: string }
+  | { type: 'ai_disconnected'; message: string };

@@ -1,10 +1,11 @@
-import { useEffect, useState, useRef } from 'react';
-import { useWebSocket } from '../hooks/useWebSocket';
-import { useAudio } from '../hooks/useAudio';
+import { useSessionLogic } from '../hooks/useSessionLogic';
 import { Dashboard } from './Dashboard';
 import { Waveform } from './Waveform';
-import type { SessionReport, MetricSnapshot, TranscriptCue } from '../types';
-import { Target, Handshake, Swords, Mic, Zap } from 'lucide-react';
+import { SessionTopbar } from './session/SessionTopbar';
+import { SessionEndingOverlay } from './session/SessionEndingOverlay';
+import { SessionStatusDisplay } from './session/SessionStatusDisplay';
+import { TranscriptFeed } from './session/TranscriptFeed';
+import type { SessionReport } from '../types';
 
 interface Props {
     mode: string;
@@ -13,212 +14,21 @@ interface Props {
 }
 
 export function Session({ mode, userId, onEnd }: Props) {
-    const { connect, disconnect, sendBinary, sendJSON, isConnected } = useWebSocket(mode, userId);
-    const { initPlayback, startCapture, stopCapture, playChunk, handleInterrupt, userAnalyserRef, aiAnalyserRef } = useAudio(sendBinary);
-    const [metrics, setMetrics] = useState<MetricSnapshot | null>(null);
-    const [cues, setCues] = useState<TranscriptCue[]>([]);
-    const [elapsed, setElapsed] = useState(0);
-    const [status, setStatus] = useState<'connecting' | 'listening' | 'speaking' | 'interrupted' | 'ending' | 'disconnected'>('connecting');
-    const timerRef = useRef<number | null>(null);
-    const endingRef = useRef(false);
-    const feedEndRef = useRef<HTMLDivElement | null>(null);
+    const {
+        status, metrics, cues, elapsed,
+        isConnected, handleEnd,
+        userAnalyserRef, aiAnalyserRef, feedEndRef,
+    } = useSessionLogic(mode, userId, onEnd);
 
-    useEffect(() => {
-        console.log('🔌 [Session] Connecting to WebSocket...');
-        const ws = connect();
-
-        ws.onmessage = (event: MessageEvent) => {
-            if (event.data instanceof ArrayBuffer) {
-                // Binary = audio response from AI
-                console.log(`🔊 [Session] ← audio chunk: ${event.data.byteLength} bytes`);
-                setStatus('speaking');
-                playChunk(event.data);
-            } else {
-                const msg = JSON.parse(event.data as string);
-                console.log(`📩 [Session] ← ${msg.type}`, msg.type === 'transcript_cue' ? msg.text?.slice(0, 80) : '');
-                switch (msg.type) {
-                    case 'session_started':
-                        console.log(`✅ [Session] Session started: ${msg.sessionId}`);
-                        initPlayback(); // Initialize ear piece (speakers) immediately
-                        startCapture().catch(err => console.error('Failed to start capture:', err));
-                        setStatus('connecting'); // Wait for AI intro to finish before showing listening status
-                        break;
-                    case 'interrupted':
-                        setStatus('interrupted');
-                        handleInterrupt();
-                        setTimeout(() => setStatus('listening'), 1000);
-                        break;
-                    case 'metrics':
-                        console.log('📊 [Session] Metrics update:', msg.data);
-                        setMetrics(msg.data as MetricSnapshot);
-                        break;
-                    case 'transcript_cue':
-                        setCues(prev => [...prev, { text: msg.text, timestamp: msg.timestamp }]);
-                        break;
-                    case 'turn_complete':
-                        if (!timerRef.current) {
-                            console.log('🎤 [Session] AI intro finished, starting timer');
-                            timerRef.current = window.setInterval(() => {
-                                setElapsed(prev => prev + 1);
-                            }, 1000);
-                        }
-                        setStatus(prev => prev === 'ending' ? 'ending' : 'listening');
-                        break;
-                    case 'report':
-                        console.log('📊 [Session] Report received:', msg.data);
-                        if (!endingRef.current) {
-                            endingRef.current = true;
-                            onEnd(msg.data as SessionReport);
-                        }
-                        break;
-                    case 'error':
-                        console.error('❌ [Session] Server error:', msg.message);
-                        break;
-                    case 'ai_disconnected':
-                        console.warn('⚠️ [Session] AI disconnected:', msg.message);
-                        stopCapture();
-                        setStatus('disconnected');
-                        break;
-                }
-            }
-        };
-
-        // Timer is now started upon the first 'turn_complete'
-
-        return () => {
-            if (timerRef.current) clearInterval(timerRef.current);
-            stopCapture();
-            disconnect();
-        };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-
-    // Auto-scroll coaching feed when new cues arrive
-    useEffect(() => {
-        feedEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-    }, [cues]);
-
-    // Enforce 3-minute limit (180 seconds)
-    useEffect(() => {
-        if (elapsed >= 180 && status !== 'ending' && status !== 'disconnected') {
-            console.log('⏱️ [Session] 3 minute limit reached. Auto-ending.');
-            handleEnd();
-        }
-    }, [elapsed, status]);
-
-    const handleEnd = () => {
-        if (endingRef.current) return;
-        console.log('⏹️ [Session] Ending session...');
-        stopCapture();
-        if (timerRef.current) clearInterval(timerRef.current);
-        sendJSON({ type: 'end_session' });
-        setStatus('ending');
-    };
-
-    const modeLabels: Record<string, { label: string; icon: React.ReactNode; iconUrl?: string }> = {
-        pitch_perfect: {
-            label: 'Pitch Perfect',
-            icon: <Target size={18} strokeWidth={2} />,
-            iconUrl: '/icons/pitch_perfect.png'
-        },
-        empathy_trainer: {
-            label: 'Empathy Trainer',
-            icon: <Handshake size={18} strokeWidth={2} />,
-            iconUrl: '/icons/empathy_trainer.png'
-        },
-        veritalk: {
-            label: 'Veritalk',
-            icon: <Swords size={18} strokeWidth={2} />,
-            iconUrl: '/icons/veritalk.png'
-        },
-        impromptu: {
-            label: 'Impromptu',
-            icon: <Zap size={18} strokeWidth={2} />,
-            iconUrl: '/icons/impromptu.png'
-        }
-    };
-
-    const modeInfo = modeLabels[mode] || { label: mode, icon: <Mic size={18} strokeWidth={2} /> };
-
-    const renderBadgeIcon = () => (
-        <span className="session__mode-icon">
-            {modeInfo.iconUrl ? (
-                <img
-                    src={modeInfo.iconUrl}
-                    alt={modeInfo.label}
-                    className="session__mode-image-icon"
-                    onError={(e) => {
-                        (e.target as HTMLImageElement).style.display = 'none';
-                        (e.target as HTMLImageElement).parentElement!.querySelector('.lucide-icon-fallback')!.removeAttribute('style');
-                    }}
-                />
-            ) : null}
-            <span
-                className="lucide-icon-fallback"
-                style={modeInfo.iconUrl ? { display: 'none' } : {}}
-            >
-                {modeInfo.icon}
-            </span>
-        </span>
-    );
-
-    // Show loading overlay when generating report
     if (status === 'ending') {
-        return (
-            <div className="session session--ending">
-                <div className="session__topbar">
-                    <span className="session__mode-badge">
-                        {renderBadgeIcon()}
-                        {modeInfo.label}
-                    </span>
-                    <span className={`session__timer ${elapsed >= 150 ? 'session__timer--warning' : ''}`}>{formatTime(elapsed)}</span>
-                </div>
-
-                <div className="session__loading">
-                    <div className="session__loading-spinner" />
-                    <h2 className="session__loading-title">Analyzing your session</h2>
-                    <p className="session__loading-subtitle">
-                        Generating your personalized performance report...
-                    </p>
-                    <div className="session__loading-steps">
-                        <span className="session__loading-step session__loading-step--done">
-                            ✓ Session recorded
-                        </span>
-                        <span className="session__loading-step session__loading-step--active">
-                            ⟳ Analyzing transcript & metrics
-                        </span>
-                        <span className="session__loading-step">
-                            ○ Building report
-                        </span>
-                    </div>
-                </div>
-            </div>
-        );
+        return <SessionEndingOverlay mode={mode} elapsed={elapsed} />;
     }
 
     return (
         <div className="session">
-            {/* Top bar */}
-            <div className="session__topbar">
-                <span className="session__mode-badge">
-                    {renderBadgeIcon()}
-                    {modeInfo.label}
-                </span>
-                <span className={`session__timer ${elapsed >= 150 ? 'session__timer--warning' : ''}`}>{formatTime(elapsed)}</span>
-            </div>
+            <SessionTopbar mode={mode} elapsed={elapsed} />
+            <SessionStatusDisplay status={status} />
 
-            {/* Status Text (Moved above waveform for cleaner look) */}
-            <div className={`session__status session__status--${status}`}>
-                <span className="session__status-text">
-                    {status === 'connecting' && 'Connecting...'}
-                    {status === 'listening' && "I'm listening..."}
-                    {status === 'speaking' && 'AI speaking...'}
-                    {status === 'interrupted' && 'Interrupted!'}
-                    {status === 'disconnected' && 'AI disconnected — click End Session for your report'}
-                </span>
-            </div>
-
-            {/* Mirrored Waveform */}
             <Waveform
                 userAnalyserRef={userAnalyserRef}
                 aiAnalyserRef={aiAnalyserRef}
@@ -226,36 +36,9 @@ export function Session({ mode, userId, onEnd }: Props) {
                 mode={mode}
             />
 
-            {/* Dashboard */}
             <Dashboard metrics={metrics} elapsed={elapsed} />
+            <TranscriptFeed cues={cues} feedEndRef={feedEndRef} />
 
-            {/* Live transcript feed */}
-            <div className="transcript-feed">
-                <h3 className="transcript-feed__title">
-                    <span className="transcript-feed__live-dot" />
-                    Live Transcript
-                </h3>
-                <div className="transcript-feed__list">
-                    {cues.length === 0 ? (
-                        <div className="transcript-feed__empty">
-                            Waiting for conversation...
-                        </div>
-                    ) : (
-                        cues.map((cue, i) => (
-                            <div
-                                key={i}
-                                className={`transcript-feed__item ${i === cues.length - 1 ? 'transcript-feed__item--latest' : ''}`}
-                            >
-                                <span className="transcript-feed__time">{formatTime(cue.timestamp)}</span>
-                                <span className="transcript-feed__text">{cue.text}</span>
-                            </div>
-                        ))
-                    )}
-                    <div ref={feedEndRef} />
-                </div>
-            </div>
-
-            {/* End session button */}
             <button
                 className="session__end-btn"
                 onClick={handleEnd}
@@ -265,10 +48,4 @@ export function Session({ mode, userId, onEnd }: Props) {
             </button>
         </div>
     );
-}
-
-function formatTime(seconds: number): string {
-    const m = Math.floor(seconds / 60);
-    const s = seconds % 60;
-    return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
 }

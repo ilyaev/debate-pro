@@ -66,6 +66,7 @@
 | Video Capture | `getUserMedia` | Captures webcam frames for body language analysis |
 | WebSocket Client | Native `WebSocket` API (custom hook) | Sends audio/video chunks to backend; receives audio responses and metric events |
 | Audio Playback | Web Audio API | Plays back Gemini's voice responses with interrupt handling |
+| Session Logic | `useSessionLogic` hook | Manages WS message dispatch, status state machine, timer, metrics & transcript state |
 | Dashboard UI | React components (TSX) | Renders live metrics (filler count, pace, tone gauge) and session controls |
 | Session Report | React component | Displays post-session summary with timestamps and scores |
 | Build/Dev | Vite | Fast HMR dev server and optimized production builds |
@@ -73,7 +74,7 @@
 **Key design decisions:**
 - **React + TypeScript.** Component-based UI with type safety. React's state management (hooks + context) is well-suited for the real-time dashboard and screen transitions.
 - **Vite.** Fast dev server with HMR. Produces an optimized static bundle for production that the Express backend serves.
-- **WebSocket as a custom hook.** `useWebSocket` hook manages the connection lifecycle, auto-reconnection, and message dispatch to React state.
+- **WebSocket as a custom hook.** `useWebSocket` hook manages the connection lifecycle, auto-reconnection, and binary/JSON transport. The `useSessionLogic` hook composes `useWebSocket` and `useAudio` to manage the full session state machine (status, metrics, transcript, timer).
 - **Audio format:** Client sends raw PCM 16-bit, 16kHz, little-endian. Client receives PCM 16-bit, 24kHz from Gemini.
 
 ### 2. Backend — Node.js + Express + ws on Cloud Run
@@ -251,14 +252,20 @@ gemili/
 │       ├── index.css             # Global styles
 │       ├── components/
 │       │   ├── ModeSelect.tsx    # Mode selection cards
-│       │   ├── Session.tsx       # Active session screen
+│       │   ├── Session.tsx       # Slim session orchestrator (~50 LOC)
 │       │   ├── Dashboard.tsx     # Live metrics dashboard
 │       │   ├── Report.tsx        # Post-session report
-│       │   └── Waveform.tsx      # Audio waveform visualization
+│       │   ├── Waveform.tsx      # Audio waveform visualization
+│       │   └── session/          # Session sub-components (extracted from Session.tsx)
+│       │       ├── SessionTopbar.tsx        # Mode badge + timer
+│       │       ├── SessionEndingOverlay.tsx # Report-generation loading screen
+│       │       ├── SessionStatusDisplay.tsx # Connection/listening status text
+│       │       └── TranscriptFeed.tsx       # Live transcript list with auto-scroll
 │       └── hooks/
-│           ├── useWebSocket.ts   # WebSocket connection hook
-│           ├── useAudio.ts       # Audio capture/playback hook
-│           └── useVideo.ts       # Webcam capture hook
+│           ├── useWebSocket.ts       # WebSocket connection hook
+│           ├── useAudio.ts           # Audio capture/playback hook
+│           ├── useSessionLogic.ts    # Session state machine, WS dispatch, timer
+│           └── useVideo.ts           # Webcam capture hook
 ├── server/                       # Node.js + Express
 │   ├── main.ts                  # Express app entrypoint, injects shared store
 │   ├── ws-handler.ts            # WebSocket orchestrator (~120 LOC)

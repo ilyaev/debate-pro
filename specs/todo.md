@@ -97,3 +97,16 @@
 - [x] Verify clean TypeScript compilation
 - [x] Update spec documentation to reflect changes
 
+## Phase 12: Client Session.tsx Refactoring
+- [x] Analyze Session.tsx and create specs/session_refactoring.md
+- [x] Add ServerMessage discriminated union + SessionStatus type to types.ts
+- [x] Extract MODE_CONFIG, formatTime, session constants to config.ts
+- [x] Extract useSessionLogic hook (WS dispatch, status state machine, timer, metrics)
+- [x] Extract SessionTopbar sub-component
+- [x] Extract SessionEndingOverlay sub-component
+- [x] Extract SessionStatusDisplay sub-component
+- [x] Extract TranscriptFeed sub-component
+- [x] Slim Session.tsx to ~50 LOC orchestrator
+- [x] Verify clean TypeScript compilation (no new errors)
+- [x] Update architecture.md file structure and component table
+

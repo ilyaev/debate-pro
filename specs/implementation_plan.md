@@ -25,13 +25,19 @@ gemili/
 │       ├── index.css
 │       ├── components/
 │       │   ├── ModeSelect.tsx
-│       │   ├── Session.tsx
+│       │   ├── Session.tsx         # Slim orchestrator (~50 LOC)
 │       │   ├── Dashboard.tsx
 │       │   ├── Report.tsx
-│       │   └── Waveform.tsx
+│       │   ├── Waveform.tsx
+│       │   └── session/            # Extracted session sub-components
+│       │       ├── SessionTopbar.tsx
+│       │       ├── SessionEndingOverlay.tsx
+│       │       ├── SessionStatusDisplay.tsx
+│       │       └── TranscriptFeed.tsx
 │       └── hooks/
 │           ├── useWebSocket.ts
 │           ├── useAudio.ts
+│           ├── useSessionLogic.ts  # WS dispatch, status machine, timer
 │           └── useVideo.ts
 ├── server/
 │   ├── main.ts

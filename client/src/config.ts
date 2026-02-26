@@ -9,3 +9,23 @@ export const MODE_VISUALIZATION: Record<string, VisualizationType> = {
     impromptu: 'classic',
 };
 
+export const SESSION_LIMIT_SECONDS = 180;
+export const SESSION_WARNING_SECONDS = 150;
+
+export interface ModeConfig {
+    label: string;
+    iconUrl: string;
+}
+
+export const MODE_CONFIG: Record<string, ModeConfig> = {
+    pitch_perfect: { label: 'Pitch Perfect', iconUrl: '/icons/pitch_perfect.png' },
+    empathy_trainer: { label: 'Empathy Trainer', iconUrl: '/icons/empathy_trainer.png' },
+    veritalk: { label: 'Veritalk', iconUrl: '/icons/veritalk.png' },
+    impromptu: { label: 'Impromptu', iconUrl: '/icons/impromptu.png' },
+};
+
+export function formatTime(seconds: number): string {
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+}
