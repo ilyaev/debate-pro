@@ -1,0 +1,99 @@
+{
+    "title": "Glotti Intro Video - Script Variant C",
+    "totalDuration": 225,
+    "segments": [
+        {
+            "id": "setup",
+            "startTime": 0,
+            "endTime": 20,
+            "title": "Setup",
+            "content": "Challenge setup and dramatic hook.",
+            "prompt": "High-octane, personal, and slightly breathless. Sound like you're actually about to enter a high-stakes arena. Emphasize 'interrupt me, challenge me, and judge me'.",
+            "text": "[Screen: Camera on you, high energy]\n\nVoiceover:\n\"I built an AI that's designed to interrupt me, challenge me, and judge me. Let's see if I can survive three minutes with it.\"\n\n\"I'm going to pitch my project to the hardest VC in the world — an AI that's been programmed to tear me apart.\"",
+            "visuals": "[Screen: Camera on you]",
+            "instructions": [
+                "Set a personal challenge",
+                "High energy"
+            ]
+        },
+        {
+            "id": "problem",
+            "startTime": 20,
+            "endTime": 30,
+            "title": "Problem Statement",
+            "content": "Why Glotti exists.",
+            "prompt": "Vulnerable but clear. Speak with the conviction of someone who has actually faced this problem. Use a more grounded, serious tone compared to the high-energy hook.",
+            "text": "[Screen: Quick cut to the Mode Select screen]\n\nVoiceover:\n\"There's no good way to practice high-stakes conversations. Friends are too nice. Coaches are expensive. I wanted something that felt real.\"",
+            "visuals": "[Screen: Mode select]",
+            "instructions": [
+                "Identify the pain point"
+            ]
+        },
+        {
+            "id": "demo",
+            "startTime": 30,
+            "endTime": 150,
+            "title": "Full PitchPerfect Session",
+            "content": "Run a real ~2 minute session. Let interactions play out.",
+            "prompt": "Authentic and live. Don't sound like you're reading a script—sound like you're actually pitching. React with genuine surprise if the AI interrupts. The final voiceover should sound slightly out of breath but impressed.",
+            "text": "[Screen: Start PitchPerfect session — Full screen app]\n\n[Action: Start the pitch. Do not rehearse too much — genuine stumbles make it authentic.]\n\n[Keep talking as the AI challenges you. Let it interrupt. React naturally.]\n\nVoiceover:\n\"Okay, that was brutal. But that's the point — in a real investor meeting, that's exactly what happens.\"\n\n[Action: Pitch Glotti itself to the AI VC. Let the waveforms clash as you both talk.]",
+            "visuals": "[Screen: Live demo]",
+            "instructions": [
+                "Don't over-rehearse",
+                "Let AI interruptions happen"
+            ]
+        },
+        {
+            "id": "reaction",
+            "startTime": 150,
+            "endTime": 180,
+            "title": "Report Reaction",
+            "content": "React to your score genuinely. Scroll through feedback.",
+            "prompt": "Genuine and analytical. Sound slightly humbled by the score, then transition to a more hopeful tone as you read the improvement tips. Let your personality shine through on the 'Ouch'.",
+            "text": "[Screen: End session → Report page appears]\n\nVoiceover:\n\"Let's see how I did...\"\n\n[Action: Scroll to the circular gauge and let it fill]\n\n\"A [X] out of 10. Ouch. Let's see what it says... 'Weakest link: market articulation.' Yeah, that's fair.\"",
+            "visuals": "[Screen: Report page]",
+            "instructions": [
+                "React genuinely to the score"
+            ]
+        },
+        {
+            "id": "summary",
+            "startTime": 180,
+            "endTime": 200,
+            "title": "Feature Summary",
+            "content": "Quick montage of other modes and share modal.",
+            "prompt": "Rapid-fire and efficient. Emphasize the completeness of the platform. Sound like you've just proven the product works and are now showing the scope.",
+            "text": "[Screen: Quick montage: EmpathyTrainer, Veritalk, Impromptu cards]\n\nVoiceover:\n\"Four modes. Real-time AI that listens, interrupts, and coaches. Full performance reports. All powered by Gemini Live API.\"\n\n[Action: Show session history list and open a share modal]",
+            "visuals": "[Screen: Montage of features]",
+            "instructions": [
+                "Quick highlight of other modes"
+            ]
+        },
+        {
+            "id": "arch",
+            "startTime": 200,
+            "endTime": 215,
+            "title": "Architecture Flash",
+            "content": "Quick flash of the diagram + tech stack.",
+            "prompt": "Concise and authoritative. Speed through the tech abbreviations while remaining crystal clear. Sound proud of the lightweight but powerful architecture.",
+            "text": "[Screen: Architecture diagram]\n\nVoiceover:\n\"The stack is lightweight: Node.js, React, and Gemini 2.5 on Google Cloud Run. Scalable, fast, and 100% multimodal.\"",
+            "visuals": "[Screen: Architecture diagram]",
+            "instructions": [
+                "Show technical depth briefly"
+            ]
+        },
+        {
+            "id": "close",
+            "startTime": 215,
+            "endTime": 225,
+            "title": "Closing",
+            "content": "Final challenge and URL.",
+            "prompt": "End with a wink. Sound challenging but inviting. Make the URL the most memorable part of the whole script. Leave with high confidence.",
+            "text": "[Screen: Final logo and URL]\n\nVoiceover:\n\"Think you can beat my score? Try it for yourself at glotti.pbartz.net.\"",
+            "visuals": "[Screen: Final URL]",
+            "instructions": [
+                "Strong call to action"
+            ]
+        }
+    ]
+}

@@ -1,0 +1,127 @@
+{
+    "title": "Glotti Intro Video - Script Variant B",
+    "totalDuration": 225,
+    "segments": [
+        {
+            "id": "hook",
+            "startTime": 0,
+            "endTime": 20,
+            "title": "Hook",
+            "content": "Emotional hook and core value prop.",
+            "prompt": "Deliver with a punchy, rhetorical style. The first question should be conversational but intense. Pause slightly before the second sentence to let the gravity of 'fights back' sink in.",
+            "text": "[Screen: Camera on you or clean title card]\n\nVoiceover:\n\"What if you could rehearse the hardest conversations with an AI that fights back?\"\n\n\"No more rehearsing in front of a mirror or asking a friend for a polite opinion.\"",
+            "visuals": "[Screen: Camera on you]",
+            "instructions": [
+                "Hook the viewer",
+                "Speak with conviction"
+            ]
+        },
+        {
+            "id": "modes",
+            "startTime": 20,
+            "endTime": 40,
+            "title": "Mode Select",
+            "content": "Show all 4 modes, explain the concept.",
+            "prompt": "Clear, energetic, and organized. Emphasize the four names of the modes with a rhythmic cadence. Sound welcoming and ready to guide.",
+            "text": "[Screen: Mode select dashboard]\n\nVoiceover:\n\"This is Glotti. We've built four distinct training modes to master your communication: PitchPerfect, EmpathyTrainer, Veritalk, and Impromptu.\"\n\n[Action: Hover over each mode card briefly]",
+            "visuals": "[Screen: Dashboard]",
+            "instructions": [
+                "Quick overview of modes"
+            ]
+        },
+        {
+            "id": "pitch",
+            "startTime": 40,
+            "endTime": 80,
+            "title": "PitchPerfect Demo",
+            "content": "40-second demo — pitch → interruption → show dashboard.",
+            "prompt": "Instructional and helpful. Sound relaxed when explaining the 'buzzword' trap, then sound genuinely surprised (even though you expect it) when the AI interrupts. The second voiceover should be enthusiastic about the barge-in technology.",
+            "text": "[Screen: Click PitchPerfect → Start Session]\n\nVoiceover:\n\"The VC persona interrupts you mid-sentence if you hand-wave or lose focus. Watch — I'm about to use a buzzword.\"\n\n[You: 'We aim to disrupt the traditional—']\n\n[AI interrupts: 'Disrupt is a tired word. How do you actually scale?']\n\nVoiceover:\n\"See that? It didn't even let me finish. That's Gemini Live API with real-time barge-in.\"",
+            "visuals": "[Screen: Session view]",
+            "instructions": [
+                "Deliberately use a buzzword",
+                "React to AI interruption"
+            ]
+        },
+        {
+            "id": "empathy",
+            "startTime": 80,
+            "endTime": 110,
+            "title": "EmpathyTrainer Demo",
+            "content": "30-second demo — show emotional escalation/de-escalation.",
+            "prompt": "Serious and didactic. Focus on the 'common mistake'. The final voiceover should sound like a revelation—explaining clearly why the AI reacted that way to the word 'but'.",
+            "text": "[Screen: End session → Switch to EmpathyTrainer]\n\nVoiceover:\n\"EmpathyTrainer focuses on de-escalation. Watch what happens when I make a common mistake.\"\n\n[AI (as customer): 'This is the third time I've called and nothing is fixed!']\n\n[You: 'I understand, but...']\n\nVoiceover:\n\"The customer just escalated because I said 'I understand, but...' — that little word 'but' negated everything before it. The AI caught that instantly.\"",
+            "visuals": "[Screen: Session view]",
+            "instructions": [
+                "Focus on the 'but' escalation"
+            ]
+        },
+        {
+            "id": "veritalk",
+            "startTime": 110,
+            "endTime": 135,
+            "title": "Veritalk Demo",
+            "content": "25-second demo — show Google Search grounding fact-check.",
+            "prompt": "Sharp and impressed. Emphasize 'fact-checking'. Sound confident when delivering the remote work stat, then sound slightly humbled by the AI's real-time accuracy.",
+            "text": "[Screen: Switch to Veritalk]\n\nVoiceover:\n\"In Veritalk mode, the AI isn't just listening—it's fact-checking.\"\n\n[You: 'Remote work increases productivity by 40%.']\n\n[AI: 'Wait. Recent 2024 meta-analyses actually show a mix of results, often depending on industry. Where is that 40% from?']\n\nVoiceover:\n\"That's live Google Search grounding. No pre-scripted answers—just real data.\"",
+            "visuals": "[Screen: Session view]",
+            "instructions": [
+                "Show Search grounding in action"
+            ]
+        },
+        {
+            "id": "impromptu",
+            "startTime": 135,
+            "endTime": 155,
+            "title": "Impromptu Demo",
+            "content": "20-second demo — show random topic assignment.",
+            "prompt": "Playful and fast. Sound like you're having fun with the random assignment. Speak with high energy about the 'three-second' rule.",
+            "text": "[Screen: Switch to Impromptu]\n\nVoiceover:\n\"And finally, Impromptu gives you a random topic with zero preparation.\"\n\n[AI: 'Explain the internet to Benjamin Franklin. You have two minutes.']\n\nVoiceover:\n\"If I pause for more than three seconds, the AI jumps in to keep the energy up.\"",
+            "visuals": "[Screen: Session view]",
+            "instructions": [
+                "Mention the 'no preparation' aspect"
+            ]
+        },
+        {
+            "id": "report",
+            "startTime": 155,
+            "endTime": 190,
+            "title": "Report Closeup",
+            "content": "Show one detailed report — score gauge, categories, key moments, tips.",
+            "prompt": "Professional, detailed, and reassuring. Focus on the 'value' of the metrics. Slow down slightly to let the viewer see the dashboard elements as you name them.",
+            "text": "[Screen: End session → Show full report page]\n\nVoiceover:\n\"Every session ends with a comprehensive evaluation. We track filler words, WPM, and tone, but we also grade you on mode-specific criteria like market resonance or active listening.\"\n\n[Action: Scroll through category cards and improvement tips]",
+            "visuals": "[Screen: Report page]",
+            "instructions": [
+                "Highlight the metrics dashboard",
+                "Show actionable tips"
+            ]
+        },
+        {
+            "id": "past",
+            "startTime": 190,
+            "endTime": 210,
+            "title": "Past Sessions & Sharing",
+            "content": "Show sessions list, share modal, OG card.",
+            "prompt": "Social and collaborative. Sound excited about the prospect of tracking progress and sharing high scores. Warm and community-focused tone.",
+            "text": "[Screen: Click Dashboard → Sessions List]\n\nVoiceover:\n\"Your history is saved, allowing you to track progress over time. And when you nail a high score, you can share a beautiful performance card with a single click.\"\n\n[Action: Open Share modal and show OG preview]",
+            "visuals": "[Screen: Sessions list and Share Modal]",
+            "instructions": [
+                "Show the open graph preview"
+            ]
+        },
+        {
+            "id": "tech",
+            "startTime": 210,
+            "endTime": 225,
+            "title": "Tech & Close",
+            "content": "Quick architecture mention, live URL.",
+            "prompt": "Final strong push. Sound modern and tech-savvy. End with a very clear and welcoming call to action on the URL.",
+            "text": "[Screen: Architecture diagram]\n\nVoiceover:\n\"Built with React, Gemini Live API, and Google Cloud Run. Master your voice today.\"\n\n\"Try it live at glotti.pbartz.net\"",
+            "visuals": "[Screen: URL and logo]",
+            "instructions": [
+                "Call to action",
+                "Mention live URL"
+            ]
+        }
+    ]
+}

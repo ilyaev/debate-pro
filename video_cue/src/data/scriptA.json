@@ -1,0 +1,114 @@
+{
+    "title": "Glotti Intro Video - Script Variant A",
+    "totalDuration": 225,
+    "segments": [
+        {
+            "id": "hook",
+            "startTime": 0,
+            "endTime": 30,
+            "title": "SCENE 1 — The Hook",
+            "content": "Why this matters. The pain point.",
+            "prompt": "Deliver this with strong narrative energy. Start mysterious and intriguing, then pivot to a more serious, empathetic tone when discussing 'messy' conversations. Use a slight pause after 'Practiced with friends who nodded politely' for impact.",
+            "audio": "scriptA/video_1_scene_1",
+            "text": "[Screen: Black background with text, or you speaking to camera]\n\nVoiceover/You:\n\"Imagine you're about to pitch your startup to a top VC. You've rehearsed in the mirror, you've practiced with friends who nodded politely... but none of them interrupted you with 'What's your customer acquisition cost?' None of them caught you say 'um' twelve times.\n\nReal high-stakes conversations are messy, adversarial, and unpredictable. And there's no safe place to practice them. Until now.\"",
+            "visuals": "[Screen: Black background with text]",
+            "instructions": [
+                "Speak clearly",
+                "Maintain eye contact"
+            ]
+        },
+        {
+            "id": "intro",
+            "startTime": 30,
+            "endTime": 50,
+            "title": "SCENE 2 — Product Intro",
+            "content": "What Glotti is. Quick mode overview.",
+            "prompt": "Transition to an upbeat, professional, and tech-forward tone. Speak with excitement about the Gemini Live API. Keep the pacing brisk during the list of personas to emphasize variety.",
+            "audio": "scriptA/video_1_scene_2",
+            "text": "[Screen: Mode Select page — show all 4 mode cards]\n\nVoiceover:\n\"This is Glotti — a real-time AI sparring partner powered by Gemini's Live API. You choose a persona — a skeptical VC, an angry customer, a debate opponent, an improv coach — and the AI listens to you, challenges you, and interrupts you in real-time. Just like the real thing.\"\n\n[Action: Mouse hovers over each mode card briefly as you name them]",
+            "visuals": "[Screen: Mode Select page — show all 4 mode cards]",
+            "instructions": [
+                "Hover over each mode card briefly as you name them"
+            ]
+        },
+        {
+            "id": "demo1",
+            "startTime": 50,
+            "endTime": 130,
+            "title": "SCENE 3 — Live Demo: PitchPerfect",
+            "content": "PitchPerfect session — show the core loop (speak → AI interrupts → metrics update → barge-in)",
+            "prompt": "The tone should be instructional but spontaneous. During the 'speaking into mic' part, sound like a natural entrepreneur—passionate but slightly nervous to illustrate the 'practice' context. After the interruption, sound impressed and analytical.",
+            "audio": "scriptA/video_1_scene_3",
+            "text": "[Screen: Click 'Start Session' on PitchPerfect card]\n\nVoiceover (while connecting):\n\"Let me show you. I'm starting a PitchPerfect session — the AI is a skeptical venture capitalist.\"\n\n[Screen: Session view appears — waveform, dashboard, transcript feed, timer]\n\n[Wait for AI greeting — the VC will say something like 'Alright, you have 3 minutes. What's the company?']\n\nYou (speaking into mic, actually pitching):\n\"Thanks for taking the meeting. We're building Glotti — it's an AI-powered communication coach that—\"\n\n[The AI will likely interrupt you. Let it. This is the money shot.]\n\n[Expected AI interruption: Something like 'Stop. What problem are you solving? Don't start with the solution.']\n\nVoiceover (after the interruption):\n\"See that? It just interrupted me. That's Gemini Live API with barge-in — the agent detected I was burying the lede and cut me off mid-sentence.\"\n\n[Point out the dashboard — use mouse cursor to highlight]\n\"Meanwhile, the live dashboard is tracking my filler words, speaking pace, tone confidence, and talk ratio — all in real-time.\"\n\n[Continue the pitch for ~30 more seconds. Let the AI respond naturally. Show the waveform reacting to both voices — the 'Tides Clash' effect where the waveforms battle.]\n\n[Point to the transcript feed]\n\"The live transcript shows everything being said — both sides. Every sentence is streamed from Gemini's real-time transcription.\"\n\n[Click 'End Session']",
+            "visuals": "[Screen: Session view appears — waveform, dashboard, transcript feed, timer]",
+            "instructions": [
+                "Wait for AI greeting",
+                "Actually pitch",
+                "Let AI interruption happen",
+                "Highlight metrics with cursor"
+            ]
+        },
+        {
+            "id": "demo2",
+            "startTime": 130,
+            "endTime": 170,
+            "title": "SCENE 4 — Mode Switch",
+            "content": "Quick cut to Veritalk or EmpathyTrainer — show persona variety + Search grounding or emotional escalation",
+            "prompt": "Dynamic and fast-paced. Emphasize keywords like 'Google Search grounding' and 'emotional intensity'. When demonstrating the 'Escalation' part, sound slightly frustrated to trigger the AI correctly, then return to a calm analytical voiceover.",
+            "audio": "scriptA/video_1_scene_4",
+            "text": "[Screen: Back to mode select → click Veritalk]\n\nVoiceover:\n\"Now watch what happens in debate mode. Veritalk uses Google Search grounding to fact-check me in real-time.\"\n\n[You: 'Studies show that remote work increases productivity by 40%.']\n\n[AI will likely counter with: 'That 40% figure comes from a single Stanford study from 2015 — and it measured call center workers, not knowledge workers. Recent 2024 meta-analyses show mixed results.']\n\nVoiceover:\n\"It just pulled a real counter-argument using Google Search. This isn't canned — it's live fact-checking.\"\n\n[OR Option B — EmpathyTrainer]\n\nVoiceover:\n\"In EmpathyTrainer mode, the AI plays an upset customer or struggling employee. Watch what happens when I try to de-escalate.\"\n\n[AI (as angry customer): 'I've been waiting two weeks for my order and nobody has even called me back!']\n\n[You: 'I totally understand, but our policy—']\n\n[AI (escalating): 'Don't 'but' me! You're not listening!']\n\nVoiceover:\n\"The agent detected the word 'but' after empathy — a classic de-escalation mistake — and immediately escalated. It adapts its emotional intensity based on how you respond.\"\n\n[Click 'End Session' after ~30s]",
+            "visuals": "[Screen: Back to mode select → click Veritalk]",
+            "instructions": [
+                "Click through modes",
+                "Show Search grounding",
+                "Show emotional escalation"
+            ]
+        },
+        {
+            "id": "report",
+            "startTime": 170,
+            "endTime": 200,
+            "title": "SCENE 5 — Report & Sharing",
+            "content": "Show report generation, score card, mode-specific feedback, share modal",
+            "prompt": "Clear, informative, and proud. Highlight the technical depth ('ADK framework') but keep it accessible. Emphasize the value of 'actionable improvement tips'. Tone should be encouraging.",
+            "audio": "scriptA/video_1_scene_5",
+            "text": "[Screen: Session ending overlay → report generation → report appears]\n\nVoiceover (over loading screen):\n\"After the session, Glotti generates a detailed performance report using Google's ADK framework.\"\n\n[Screen: Report page appears with score gauge, category cards, metrics]\n\n\"You get an overall score, category-by-category breakdowns specific to the mode — problem clarity, Q&A performance, handling pressure — plus key moments from the conversation and actionable improvement tips.\"\n\n[Scroll through report — show the category cards, strongest asset / weakest link sections, key moments timeline, improvement tips list]\n\n[Click 'Share' → show Share Modal]\n\n\"And you can share your results with an auto-generated performance card — optimized for LinkedIn, X, and other platforms with server-rendered Open Graph previews.\"\n\n[Show the OG card preview in the modal, the social post templates]",
+            "visuals": "[Screen: Report page appears with score gauge, category cards, metrics]",
+            "instructions": [
+                "Scroll through report",
+                "Show Share Modal",
+                "Point to OG preview"
+            ]
+        },
+        {
+            "id": "arch",
+            "startTime": 200,
+            "endTime": 215,
+            "title": "SCENE 6 — Architecture Flash",
+            "content": "Quick diagram: Browser ↔ Backend ↔ Gemini. Mention ADK, Cloud Run, Firestore.",
+            "prompt": "Expert, technical, and efficient. Speak slightly faster here to fit the technical details into the 15-second slot. sound authoritative about the cloud stack.",
+            "audio": "scriptA/video_1_scene_6",
+            "text": "[Screen: Architecture diagram from docs/diagrams.md or README]\n\nVoiceover:\n\"Under the hood: the React client streams audio over WebSocket to a Node.js backend on Cloud Run, which pipes it to Gemini 2.5 Flash via the Live API. Google ADK orchestrates report generation, tone analysis, and analytics. Sessions are persisted in Firestore. Deployed with a single script.\"",
+            "visuals": "[Screen: Architecture diagram]",
+            "instructions": [
+                "Show diagram",
+                "Mention key tech stack"
+            ]
+        },
+        {
+            "id": "closing",
+            "startTime": 215,
+            "endTime": 225,
+            "title": "SCENE 7 — Closing",
+            "content": "\"Try it live\" URL, tagline",
+            "prompt": "Confident and inviting. End with a strong vocal hook on 'glotti.pbartz.net'. Warm but professional delivery.",
+            "audio": "scriptA/video_1_scene_7",
+            "text": "[Screen: Mode select page or live URL]\n\nVoiceover:\n\"Glotti. Master high-stakes conversations with a real-time AI sparring partner. Try it live at glotti.pbartz.net.\"",
+            "visuals": "[Screen: Mode select page or live URL]",
+            "instructions": [
+                "End strong",
+                "Display URL"
+            ]
+        }
+    ]
+}
