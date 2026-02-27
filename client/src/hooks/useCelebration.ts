@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, useEffect } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import type { SessionReport } from '../types';
 import type { CelebrationVariant } from '../components/session/CongratulationsOverlay';
 
@@ -54,11 +54,11 @@ export function useCelebration({ userId, onEnd }: UseCelebrationProps): UseCeleb
 
         // Milestone check — fetch session count
         const apiBase = import.meta.env.VITE_API_URL ?? '';
-        
-        // Use an abort controller to cleanup fetch? 
+
+        // Use an abort controller to cleanup fetch?
         // We can't easily return cleanup from here since it's called inside useEffect usually.
         // But for simplicity let's just fire and forget, ignoring errors.
-        
+
         fetch(`${apiBase}/api/sessions?userId=${encodeURIComponent(userId)}`)
             .then(r => r.ok ? r.json() : [])
             .then((data: unknown[]) => {
@@ -68,8 +68,8 @@ export function useCelebration({ userId, onEnd }: UseCelebrationProps): UseCeleb
                     setCelebration({ kind: 'milestone', count: nextCount });
                 }
             })
-            .catch(() => { 
-                // silently ignore — no celebration on error 
+            .catch(() => {
+                // silently ignore — no celebration on error
             });
     }, [userId]);
 
