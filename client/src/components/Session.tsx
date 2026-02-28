@@ -17,16 +17,16 @@ interface Props {
 }
 
 export function Session({ mode, userId, onEnd }: Props) {
-    const { 
-        celebration, 
-        handleReportReceived, 
+    const {
+        celebration,
+        handleReportReceived,
         handleCelebrationComplete,
         checkMilestones
     } = useCelebration({ userId, onEnd });
 
     const {
         status, metrics, cues, elapsed,
-        isConnected, handleEnd,
+        isConnected, isPaused, togglePause, handleEnd,
         userAnalyserRef, aiAnalyserRef, feedEndRef,
     } = useSessionLogic(mode, userId, handleReportReceived);
 
@@ -65,13 +65,22 @@ export function Session({ mode, userId, onEnd }: Props) {
             <Dashboard metrics={metrics} elapsed={elapsed} />
             <TranscriptFeed cues={cues} feedEndRef={feedEndRef} />
 
-            <button
-                className="session__end-btn"
-                onClick={handleEnd}
-                disabled={!isConnected || status === 'connecting'}
-            >
-                End Session
-            </button>
+            <div className="session__actions">
+                <button
+                    className="session__btn session__btn--pause"
+                    onClick={togglePause}
+                    disabled={!isConnected || status === 'connecting'}
+                >
+                    {isPaused ? 'Resume Session' : 'Pause Session'}
+                </button>
+                <button
+                    className="session__btn session__btn--end"
+                    onClick={handleEnd}
+                    disabled={!isConnected || status === 'connecting'}
+                >
+                    End Session
+                </button>
+            </div>
         </div>
     );
 }

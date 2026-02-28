@@ -10,6 +10,8 @@ interface UseSessionLogicReturn {
     cues: TranscriptCue[];
     elapsed: number;
     isConnected: boolean;
+    isPaused: boolean;
+    togglePause: () => void;
     handleEnd: () => void;
     userAnalyserRef: React.RefObject<AnalyserNode | null>;
     aiAnalyserRef: React.RefObject<AnalyserNode | null>;
@@ -22,15 +24,17 @@ export function useSessionLogic(
     onEnd: (report: SessionReport) => void
 ): UseSessionLogicReturn {
     const { connect, disconnect, sendBinary, sendJSON, isConnected } = useWebSocket(mode, userId);
-    const { initPlayback, startCapture, stopCapture, playChunk, handleInterrupt, userAnalyserRef, aiAnalyserRef } = useAudio(sendBinary);
+    const { initPlayback, startCapture, stopCapture, pauseCapture, resumeCapture, playChunk, handleInterrupt, userAnalyserRef, aiAnalyserRef } = useAudio(sendBinary);
 
     const [metrics, setMetrics] = useState<MetricSnapshot | null>(null);
     const [cues, setCues] = useState<TranscriptCue[]>([]);
     const [elapsed, setElapsed] = useState(0);
     const [status, setStatus] = useState<SessionStatus>('connecting');
+    const [isPaused, setIsPaused] = useState(false);
 
     const timerRef = useRef<number | null>(null);
     const endingRef = useRef(false);
+    const isPausedRef = useRef(false);
     const feedEndRef = useRef<HTMLDivElement | null>(null);
 
     // Stable ref for onEnd to avoid stale closures
@@ -45,6 +49,35 @@ export function useSessionLogic(
         sendJSON({ type: 'end_session' });
         setStatus('ending');
     }, [stopCapture, sendJSON]);
+
+    const togglePause = useCallback(() => {
+        if (endingRef.current) return;
+
+        if (isPausedRef.current) {
+            console.log('▶️ [Session] Resuming session...');
+            resumeCapture();
+            if (!timerRef.current) {
+                timerRef.current = window.setInterval(() => {
+                    setElapsed(prev => prev + 1);
+                }, 1000);
+            }
+            sendJSON({ type: 'resume_session' });
+            setIsPaused(false);
+            isPausedRef.current = false;
+            setStatus('listening');
+        } else {
+            console.log('⏸️ [Session] Pausing session...');
+            pauseCapture();
+            if (timerRef.current) {
+                clearInterval(timerRef.current);
+                timerRef.current = null;
+            }
+            sendJSON({ type: 'pause_session' });
+            setIsPaused(true);
+            isPausedRef.current = true;
+            setStatus('paused');
+        }
+    }, [pauseCapture, resumeCapture, sendJSON]);
 
     // WebSocket connection + message dispatcher
     useEffect(() => {
@@ -82,13 +115,17 @@ export function useSessionLogic(
                     setCues(prev => [...prev, { text: msg.text, timestamp: msg.timestamp }]);
                     break;
                 case 'turn_complete':
-                    if (!timerRef.current) {
+                    if (!timerRef.current && !isPausedRef.current) {
                         console.log('🎤 [Session] AI intro finished, starting timer');
                         timerRef.current = window.setInterval(() => {
                             setElapsed(prev => prev + 1);
                         }, 1000);
                     }
-                    setStatus(prev => prev === 'ending' ? 'ending' : 'listening');
+                    setStatus(prev => {
+                        if (prev === 'ending') return 'ending';
+                        if (prev === 'paused') return 'paused';
+                        return 'listening';
+                    });
                     break;
                 case 'report':
                     console.log('📊 [Session] Report received:', msg.data);
@@ -135,6 +172,8 @@ export function useSessionLogic(
         cues,
         elapsed,
         isConnected,
+        isPaused,
+        togglePause,
         handleEnd,
         userAnalyserRef,
         aiAnalyserRef,

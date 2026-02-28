@@ -7,6 +7,7 @@ const STATUS_TEXT: Record<SessionStatus, string> = {
     interrupted: 'Interrupted!',
     ending: '',
     disconnected: 'AI disconnected — click End Session for your report',
+    paused: 'Session Paused',
 };
 
 interface Props {

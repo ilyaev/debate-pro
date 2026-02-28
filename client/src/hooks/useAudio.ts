@@ -28,6 +28,8 @@ interface UseAudioReturn {
   initPlayback: () => void;
   startCapture: () => Promise<void>;
   stopCapture: () => void;
+  pauseCapture: () => void;
+  resumeCapture: () => void;
   playChunk: (audioData: ArrayBuffer) => void;
   handleInterrupt: () => void;
   userAnalyserRef: React.RefObject<AnalyserNode | null>;
@@ -83,6 +85,9 @@ export function useAudio(sendBinary: (data: ArrayBuffer) => void): UseAudioRetur
       // Use ScriptProcessor as fallback (AudioWorklet requires HTTPS)
       const processor = context.createScriptProcessor(4096, 1, 1);
       processor.onaudioprocess = (e) => {
+        const isEnabled = streamRef.current?.getAudioTracks()[0]?.enabled ?? false;
+        if (!isEnabled) return;
+
         const inputData = e.inputBuffer.getChannelData(0);
         // Convert Float32 to Int16 PCM
         const pcm = new Int16Array(inputData.length);
@@ -137,6 +142,22 @@ export function useAudio(sendBinary: (data: ArrayBuffer) => void): UseAudioRetur
     isPlayingRef.current = false;
 
     console.log('🎤 Audio capture stopped');
+  }, []);
+
+  const pauseCapture = useCallback(() => {
+    if (streamRef.current) {
+        streamRef.current.getAudioTracks().forEach(track => {
+            track.enabled = false;
+        });
+    }
+  }, []);
+
+  const resumeCapture = useCallback(() => {
+    if (streamRef.current) {
+        streamRef.current.getAudioTracks().forEach(track => {
+            track.enabled = true;
+        });
+    }
   }, []);
 
   const playChunk = useCallback((audioData: ArrayBuffer) => {
@@ -202,5 +223,5 @@ export function useAudio(sendBinary: (data: ArrayBuffer) => void): UseAudioRetur
     console.log('⚡ Playback interrupted');
   }, []);
 
-  return { initPlayback, startCapture, stopCapture, playChunk, handleInterrupt, userAnalyserRef, aiAnalyserRef };
+  return { initPlayback, startCapture, stopCapture, pauseCapture, resumeCapture, playChunk, handleInterrupt, userAnalyserRef, aiAnalyserRef };
 }

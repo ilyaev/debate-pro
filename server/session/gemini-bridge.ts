@@ -234,6 +234,26 @@ export function forwardClientMessage(
     console.log(`   [${state.id}] → client command: ${msg.type}`);
     if (msg.type === 'end_session') {
       onEndSession();
+    } else if (msg.type === 'pause_session') {
+      try {
+        session.sendClientContent({
+          turns: [{ role: 'user', parts: [{ text: "SYSTEM: The user has paused the session. Please stand by. CRITICAL: Do NOT acknowledge this message. Do NOT say 'ok' or make any comment about pausing. Remain completely silent." }] }],
+          turnComplete: true,
+        });
+        console.log(`   [${state.id}] Sent pause notification to Gemini.`);
+      } catch (err) {
+        console.error(`   [${state.id}] Failed to send pause instruction:`, err);
+      }
+    } else if (msg.type === 'resume_session') {
+      try {
+        session.sendClientContent({
+          turns: [{ role: 'user', parts: [{ text: "SYSTEM: The user has resumed the session. You may continue the conversation. CRITICAL: Do NOT acknowledge this message. Do NOT make any comment about resuming or pausing. Just continue naturally from where we left off." }] }],
+          turnComplete: true,
+        });
+        console.log(`   [${state.id}] Sent resume notification to Gemini.`);
+      } catch (err) {
+        console.error(`   [${state.id}] Failed to send resume instruction:`, err);
+      }
     }
     return;
   }

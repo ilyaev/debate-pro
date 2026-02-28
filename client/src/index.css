@@ -319,7 +319,7 @@ body {
   .home-sessions-bar {
     position: absolute;
     top: var(--space-xl);
-    left: 0; 
+    left: 0;
     right: 0;
     margin: 0 auto;
     max-width: 1400px; /* Match .mode-cards width */
@@ -987,14 +987,19 @@ body {
   line-height: 1.4;
 }
 
-/* ===== End Session Button ===== */
-.session__end-btn {
+/* ===== Session Actions ===== */
+.session__actions {
+  display: flex;
+  gap: var(--space-md);
   margin-top: auto;
   align-self: center;
+  flex-shrink: 0;
+}
+
+.session__btn {
   padding: var(--space-md) var(--space-2xl);
   border: 2px solid var(--text-secondary);
   border-radius: var(--radius-full);
-  flex-shrink: 0;
   background: transparent;
   color: var(--text-primary);
   font-size: 16px;
@@ -1003,15 +1008,22 @@ body {
   transition: all 0.2s ease;
 }
 
-.session__end-btn:hover {
+.session__btn--end:hover {
   border-color: var(--accent-orange);
   color: var(--accent-orange);
 }
 
-.session__end-btn:disabled {
+.session__btn--pause:hover {
+  border-color: var(--accent-blue);
+  color: var(--accent-blue);
+}
+
+.session__btn:disabled {
   opacity: 0.4;
   cursor: not-allowed;
 }
+
+/* Removed old hover/disabled styles since they are combined above */
 
 /* ===== Session Loading (Report Generation) ===== */
 .session--ending {
@@ -2928,14 +2940,14 @@ body {
     margin-right: auto;
   }
 
-  /* 
+  /*
   .session-detail__nav-inner .sessions-back-btn {
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
     background: white;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  } 
+  }
   */
 
   .session-detail__nav-meta {
@@ -2986,7 +2998,7 @@ body {
     box-shadow: none;
     background: transparent;
     margin: 0 0 var(--space-lg);
-    
+
     padding: var(--space-sm) var(--space-md);
     min-height: 60px;
     justify-content: center;

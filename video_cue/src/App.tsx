@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect, useRef } from 'react'
-import { Play, Pause, RotateCcw, Monitor, List, Upload, ChevronDown, Volume2 } from 'lucide-react'
+import { Play, Pause, RotateCcw, Monitor, List, Upload, ChevronDown, Volume2, Music } from 'lucide-react'
 import { useTimer } from './hooks/useTimer'
 import scriptA from './data/scriptA.json'
 import scriptB from './data/scriptB.json'
@@ -183,10 +183,25 @@ function App() {
           </div>
         </div>
 
-        <button className="btn" onClick={() => setShowImport(!showImport)}>
-          <Upload size={18} />
-          Import
-        </button>
+        <div className="flex gap-2">
+          <a
+            className="btn"
+            href="/audio.html"
+            target="_blank"
+            rel="noopener noreferrer"
+            title="Open Audio List in new tab"
+          >
+            <Music size={18} />
+            Audio List
+          </a>
+          <button 
+            className="btn"
+            onClick={() => setShowImport(!showImport)}
+          >
+            <Upload size={18} />
+            Import
+          </button>
+        </div>
       </header>
 
       {/* Main Content */}

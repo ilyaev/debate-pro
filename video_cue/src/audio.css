@@ -1,0 +1,11 @@
+.audio-app-container {
+  padding: 20px;
+  min-height: 100vh;
+  /* background by default is set in index.css body, so this might be redundant but safe */
+  /* Enable scrolling for this specific container/page */
+  overflow-y: auto; 
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Override body overflow specifically for the audio page context if possible, 
+   but since CSS is global, we might need a specific class on body or handle it via component style */

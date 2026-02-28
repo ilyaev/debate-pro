@@ -93,7 +93,7 @@ export interface SessionFull {
 
 export type VisualizationType = 'classic' | 'tides_overlay' | 'tides_clash';
 
-export type SessionStatus = 'connecting' | 'listening' | 'speaking' | 'interrupted' | 'ending' | 'disconnected';
+export type SessionStatus = 'connecting' | 'listening' | 'speaking' | 'interrupted' | 'ending' | 'disconnected' | 'paused';
 
 export interface VisualizerProps {
     userAnalyserRef: React.RefObject<AnalyserNode | null>;

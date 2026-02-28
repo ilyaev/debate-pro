@@ -5,3 +5,5 @@ client/node_modules/
 .env
 *.log
 client/tsconfig.tsbuildinfo
+
+video/

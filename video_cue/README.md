@@ -29,12 +29,13 @@ Open [http://localhost:5173](http://localhost:5173) in your browser. It is recom
 
 ## Features
 
-- **Real-time Teleprompter**: Large, high-contrast text that adjusts font size automatically based on length.
+- **Real-time Teleprompter**: High-contrast focal text with automated smooth scrolling and dynamic font sizing.
+- **Reference Audio Playback**: Play and restart target voice recordings directly from the sidebar to rehearse delivery.
+- **Voice Delivery Prompts**: Dedicated "Delivery Notes" for each scene providing cues for intonation, speed, and emotion.
+- **Stabilized Layout**: A strictly constrained `100vh` interface that ensures the timeline and header are always visible, using internal scrolling for long text.
+- **Focal-Point Styling**: Clear visual distinction between spoken text (high contrast white) and stage directions or speaker labels (dimmed/accented).
 - **Multi-Script Support**: Toggle between specialized script variants (Variant A, B, and C).
-- **Dynamic Cues**: Detailed visual instructions and high-level content summaries for each segment.
-- **Visual Progress**: A full-width timeline with manual seeking and a large "MM:SS" countdown.
 - **Glassmorphism UI**: Modern, dark-mode aesthetic designed for legibility and premium feel.
-- **Custom Import**: Option to paste and load your own custom script JSON.
 
 ---
 
@@ -49,7 +50,9 @@ interface ScriptSegment {
   endTime: number;   // End time in seconds
   title: string;     // Scene title (e.g., "The Hook")
   content?: string;  // High-level summary of the segment
-  text: string;      // Teleprompter text
+  prompt?: string;   // Instructions for voice delivery
+  audio?: string;    // Reference audio filename (stored in public/audio/)
+  text: string;      // Teleprompter text (supports [Stage Directions] and Speaker:)
   visuals?: string;  // On-screen visual instructions
   instructions?: string[]; // Bulleted notes for the presenter
 }
@@ -60,12 +63,12 @@ interface ScriptSegment {
 ## Shortcuts
 
 - **Space**: Start / Pause the timer.
-- **R**: Reset the timer to 00:00.
+- **R**: Reset the timer (also stops and resets any playing audio).
 - **Click Timeline**: Jump to a specific segment start time.
 
 ---
 
-## Built With
+## Technical Stack
 
 - **React + TypeScript**
 - **Vite**
