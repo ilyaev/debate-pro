@@ -35,6 +35,9 @@ const COMMON_ORGS = [
     { label: 'Local Business', value: 'Local Business' }
 ];
 
+const getRandomOrg = () => COMMON_ORGS[Math.floor(Math.random() * COMMON_ORGS.length)].value;
+const getRandomRole = () => COMMON_ROLES[Math.floor(Math.random() * COMMON_ROLES.length)].value;
+
 export function IntroWizard({ userId, onStart, onCancel }: Props) {
     const [presets, setPresets] = useState<Preset[]>([]);
     const [selectedPresetId, setSelectedPresetId] = useState<string>('new');
@@ -58,28 +61,39 @@ export function IntroWizard({ userId, onStart, onCancel }: Props) {
                     setFormData(first);
                 } else {
                     // Set random initial values
-                    const randomOrg = COMMON_ORGS[Math.floor(Math.random() * COMMON_ORGS.length)].value;
-                    const randomRole = COMMON_ROLES[Math.floor(Math.random() * COMMON_ROLES.length)].value;
-                    setFormData(prev => ({ ...prev, organization: randomOrg, role: randomRole }));
+                    setFormData(prev => ({ ...prev, organization: getRandomOrg(), role: getRandomRole() }));
                 }
             })
             .catch(err => {
                 console.error(err);
-                const randomOrg = COMMON_ORGS[Math.floor(Math.random() * COMMON_ORGS.length)].value;
-                const randomRole = COMMON_ROLES[Math.floor(Math.random() * COMMON_ROLES.length)].value;
-                setFormData(prev => ({ ...prev, organization: randomOrg, role: randomRole }));
+                setFormData(prev => ({ ...prev, organization: getRandomOrg(), role: getRandomRole() }));
             });
     }, [userId]);
 
     const handlePresetChangeVal = (id: string) => {
         setSelectedPresetId(id);
         if (id === 'new') {
-            setFormData({ presetName: '', organization: '', role: '', background: '' });
+            setFormData({ presetName: '', organization: getRandomOrg(), role: getRandomRole(), background: '' });
         } else {
             const preset = presets.find(p => p.id === id);
             if (preset) setFormData(preset);
         }
     };
+
+    // Keep the preset dropdown in sync with manual field edits
+    useEffect(() => {
+        // Find if current organization/role perfectly matches a known preset
+        const matchedPreset = presets.find(
+            p => p.organization.toLowerCase() === formData.organization.toLowerCase() &&
+                p.role.toLowerCase() === formData.role.toLowerCase()
+        );
+
+        if (matchedPreset) {
+            setSelectedPresetId(matchedPreset.id!);
+        } else {
+            setSelectedPresetId('new');
+        }
+    }, [formData.organization, formData.role, presets]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();

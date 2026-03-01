@@ -61,9 +61,8 @@ export function ComboBox({ value, onChange, options, placeholder, disabled, allo
         if (!disabled) setIsOpen(!isOpen);
     };
 
-    const filteredOptions = allowCustom && inputValue
-        ? options.filter(opt => opt.label.toLowerCase().includes(inputValue.toLowerCase()))
-        : options;
+    // Provide all options without filtering based on text input
+    const filteredOptions = options;
 
     return (
         <div className={`combo-box ${disabled ? 'combo-box--disabled' : ''}`} ref={containerRef}>
