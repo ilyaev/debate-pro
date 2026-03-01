@@ -27,6 +27,7 @@ The core innovation is leveraging **Gemini Live API's bidirectional audio stream
 - **Real-time interruption** — The agent challenges you *while* you speak, training genuine composure under pressure. Not post-hoc.
 - **Configurable personas** — Each scenario mode has its own personality, escalation logic, and evaluation rubric.
 - **Live metrics dashboard** — Filler word count, speaking pace, tone confidence, and talk ratio update in real-time on screen.
+- **Persistent profiling** — The system analyzes every session to update a persistent profile of your communication strengths, weaknesses, and factual background, injecting this context into future sessions for continuous coaching.
 - **Post-session reports** — Structured breakdowns with timestamps, key moments, scores, and actionable improvement tips.
 - **Feedback sessions** — After reviewing your report, rejoin a voice session with the same AI persona to discuss your performance, ask questions, and get targeted advice based on what happened in the original session.
 - **Social sharing** — Auto-generated performance cards with OG image previews for sharing results on LinkedIn, X, and more.
@@ -48,6 +49,9 @@ An aggressive debate opponent that uses **Google Search grounding** to pull real
 
 ### Impromptu — Spontaneous Speaking
 Practice building structure on the fly with surprise topics. Evaluated on clarity, structure (open → develop → close), confidence markers, and filler word discipline.
+
+### Professional Introduction — Interview & Networking Coach
+A dynamic mentor that helps you perfect your self-introduction ("Tell me about yourself"). It adapts the scenario based on your target organization and role, and remembers you across sessions to provide continuous feedback on your pitch over time.
 
 ---
 

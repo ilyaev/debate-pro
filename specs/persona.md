@@ -10,7 +10,8 @@ This document details how Glotti implements its various training scenarios and p
 ## 2. Implementation Architecture
 
 ### Post-Session User Profiling
-Some personas can collect ongoing history. The async `server/services/profiler.ts` process runs after a session finishes. It can analyze the transcript, update `store.ts` with behavioral notes or factual summaries, and re-inject that acquired knowledge into the `systemPrompt` for subsequent sessions.
+Some personas can collect ongoing history. The async `server/services/profiler.ts` process runs after a session finishes. It analyzes the transcript, updates `store.ts` with behavioral notes or factual summaries, and re-injects that acquired knowledge into the `systemPrompt` for subsequent sessions.
+**Mode-Aware Logic**: The profiler uses a dynamic prompt (`getProfilerPrompt(mode)`). For real-world scenarios like `professional_introduction`, it extracts both factual background and behavioral coaching notes. For fictional roleplays (like `debate` or `pitch_perfect`), it is strictly instructed to *only* extract behavioral/communication notes, preventing fictional data from polluting the user's permanent factual summary.
 
 ### Backend: Configuration & Prompts
 Scenarios are defined in `server/config.ts` via the `MODES` constant. This constant maps a unique mode ID (e.g., `pitch_perfect`) to the path of its system prompt file.

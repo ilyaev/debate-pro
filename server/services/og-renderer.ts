@@ -50,6 +50,8 @@ export function loadAssets(): boolean {
         bgImages['pitch_perfect'] = loadBg('bg_pitch.jpg');
         bgImages['empathy_trainer'] = loadBg('bg_empathy.jpg');
         bgImages['impromptu'] = loadBg('bg_impromptu.jpg');
+        bgImages['professional_introduction'] = loadBg('bg_interview.jpg');
+        bgImages['veritalk'] = loadBg('bg_veritalk.jpg');
         return true;
     } catch (e) {
         console.warn('Could not load assets for OG renderer:', e);

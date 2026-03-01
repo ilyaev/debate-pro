@@ -63,7 +63,7 @@ This persona fits well into the existing `MODES` structure in `server/config.ts`
 
 ### 3.3. Frontend Adjustments
 1. **User Identity**: The frontend will generate a `uuid` in `localStorage` to identify the user anonymously.
-2. **Wizard UI**: A new React component `IntroWizard.tsx` that appears when the "Professional Introduction" mode is selected.
+2. **Wizard UI**: A new React component `IntroWizard.tsx` that appears when the "Professional Introduction" mode is selected. This incorporates a new, shared `ComboBox.tsx` component with case-insensitive filtering for intuitive data entry.
 3. **WebSocket Connection**: Update `useWebSocket.ts` to append the necessary dynamic parameters to the WS connection URL.
 
 ---
