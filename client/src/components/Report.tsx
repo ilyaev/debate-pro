@@ -3,6 +3,7 @@ import { PitchPerfectReport } from './report/PitchPerfectReport';
 import { EmpathyTrainerReport } from './report/EmpathyTrainerReport';
 import { VeritalkReport } from './report/VeritalkReport';
 import { ImpromptuReport } from './report/ImpromptuReport';
+import { ProfessionalIntroReport } from './report/ProfessionalIntroReport';
 
 interface Props {
     data: SessionReport;
@@ -19,6 +20,7 @@ export function Report({ data, onRestart, transcript, userId, isShared }: Props)
         case 'empathy_trainer': return <EmpathyTrainerReport {...props} />;
         case 'veritalk': return <VeritalkReport {...props} />;
         case 'impromptu': return <ImpromptuReport {...props} />;
+        case 'professional_introduction': return <ProfessionalIntroReport {...props} />;
         default: return <PitchPerfectReport {...props} />;
     }
 }

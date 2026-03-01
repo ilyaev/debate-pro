@@ -1,19 +1,19 @@
 import { useEffect, useState } from 'react';
 import { ModeSelect } from './components/ModeSelect';
+import { IntroWizard } from './components/IntroWizard';
 import { Session } from './components/Session';
 import { SessionsList } from './components/SessionsList';
 import { SessionDetail } from './components/SessionDetail';
 import { CardsSandbox } from './components/CardsSandbox';
 import { OverlayPreview } from './components/OverlayPreview';
 import type { SessionReport } from './types';
-
-export type Mode = 'pitch_perfect' | 'empathy_trainer' | 'veritalk' | 'impromptu';
+export type Mode = 'pitch_perfect' | 'empathy_trainer' | 'veritalk' | 'impromptu' | 'professional_introduction';
 
 // ─── Hash Router ──────────────────────────────────────────────────────────────
 
 export type Route =
     | { name: 'home' }
-    | { name: 'session'; mode: Mode }
+    | { name: 'session'; mode: Mode; context?: { organization: string; role: string } }
     | { name: 'sessions' }
     | { name: 'session-detail'; id: string; shareKey?: string }
     | { name: 'cards-sandbox' }
@@ -40,7 +40,7 @@ export function navigateTo(path: string) {
 
 export default function App() {
     const [route, setRoute] = useState<Route>(parseHash());
-    const [mode, setMode] = useState<Mode>('pitch_perfect');
+    const [showWizardFor, setShowWizardFor] = useState<Mode | null>(null);
     // Read userId synchronously so it's available on the very first render
     const [userId] = useState<string>(() => {
         let id = localStorage.getItem('debatepro_user_id');
@@ -58,8 +58,20 @@ export default function App() {
     }, []);
 
     const handleStart = (selectedMode: Mode) => {
-        setMode(selectedMode);
-        setRoute({ name: 'session', mode: selectedMode });
+        if (selectedMode === 'professional_introduction') {
+            setShowWizardFor(selectedMode);
+        } else {
+            setRoute({ name: 'session', mode: selectedMode });
+        }
+    };
+
+    const handleWizardStart = (context: { organization: string; role: string }) => {
+        setRoute({ name: 'session', mode: showWizardFor!, context });
+        setShowWizardFor(null);
+    };
+
+    const handleWizardCancel = () => {
+        setShowWizardFor(null);
     };
 
     const handleSessionEnd = (reportData: SessionReport) => {
@@ -74,8 +86,15 @@ export default function App() {
     return (
         <div className="app">
             {route.name === 'home' && <ModeSelect onStart={handleStart} userId={userId} />}
+            {showWizardFor === 'professional_introduction' && (
+                <IntroWizard
+                    userId={userId}
+                    onStart={handleWizardStart}
+                    onCancel={handleWizardCancel}
+                />
+            )}
             {route.name === 'session' && (
-                <Session mode={mode} onEnd={handleSessionEnd} userId={userId} />
+                <Session mode={route.mode} context={route.context} onEnd={handleSessionEnd} userId={userId} />
             )}
             {route.name === 'sessions' && <SessionsList userId={userId} />}
             {route.name === 'session-detail' && (

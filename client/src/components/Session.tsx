@@ -13,10 +13,11 @@ import type { SessionReport } from '../types';
 interface Props {
     mode: string;
     userId: string;
+    context?: { organization: string; role: string };
     onEnd: (report: SessionReport) => void;
 }
 
-export function Session({ mode, userId, onEnd }: Props) {
+export function Session({ mode, userId, context, onEnd }: Props) {
     const {
         celebration,
         handleReportReceived,
@@ -28,7 +29,7 @@ export function Session({ mode, userId, onEnd }: Props) {
         status, metrics, cues, elapsed,
         isConnected, isPaused, togglePause, handleEnd,
         userAnalyserRef, aiAnalyserRef, feedEndRef,
-    } = useSessionLogic(mode, userId, handleReportReceived);
+    } = useSessionLogic(mode, userId, handleReportReceived, context);
 
     // Trigger milestone check when status changes to 'ending'
     useEffect(() => {

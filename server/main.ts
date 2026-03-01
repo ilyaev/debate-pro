@@ -66,7 +66,12 @@ wss.on('connection', (ws, req) => {
   const mode = url.searchParams.get('mode') || 'pitch_perfect';
   const userId = url.searchParams.get('userId') || 'anonymous';
   const originalSessionId = url.searchParams.get('originalSessionId');
-  handleConnection(ws, mode, userId, originalSessionId);
+
+  // Professional Intro params
+  const organization = url.searchParams.get('organization') || '';
+  const role = url.searchParams.get('role') || '';
+
+  handleConnection(ws, mode, userId, { originalSessionId, organization, role });
 });
 
 server.listen(config.port, () => {

@@ -15,6 +15,13 @@ const shareKeyParam = z.object({
     id: z.string().min(1),
     key: z.string().length(24),
 });
+const presetSchema = z.object({
+    userId: z.string().min(1),
+    presetName: z.string().min(1),
+    organization: z.string(),
+    role: z.string(),
+    background: z.string().optional(),
+});
 
 // ─── Router Factory (dependency injection) ────────────────────────────────────
 export function createSessionsRouter(store: SessionStore): Router {
@@ -37,6 +44,59 @@ export function createSessionsRouter(store: SessionStore): Router {
         } catch (err) {
             console.error('GET /api/sessions error:', err);
             res.status(500).json({ error: 'Failed to list sessions' });
+        }
+    });
+
+    // --- Profiles & Presets ---
+
+    // GET /api/sessions/profile?userId=<id>
+    router.get('/profile', async (req, res) => {
+        const parsed = userIdQuery.safeParse(req.query);
+        if (!parsed.success) {
+            res.status(400).json({ error: 'userId query param is required' });
+            return;
+        }
+        try {
+            const profile = await store.getProfile(parsed.data.userId);
+            res.json(profile || { factualSummary: '', coachingNotes: '' });
+        } catch (err) {
+            console.error('GET /api/sessions/profile error:', err);
+            res.status(500).json({ error: 'Failed to fetch profile' });
+        }
+    });
+
+    // GET /api/sessions/presets?userId=<id>
+    router.get('/presets', async (req, res) => {
+        const parsed = userIdQuery.safeParse(req.query);
+        if (!parsed.success) {
+            res.status(400).json({ error: 'userId query param is required' });
+            return;
+        }
+        try {
+            const presets = await store.listPresets(parsed.data.userId);
+            res.json(presets);
+        } catch (err) {
+            console.error('GET /api/sessions/presets error:', err);
+            res.status(500).json({ error: 'Failed to list presets' });
+        }
+    });
+
+    // POST /api/sessions/presets
+    router.post('/presets', async (req, res) => {
+        const parsed = presetSchema.safeParse(req.body);
+        if (!parsed.success) {
+            res.status(400).json({ error: 'Invalid preset data', details: parsed.error });
+            return;
+        }
+        try {
+            const preset = await store.savePreset({
+                ...parsed.data,
+                lastUsedAt: new Date(),
+            });
+            res.json(preset);
+        } catch (err) {
+            console.error('POST /api/sessions/presets error:', err);
+            res.status(500).json({ error: 'Failed to save preset' });
         }
     });
 

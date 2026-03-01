@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { Mode } from '../App';
 import { navigateTo } from '../App';
-import { Target, Handshake, Swords, Zap, ArrowRight } from 'lucide-react';
+import { Target, Handshake, Swords, Zap, ArrowRight, PersonStanding } from 'lucide-react';
 import { initGlobalAudio } from '../hooks/useAudio';
 
 interface Props {
@@ -45,6 +45,15 @@ const modes = [
         icon: <Zap size={48} strokeWidth={1.5} />,
         iconUrl: '/icons/icon_impromptu.png',
         color: '#f59e0b',
+    },
+    {
+        id: 'professional_introduction' as Mode,
+        title: 'Interview Intro',
+        subtitle: 'Tell me about yourself',
+        description: 'Practice tailored introductions for custom roles and organizations.',
+        iconUrl: '/icons/icon_interview.png',
+        icon: <PersonStanding size={48} strokeWidth={1.5} />,
+        color: '#f97316',
     },
 ];
 

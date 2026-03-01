@@ -60,17 +60,17 @@ This document contains example scripts designed to test the 4 core scenarios in 
 
 ### Example Script (Handling Interruptions & Logical Traps)
 
-*(Example Topic: Universal Basic Income)*
+*(Example Topic: Penguins)*
 
-> "My core thesis is that Universal Basic Income is an economic necessity in the age of rapid automation. A 2023 study by the Roosevelt Institute found that a 1000 dollar monthly dividend would actually grow the economy by 2.5 trillion dollars by drastically increasing consumer spending."
+> "Penguins do not actually exist. They are just tiny human actors wearing tuxedo suits who commute to office jobs under the ice every morning."
 
-*(AI Interrupts - Fact Checking Hook: "What's your citation for that? A 2023 meta-analysis suggests the opposite. You're just citing one heavily biased think tank.")*
+*(AI Interrupts - Fact Checking Hook: "What is your source for that? Satellite imagery and centuries of marine biology confirm penguins are aquatic flightless birds. They do not have office jobs.")*
 
-> "The Roosevelt Institute study is based on macro-economic modeling matching historical dividend data from the Alaska Permanent Fund, which shows no significant inflationary pressure over its 40-year history. Even if we discount that specific projection, the baseline fact remains that localized UBI trials, such as the comprehensive study in Stockton, California, resulted in full-time employment increasing by 12% among recipients."
+> "I concede 'human actors' is a bold metaphor. I am actually referring to the complex social hierarchy and highly synchronized daily migration patterns of Emperor penguins, which remarkably mirror human corporate commuting behavior."
 
-*(AI Interrupts - Vague Generalization Hook: "Wait, 'Everyone knows automation is destroying jobs' is a massive generalization. Define your terms.")*
+*(AI Interrupts - Vague Generalization Hook: "Comparing survival-driven migration to 'corporate commuting' is a massive anthropomorphic generalization. How does huddling for warmth equate to an office job?")*
 
-> "That is a fair request for precision. By 'rapid automation', I am specifically referring to the World Economic Forum's 2020 projection that AI and machine learning will displace 85 million jobs globally by 2025, specifically in mid-level administrative and routine manual labor sectors."
+> "That is a fair critique of my anthropomorphism. To be perfectly precise, I am referencing how their coordinated collective movements, specifically the continuous rotation from the cold exterior of the huddle to the warm interior, represent a structured division of labor essential for group survival."
 
 ---
 

@@ -177,3 +177,14 @@
 - [ ] Enable session resumption via `RunConfig.sessionResumption`
 - [ ] Enable context compression for long sessions
 
+## Phase 16: Professional Introduction Persona
+- [x] Create specs/professional_introduction.md with implementation details
+- [x] Backend: Extract `profiler.ts` for post-session profile building
+- [x] Backend: Update `store.ts` for dynamic user profiles and interview presets
+- [x] Backend: Add `/api/sessions/profile` and `/api/sessions/presets` REST endpoints
+- [x] Backend: Update `ws-handler.ts` to accept context injection via wizard
+- [x] Backend: Create `professional_introduction.md` system prompt with placeholders
+- [x] Frontend: Create `IntroWizard.tsx` to collect organization and role constraints
+- [x] Frontend: Update app configuration to include 'Interview Intro' persona
+- [x] Frontend: Create custom `ProfessionalIntroReport.tsx` component
+- [x] Frontend: Create shareable `ProfessionalIntroCard.tsx` social export component

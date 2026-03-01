@@ -7,6 +7,7 @@ export const MODE_VISUALIZATION: Record<string, VisualizationType> = {
     veritalk: 'tides_clash',
     empathy_trainer: 'tides_overlay',
     impromptu: 'classic',
+    professional_introduction: 'classic',
 };
 
 export const SESSION_LIMIT_SECONDS = 180;
@@ -22,6 +23,7 @@ export const MODE_CONFIG: Record<string, ModeConfig> = {
     empathy_trainer: { label: 'Empathy Trainer', iconUrl: '/icons/empathy_trainer.png' },
     veritalk: { label: 'Veritalk', iconUrl: '/icons/veritalk.png' },
     impromptu: { label: 'Impromptu', iconUrl: '/icons/impromptu.png' },
+    professional_introduction: { label: 'Interview Intro', iconUrl: '/icons/impromptu.png' },
 };
 
 export function formatTime(seconds: number): string {

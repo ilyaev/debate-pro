@@ -8,6 +8,13 @@ import { injectFeedbackContext } from './session/feedback-context.js';
 import { connectGemini, forwardClientMessage } from './session/gemini-bridge.js';
 import { sendSessionStarted, sendReport, sendError, isWsOpen } from './session/protocol.js';
 import { FEEDBACK_TIMEOUT_MS } from './session/constants.js';
+import { runProfiler } from './services/profiler.js';
+
+export interface SessionContext {
+  originalSessionId?: string | null;
+  organization?: string;
+  role?: string;
+}
 
 export interface SessionDependencies {
   genai: GoogleGenAI;
@@ -28,7 +35,7 @@ export function setDependencies(overrides: Partial<SessionDependencies>): void {
   if (overrides.store) deps.store = overrides.store;
 }
 
-export async function handleConnection(ws: WebSocket, modeStr: string, userId: string, originalSessionId?: string | null) {
+export async function handleConnection(ws: WebSocket, modeStr: string, userId: string, context: SessionContext = {}) {
   // Validate mode
   if (!(modeStr in MODES)) {
     console.error(`❌ Invalid mode: ${modeStr}`);
@@ -38,12 +45,26 @@ export async function handleConnection(ws: WebSocket, modeStr: string, userId: s
   }
 
   const mode = modeStr as Mode;
-  const systemPrompt = loadPrompt(mode);
+
+  // Fetch existing profile for the user
+  const userProfile = await deps.store.getProfile(userId);
+  const profileText = userProfile
+    ? `\nFACTUAL SUMMARY:\n${userProfile.factualSummary}\n\nCOACHING NOTES:\n${userProfile.coachingNotes}`
+    : 'No previous profile data available.';
+
+  // Prepare context map for the prompt template
+  const promptContext = {
+    ORGANIZATION: context.organization || 'Unknown Company',
+    ROLE: context.role || 'Unknown Role',
+    USER_PROFILE: profileText,
+  };
+
+  const systemPrompt = loadPrompt(mode, promptContext);
   const state = createSessionState(mode, userId, systemPrompt, deps.genai);
 
   // Feedback mode: inject original session context
-  if (mode === 'feedback' && originalSessionId) {
-    await injectFeedbackContext(state, originalSessionId, deps.store);
+  if (mode === 'feedback' && context.originalSessionId) {
+    await injectFeedbackContext(state, context.originalSessionId, deps.store);
   }
 
   console.log(`🎙️  New session: ${state.id} [${mode}] (Voice: ${state.voiceName})`);
@@ -134,6 +155,29 @@ export async function handleConnection(ws: WebSocket, modeStr: string, userId: s
         } else {
           console.log(`   [${state.id}] ⚠️ Client already disconnected, report not sent`);
         }
+
+        // Run profiler in the background if this is a supported mode
+        if (mode !== 'feedback') {
+          console.log(`   [${state.id}] Running background profiler...`);
+
+          const sessionDataForProfiler = {
+            id: state.id,
+            userId,
+            mode,
+            startedAt: state.startedAt,
+            transcript: state.transcript.map(t => `[${t.role === 'user' ? 'User' : 'AI'}] ${t.text}`),
+            metrics: state.metrics,
+            voiceName: state.voiceName,
+          };
+
+          runProfiler(userId, sessionDataForProfiler, userProfile).then(async (newProfile) => {
+            await deps.store.saveProfile(newProfile);
+            console.log(`   [${state.id}] ✅ Profile updated for ${userId}:`, newProfile.factualSummary);
+          }).catch((err) => {
+            console.error(`   [${state.id}] ❌ Profiler failed:`, err);
+          });
+        }
+
       } catch (err) {
         console.error(`   [${state.id}] ❌ Error generating report:`, err);
         sendError(ws, 'Failed to generate report. Please try again.');

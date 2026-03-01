@@ -6,6 +6,7 @@ export const MODE_LABELS: Record<string, string> = {
     veritalk: 'Veritalk',
     impromptu: 'Impromptu',
     feedback: 'Feedback',
+    professional_introduction: 'Professional Introduction',
 };
 
 export const MODE_COLORS: Record<string, string> = {
@@ -14,6 +15,7 @@ export const MODE_COLORS: Record<string, string> = {
     veritalk: 'badge--purple',
     impromptu: 'badge--orange',
     feedback: 'badge--gray',
+    professional_introduction: 'badge--gray',
 };
 
 export const MODE_ICONS: Record<string, React.ReactNode> = {
@@ -22,4 +24,5 @@ export const MODE_ICONS: Record<string, React.ReactNode> = {
     veritalk: <Swords size={18} />,
     impromptu: <Zap size={18} />,
     feedback: <MessageSquareText size={18} />,
+    professional_introduction: <MessageSquareText size={18} />,
 };

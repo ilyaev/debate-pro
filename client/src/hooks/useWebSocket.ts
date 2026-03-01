@@ -10,7 +10,11 @@ interface UseWebSocketReturn {
   sendJSON: (obj: unknown) => void;
 }
 
-export function useWebSocket(mode: string, userId: string): UseWebSocketReturn {
+export function useWebSocket(
+  mode: string,
+  userId: string,
+  context?: { organization: string; role: string }
+): UseWebSocketReturn {
   const wsRef = useRef<WebSocket | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const chunkCountRef = useRef(0);
@@ -157,7 +161,12 @@ export function useWebSocket(mode: string, userId: string): UseWebSocketReturn {
     // Default to relative connection (same host) for local dev
     // If VITE_WS_URL is set, use it for connection to the remote backend
     const wsUrlStr = import.meta.env.VITE_WS_URL || `${location.protocol === 'https:' ? 'wss:' : 'ws:'}//${location.host}`;
-    const urlStr = `${wsUrlStr}/ws?mode=${mode}&userId=${userId}`;
+
+    let urlProps = `mode=${mode}&userId=${userId}`;
+    if (context?.organization) urlProps += `&organization=${encodeURIComponent(context.organization)}`;
+    if (context?.role) urlProps += `&role=${encodeURIComponent(context.role)}`;
+
+    const urlStr = `${wsUrlStr}/ws?${urlProps}`;
 
     console.log(`🔌 [WS] Connecting to ${urlStr}`);
     const ws = new WebSocket(urlStr);
@@ -179,7 +188,7 @@ export function useWebSocket(mode: string, userId: string): UseWebSocketReturn {
 
     wsRef.current = ws;
     return ws;
-  }, [mode, userId]);
+  }, [mode, userId, context?.organization, context?.role]);
 
   const disconnect = useCallback(() => {
     if (wsRef.current) {

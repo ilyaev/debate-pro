@@ -4,6 +4,7 @@ import { PitchPerfectCard } from './cards/PitchPerfectCard.js';
 import { EmpathyTrainerCard } from './cards/EmpathyTrainerCard.js';
 import { VeritalkCard } from './cards/VeritalkCard.js';
 import { ImpromptuCard } from './cards/ImpromptuCard.js';
+import { ProfessionalIntroCard } from './cards/ProfessionalIntroCard.js';
 
 interface PerformanceCardProps {
     report: SessionReport;
@@ -23,6 +24,8 @@ export const PerformanceCard = forwardRef<HTMLDivElement, PerformanceCardProps>(
             return <VeritalkCard report={report} ref={ref} isOgImage={isOgImage} ogBackgroundImage={ogBackgroundImage} />;
         case 'impromptu':
             return <ImpromptuCard report={report} ref={ref} isOgImage={isOgImage} ogBackgroundImage={ogBackgroundImage} />;
+        case 'professional_introduction':
+            return <ProfessionalIntroCard report={report} ref={ref} isOgImage={isOgImage} ogBackgroundImage={ogBackgroundImage} />;
         default:
             // Fallback for unknown modes
             return <PitchPerfectCard report={report} ref={ref} isOgImage={isOgImage} ogBackgroundImage={ogBackgroundImage} />;

@@ -32,6 +32,8 @@ export interface SessionReport {
   };
   /** Scenario-specific extra data */
   extra?: Record<string, unknown>;
+  /** Additional fields mapped from config */
+  extraFields?: Record<string, any>;
   /** Which metric keys from `metrics` are relevant for this mode */
   displayMetrics?: string[];
   /** The name of the AI voice used in this session */

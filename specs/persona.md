@@ -9,6 +9,9 @@ This document details how Glotti implements its various training scenarios and p
 
 ## 2. Implementation Architecture
 
+### Post-Session User Profiling
+Some personas can collect ongoing history. The async `server/services/profiler.ts` process runs after a session finishes. It can analyze the transcript, update `store.ts` with behavioral notes or factual summaries, and re-inject that acquired knowledge into the `systemPrompt` for subsequent sessions.
+
 ### Backend: Configuration & Prompts
 Scenarios are defined in `server/config.ts` via the `MODES` constant. This constant maps a unique mode ID (e.g., `pitch_perfect`) to the path of its system prompt file.
 
@@ -20,7 +23,12 @@ The Gemini Live API session is initialized in `server/ws-handler.ts`. The system
 
 ```typescript
 // server/ws-handler.ts
-const systemPrompt = loadPrompt(mode);
+let systemPrompt = loadPrompt(mode);
+
+// IMPORTANT: If your persona uses dynamic context, you can retrieve frontend wizard parameters
+// from the WebSocket connection URL and inject them into the prompt here:
+// systemPrompt = systemPrompt.replace('{{ROLE}}', clientRole);
+
 const session = await genai.live.connect({
   // ...
   config: {
@@ -93,6 +101,9 @@ const modes = [
 ];
 ```
 
+> [!NOTE]
+> **Dynamic Context**: If your persona requires upfront context from the user (e.g., getting their target company and role before starting), you can intercept the 'start' flow in `client/src/App.tsx`. Render a Wizard component to gather inputs, and then pass those inputs to the WebSocket via URL parameters (`useWebSocket(mode, userId, wizardContext)`).
+
 #### Custom Icons
 Glotti supports custom PNG icons for each mode.
 *   **Storage**: Place PNG files in `client/public/icons/`.
@@ -158,8 +169,8 @@ negotiator: {
 
 After defining the config, create a matching React component in `client/src/components/report/`:
 
-1. Create `client/src/components/report/NegotiatorReport.tsx` — use the shared primitives from `ReportBase.tsx` (`ScoreGauge`, `CategoryCards`, `MetricsStrip`, `KeyMoments`, `ImprovementTips`, `ReportActions`) and add any custom sections that render the `extra` fields.
-2. Add a typed interface for the extra fields in `client/src/types.ts` (e.g., `NegotiatorExtra`).
+1. Create `client/src/components/report/NegotiatorReport.tsx` — use the shared primitives from `./ReportBase` (`ScoreGauge`, `CategoryCards`, `MetricsStrip`, `KeyMoments`, `ImprovementTips`, `ReportActions`) and add any custom sections that render the `extraFields`. **Ensure you import these relatively from `./ReportBase`**, as they live in the same directory.
+2. Add a typed interface for the extra fields in `client/src/types.ts` (e.g., `NegotiatorExtra`). Note that `SessionReport` now supports both `extra` and `extraFields` for easier mapping from config.
 3. Register the component in `client/src/components/Report.tsx` — add a `case 'negotiator':` to the `switch (data.mode)` statement.
 
 ---
@@ -172,7 +183,7 @@ Each scenario features a distinct visual layout for social sharing (1080x1080 ex
    - The card **must** have a fixed `width: '1080px'` by `height: '1080px'` dimension.
    - It **must** use raw inline CSS for styling to ensure perfect compatibility with `html-to-image` rendering.
    - Forward the `ref` to the outermost `<div>` so the capture library can target it.
-   - Design a unique visual theme (colors, gradients, metric layouts) that fits the persona's vibe.
+   - Design a unique visual theme (colors, gradients, metric layouts). If there is a shared `BaseCard` component that matches your layout, you can import it (`import { BaseCard } from '../BaseCard'`), otherwise build the `<div>` structure manually.
 2. **Access Data:** Use `report.extra` for your scenario-specific metrics (e.g., parsed as `NegotiatorExtra`), and import `formatMetricValue` from `../ReportBase` for standard metrics.
 3. **Register in the Router:** Import your new card into `client/src/components/report/PerformanceCard.tsx` and add it to the router switch statement:
 

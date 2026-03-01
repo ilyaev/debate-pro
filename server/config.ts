@@ -208,15 +208,58 @@ export const MODES: Record<string, ScenarioConfig> = {
       extraFields: {},
     },
   },
+  professional_introduction: {
+    promptFile: 'server/agents/prompts/professional_introduction.md',
+    report: {
+      promptIntro:
+        'You are evaluating a candidate or professional introducing themselves for a specific role or context. Focus on narrative structure, relevance to the target organization, and overall confidence.',
+      categories: {
+        first_impression: {
+          label: 'First Impression',
+          description: 'Did the user start strong and sound confident? Was the hook engaging?',
+        },
+        experience_relevance: {
+          label: 'Experience Relevance',
+          description: 'Did the user explicitly connect their past experience to the target organization or role? Did they avoid irrelevant rambling?',
+        },
+        structure_and_clarity: {
+          label: 'Structure & Clarity',
+          description: 'Was the introduction easy to follow? Did it have a clear beginning (past), middle (present), and end (future/why here)?',
+        },
+        question_handling: {
+          label: 'Question Handling',
+          description: 'How well did the user respond to your follow-up questions? Did they use the STAR method (Situation, Task, Action, Result) if applicable?',
+        },
+      },
+      displayMetrics: ['avg_words_per_minute', 'total_filler_words', 'dominant_tone', 'avg_clarity_score'],
+      extraFields: {
+        strongest_asset:
+          'A string describing the best part of their background or presentation style.',
+        missed_opportunities:
+          'An array of strings listing things they should have mentioned but didn\'t, or areas where they lacked detail.',
+        overall_verdict:
+          'A string summarizing if they came across as a strong fit for the role/organization.',
+      },
+    },
+  },
 } as const;
 
 export type Mode = keyof typeof MODES;
 
-export function loadPrompt(mode: Mode): string {
+export function loadPrompt(mode: Mode, context?: Record<string, string>): string {
   const isProd = process.env.NODE_ENV === 'production';
   const rootDir = isProd ? join(__dirname, '..', '..') : join(__dirname, '..');
   const promptPath = join(rootDir, MODES[mode].promptFile);
-  return readFileSync(promptPath, 'utf-8');
+  let promptText = readFileSync(promptPath, 'utf-8');
+
+  if (context) {
+    for (const [key, value] of Object.entries(context)) {
+      const regex = new RegExp(`\\{\\{${key}\\}\\}`, 'g');
+      promptText = promptText.replace(regex, value);
+    }
+  }
+
+  return promptText;
 }
 
 export function getReportConfig(mode: Mode): ScenarioReportConfig {

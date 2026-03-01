@@ -21,9 +21,10 @@ interface UseSessionLogicReturn {
 export function useSessionLogic(
     mode: string,
     userId: string,
-    onEnd: (report: SessionReport) => void
+    onEnd: (report: SessionReport) => void,
+    context?: { organization: string; role: string }
 ): UseSessionLogicReturn {
-    const { connect, disconnect, sendBinary, sendJSON, isConnected } = useWebSocket(mode, userId);
+    const { connect, disconnect, sendBinary, sendJSON, isConnected } = useWebSocket(mode, userId, context);
     const { initPlayback, startCapture, stopCapture, pauseCapture, resumeCapture, playChunk, handleInterrupt, userAnalyserRef, aiAnalyserRef } = useAudio(sendBinary);
 
     const [metrics, setMetrics] = useState<MetricSnapshot | null>(null);
