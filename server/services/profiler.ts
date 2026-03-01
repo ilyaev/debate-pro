@@ -1,6 +1,6 @@
 import { GoogleGenAI, Type } from '@google/genai';
-import { config } from '../config';
-import { UserProfile, SessionData } from '../store';
+import { config } from '../config.js';
+import { UserProfile, SessionData } from '../store.js';
 
 const genai = new GoogleGenAI({ apiKey: config.googleApiKey });
 
