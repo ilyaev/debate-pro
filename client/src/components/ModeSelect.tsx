@@ -57,10 +57,24 @@ const modes = [
     },
 ];
 
+// const steps = [
+//     { title: 'Choose a Persona', desc: 'Pick a sparring partner built for your high-stakes goal.' },
+//     { title: 'Speak Naturally', desc: 'Talk to the AI; it will listen, challenge, and intervene in real-time.' },
+//     { title: 'Master the Moment', desc: 'Get a data-driven training report to refine your communication.' },
+// ];
 const steps = [
-    { title: 'Choose a Persona', desc: 'Pick a sparring partner built for your high-stakes goal.' },
-    { title: 'Speak Naturally', desc: 'Talk to the AI; it will listen, challenge, and intervene in real-time.' },
-    { title: 'Master the Moment', desc: 'Get a data-driven training report to refine your communication.' },
+    {
+        title: 'Pick Your Challenger',
+        desc: 'Select the skeptical investor, upset client, or tough interviewer you need to prepare for today.'
+    },
+    {
+        title: 'Face the Pushback',
+        desc: 'No scripts. No safety nets. Speak your mind and hold your ground against real-time interruptions.'
+    },
+    {
+        title: 'Review the Tape',
+        desc: 'Dissect your performance to see exactly where you lost control of the conversation—and how to win it back.'
+    }
 ];
 
 export function ModeSelect({ onStart, userId }: Props) {
@@ -79,7 +93,7 @@ export function ModeSelect({ onStart, userId }: Props) {
         <div className="mode-select">
             <div className="mode-select__header">
                 <img className="logo-img" src="/glotti_logo.png" alt="Glotti" />
-                <p className="tagline">Master high-stakes conversations with real-time AI sparring.</p>
+                <p className="tagline">A friendly face for your most intimidating conversations.</p>
 
                 <div className="how-it-works">
                     {steps.map((s, idx) => (
@@ -93,7 +107,7 @@ export function ModeSelect({ onStart, userId }: Props) {
                     ))}
                 </div>
 
-                <p className="subtitle">Choose your sparring partner to begin</p>
+                <p className="subtitle">Take the Hot Seat</p>
             </div>
 
             <div className="mode-cards">
