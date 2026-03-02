@@ -11,7 +11,7 @@ export class FirestoreStore implements SessionStore {
   private async getDb() {
     if (!this.db) {
       const { Firestore } = await import('@google-cloud/firestore');
-      this.db = new Firestore();
+      this.db = new Firestore({ ignoreUndefinedProperties: true });
     }
     return this.db;
   }

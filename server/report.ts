@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { jsonrepair } from 'jsonrepair';
 import { getReportConfig, type Mode, type ScenarioReportConfig } from './config.js';
 import type { MetricSnapshot, SessionReport } from './store.js';
 import { runReportAgent } from './adk/runner.js';
@@ -197,28 +198,47 @@ ${categorySchemaBlock}
   }${extraBlock}
 }
 
-Return ONLY the JSON object, no markdown fences or explanation.
+Return ONLY a valid JSON object. Do not include any markdown fences, backticks, or introductory text.
+The JSON must strictly follow the schema above and include ALL required fields.
+JSON:
 `;
 }
 
 // ─── Validation ───────────────────────────────────────────────────────────────
 
-function validateReport(mode: Mode, raw: unknown): { base: z.infer<typeof BaseReportSchema>; extra?: Record<string, unknown> } {
-  const base = BaseReportSchema.parse(raw);
+function validateReport(mode: Mode, raw: unknown, sessionId: string): { base: z.infer<typeof BaseReportSchema>; extra?: Record<string, unknown> } {
+  try {
+    const base = BaseReportSchema.parse(raw);
 
-  const extraSchema = EXTRA_SCHEMAS[mode];
-  let extra: Record<string, unknown> | undefined;
-  if (extraSchema && typeof raw === 'object' && raw !== null && 'extra' in raw) {
-    try {
-      extra = extraSchema.parse((raw as Record<string, unknown>).extra) as Record<string, unknown>;
-    } catch (err) {
-      console.warn(`   [report] Extra field validation failed for mode ${mode}, using partial:`, err);
-      // Use the raw extra even if validation fails — better than nothing
-      extra = (raw as Record<string, unknown>).extra as Record<string, unknown>;
+    const extraSchema = EXTRA_SCHEMAS[mode];
+    let extra: Record<string, unknown> | undefined;
+    if (extraSchema && typeof raw === 'object' && raw !== null && 'extra' in raw) {
+      try {
+        extra = extraSchema.parse((raw as Record<string, unknown>).extra) as Record<string, unknown>;
+      } catch (err) {
+        console.warn(`   [${sessionId}] Extra field validation failed for mode ${mode}, using partial:`, err);
+        // Use the raw extra even if validation fails — better than nothing
+        extra = (raw as Record<string, unknown>).extra as Record<string, unknown>;
+      }
     }
-  }
 
-  return { base, extra };
+    return { base, extra };
+  } catch (err) {
+    if (err instanceof z.ZodError) {
+      console.error(`   [${sessionId}] Zod Validation failed for report:`, JSON.stringify(err.issues, null, 2));
+      console.error(`   [${sessionId}] Offending object keys:`, Object.keys(raw as any || {}));
+    }
+    throw err;
+  }
+}
+
+function extractJson(text: string): string {
+  const firstBrace = text.indexOf('{');
+  const lastBrace = text.lastIndexOf('}');
+  if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
+    return text.substring(firstBrace, lastBrace + 1);
+  }
+  return text;
 }
 
 // ─── Report Generation ────────────────────────────────────────────────────────
@@ -239,15 +259,35 @@ export async function generateReport(
     console.log(`   [${sessionId}] Report prompt length: ${prompt.length} chars, user entries: ${userEntriesCount}, total turns: ${transcript.length}`);
 
     const text = await runReportAgent('system', mode, prompt);
-    const cleaned = (text || '{}')
+    if (!text) {
+      throw new Error('LLM returned an empty report response.');
+    }
+
+    const cleaned = extractJson(text)
       .replace(/```json\n?/g, '')
       .replace(/```\n?/g, '')
       .trim()
       // Fix trailing commas before ] or } (common LLM JSON error)
       .replace(/,\s*([\]}])/g, '$1');
-    const parsed = JSON.parse(cleaned);
 
-    const { base, extra } = validateReport(mode, parsed);
+    let parsed: any;
+    try {
+      parsed = JSON.parse(cleaned);
+    } catch (parseError) {
+      console.warn(`   [${sessionId}] Standard JSON Parse failed. Attempting jsonrepair...`);
+      try {
+        const repaired = jsonrepair(cleaned);
+        parsed = JSON.parse(repaired);
+        console.log(`   [${sessionId}] jsonrepair successfully fixed the malformed LLM JSON.`);
+      } catch (repairError) {
+        console.error(`   [${sessionId}] JSON Parse & Repair Error in generateReport.`);
+        console.error(`   [${sessionId}] Raw text sample: ${text.substring(0, 200)}...`);
+        // Re-throw to be caught by the outer catch block
+        throw parseError;
+      }
+    }
+
+    const { base, extra } = validateReport(mode, parsed, sessionId);
 
     return {
       session_id: sessionId,
