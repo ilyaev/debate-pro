@@ -83,6 +83,10 @@ export function sendAiDisconnected(ws: WebSocket, message: string): void {
   sendJSON(ws, { type: 'ai_disconnected', message });
 }
 
+export function sendAiEndSession(ws: WebSocket): void {
+  sendJSON(ws, { type: 'ai_end_session' });
+}
+
 export function sendAudioChunk(ws: WebSocket, base64Data: string): void {
   const audioBuffer = Buffer.from(base64Data, 'base64');
   safeSend(ws, audioBuffer);

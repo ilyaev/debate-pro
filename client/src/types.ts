@@ -113,4 +113,5 @@ export type ServerMessage =
   | { type: 'turn_complete' }
   | { type: 'report'; data: SessionReport }
   | { type: 'error'; message: string }
-  | { type: 'ai_disconnected'; message: string };
+  | { type: 'ai_disconnected'; message: string }
+  | { type: 'ai_end_session' };

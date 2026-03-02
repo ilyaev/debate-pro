@@ -32,6 +32,7 @@ interface UseAudioReturn {
   resumeCapture: () => void;
   playChunk: (audioData: ArrayBuffer) => void;
   handleInterrupt: () => void;
+  getIsPlaying: () => boolean;
   userAnalyserRef: React.RefObject<AnalyserNode | null>;
   aiAnalyserRef: React.RefObject<AnalyserNode | null>;
 }
@@ -223,5 +224,9 @@ export function useAudio(sendBinary: (data: ArrayBuffer) => void): UseAudioRetur
     console.log('⚡ Playback interrupted');
   }, []);
 
-  return { initPlayback, startCapture, stopCapture, pauseCapture, resumeCapture, playChunk, handleInterrupt, userAnalyserRef, aiAnalyserRef };
+  const getIsPlaying = useCallback(() => {
+    return isPlayingRef.current || activeSourcesRef.current.size > 0;
+  }, []);
+
+  return { initPlayback, startCapture, stopCapture, pauseCapture, resumeCapture, playChunk, handleInterrupt, getIsPlaying, userAnalyserRef, aiAnalyserRef };
 }

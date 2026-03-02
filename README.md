@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-  <strong>Real-time AI sparring partner for high-stakes verbal interactions</strong>
+  <strong>A friendly face for your most intimidating conversations.</strong>
 </p>
 
 <p align="center">

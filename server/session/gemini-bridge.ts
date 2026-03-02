@@ -7,6 +7,7 @@ import { extractMetrics } from './metrics.js';
 import {
   sendTranscriptCue, sendMetrics, sendTurnComplete,
   sendInterrupted, sendError, sendAudioChunk, sendAiDisconnected,
+  sendAiEndSession,
   isWsOpen, parseBinaryMessage,
 } from './protocol.js';
 
@@ -82,7 +83,18 @@ export async function connectGemini(
           },
         },
       },
-      tools: state.mode === 'veritalk' || state.mode === 'professional_introduction' ? [{ googleSearch: {} }] : undefined,
+      // Give EVERY session the endSession tool for safety guardrails
+      tools: [
+        {
+          functionDeclarations: [
+            {
+              name: 'endSession',
+              description: 'Terminate the session. Use this EITHER when the conversation has reached a natural conclusion (e.g., saying goodbye) OR immediately if the user becomes heavily off-topic, offensive, rude, or NSFW.',
+            },
+          ],
+        },
+        ...(state.mode === 'veritalk' || state.mode === 'professional_introduction' ? [{ googleSearch: {} }] : []),
+      ],
     },
   });
 
@@ -115,6 +127,33 @@ function handleGeminiMessage(
   if (!serverContent) {
     if (message.toolCall) {
       console.log(`   [${state.id}] ← toolCall:`, JSON.stringify(message.toolCall).slice(0, 200));
+
+      // Check if AI is invoking the session termination tool
+      const functionCalls = message.toolCall.functionCalls;
+      if (functionCalls) {
+        for (const call of functionCalls) {
+          if (call.name === 'endSession') {
+            console.log(`   ⏹️ [${state.id}] AI triggered endSession (Natural Closure or Guardrail)`);
+            sendAiEndSession(ws);
+
+            // We must respond to the tool call to keep the API happy before we close
+            try {
+              session.sendClientContent({
+                turnComplete: true,
+                tools: [{
+                  functionResponses: [{
+                    name: 'endSession',
+                    id: call.id,
+                    response: { result: 'Session terminating...' }
+                  }]
+                }]
+              });
+            } catch (err) {
+              console.error(`   [${state.id}] Failed to send tool response:`, err);
+            }
+          }
+        }
+      }
     }
     return;
   }

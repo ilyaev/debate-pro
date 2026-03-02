@@ -26,7 +26,7 @@ export function useSessionLogic(
     options: { enabled?: boolean } = { enabled: true }
 ): UseSessionLogicReturn {
     const { connect, disconnect, sendBinary, sendJSON, isConnected } = useWebSocket(mode, userId, context);
-    const { initPlayback, startCapture, stopCapture, pauseCapture, resumeCapture, playChunk, handleInterrupt, userAnalyserRef, aiAnalyserRef } = useAudio(sendBinary);
+    const { initPlayback, startCapture, stopCapture, pauseCapture, resumeCapture, playChunk, handleInterrupt, getIsPlaying, userAnalyserRef, aiAnalyserRef } = useAudio(sendBinary);
 
     const [metrics, setMetrics] = useState<MetricSnapshot | null>(null);
     const [cues, setCues] = useState<TranscriptCue[]>([]);
@@ -145,6 +145,22 @@ export function useSessionLogic(
                     console.warn('⚠️ [Session] AI disconnected:', msg.message);
                     stopCapture();
                     setStatus('disconnected');
+                    break;
+                case 'ai_end_session':
+                    console.warn('⚠️ [Session] AI initiated session end sequence via guardrail or natural closure.');
+                    pauseCapture(); // mute user mic so they can't interrupt the goodbye
+
+                    // Allow 1.5s for any in-flight audio chunks to arrive and be queued
+                    setTimeout(() => {
+                        let checks = 0;
+                        const checkAudio = setInterval(() => {
+                            checks++;
+                            if (!getIsPlaying() || checks > 30) { // max 15s wait
+                                clearInterval(checkAudio);
+                                handleEnd();
+                            }
+                        }, 500);
+                    }, 1500);
                     break;
             }
         };
