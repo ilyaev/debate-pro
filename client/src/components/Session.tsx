@@ -8,16 +8,20 @@ import { SessionEndingOverlay } from './session/SessionEndingOverlay';
 import { CongratulationsOverlay } from './session/CongratulationsOverlay';
 import { SessionStatusDisplay } from './session/SessionStatusDisplay';
 import { TranscriptFeed } from './session/TranscriptFeed';
-import type { SessionReport } from '../types';
+import type { SessionReport, SessionStatus, MetricSnapshot, TranscriptCue } from '../types';
 
 interface Props {
     mode: string;
     userId: string;
     context?: { organization: string; role: string };
     onEnd: (report: SessionReport) => void;
+    debug?: boolean;
+    debugStatus?: SessionStatus;
+    debugMetrics?: MetricSnapshot | null;
+    debugCues?: TranscriptCue[];
 }
 
-export function Session({ mode, userId, context, onEnd }: Props) {
+export function Session({ mode, userId, context, onEnd, debug, debugStatus, debugMetrics, debugCues }: Props) {
     const {
         celebration,
         handleReportReceived,
@@ -25,11 +29,28 @@ export function Session({ mode, userId, context, onEnd }: Props) {
         checkMilestones
     } = useCelebration({ userId, onEnd });
 
-    const {
-        status, metrics, cues, elapsed,
-        isConnected, isPaused, togglePause, handleEnd,
-        userAnalyserRef, aiAnalyserRef, feedEndRef,
-    } = useSessionLogic(mode, userId, handleReportReceived, context);
+    const sessionLogic = useSessionLogic(mode, userId, handleReportReceived, context, {
+        enabled: !debug
+    });
+
+    const status = debug && debugStatus ? debugStatus : sessionLogic.status;
+    const metrics = debug && debugMetrics !== undefined ? debugMetrics : sessionLogic.metrics;
+    const cues = debug && debugCues ? debugCues : sessionLogic.cues;
+    const elapsed = sessionLogic.elapsed;
+    const isConnected = debug ? true : sessionLogic.isConnected;
+    // const isPaused = sessionLogic.isPaused;
+    // const togglePause = sessionLogic.togglePause;
+    const handleEnd = sessionLogic.handleEnd;
+    const userAnalyserRef = sessionLogic.userAnalyserRef;
+    const aiAnalyserRef = sessionLogic.aiAnalyserRef;
+    const feedEndRef = sessionLogic.feedEndRef;
+
+    const handleCancel = () => {
+        if (!debug) {
+            sessionLogic.handleEnd(); // Clean up WebSocket
+        }
+        window.location.hash = ''; // Return to home/cancel wizard
+    };
 
     // Trigger milestone check when status changes to 'ending'
     useEffect(() => {
@@ -53,33 +74,30 @@ export function Session({ mode, userId, context, onEnd }: Props) {
 
     return (
         <div className="session">
-            <SessionTopbar mode={mode} elapsed={elapsed} />
+            {status !== 'connecting' && <SessionTopbar mode={mode} elapsed={elapsed} status={status} />}
             <SessionStatusDisplay status={status} />
 
-            <Waveform
-                userAnalyserRef={userAnalyserRef}
-                aiAnalyserRef={aiAnalyserRef}
-                status={status}
-                mode={mode}
-            />
+            {status !== 'connecting' && (
+                <>
+                    <Waveform
+                        userAnalyserRef={userAnalyserRef}
+                        aiAnalyserRef={aiAnalyserRef}
+                        status={status}
+                        mode={mode}
+                    />
 
-            <Dashboard metrics={metrics} elapsed={elapsed} />
-            <TranscriptFeed cues={cues} feedEndRef={feedEndRef} />
+                    <Dashboard status={status} metrics={metrics} elapsed={elapsed} />
+                    <TranscriptFeed status={status} cues={cues} feedEndRef={feedEndRef} />
+                </>
+            )}
 
             <div className="session__actions">
-                {/* <button
-                    className="session__btn session__btn--pause"
-                    onClick={togglePause}
-                    disabled={!isConnected || status === 'connecting'}
-                >
-                    {isPaused ? 'Resume Session' : 'Pause Session'}
-                </button> */}
                 <button
-                    className="session__btn session__btn--end"
-                    onClick={handleEnd}
-                    disabled={!isConnected || status === 'connecting'}
+                    className={`session__btn ${status === 'connecting' ? 'session__btn--cancel' : 'session__btn--end'}`}
+                    onClick={status === 'connecting' ? handleCancel : handleEnd}
+                    disabled={!isConnected && status !== 'connecting'}
                 >
-                    End Session
+                    {status === 'connecting' ? 'Cancel' : 'End Session'}
                 </button>
             </div>
         </div>

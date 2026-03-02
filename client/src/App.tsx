@@ -6,6 +6,7 @@ import { SessionsList } from './components/SessionsList';
 import { SessionDetail } from './components/SessionDetail';
 import { CardsSandbox } from './components/CardsSandbox';
 import { OverlayPreview } from './components/OverlayPreview';
+import { DebugSession } from './components/DebugSession';
 import type { SessionReport } from './types';
 export type Mode = 'pitch_perfect' | 'empathy_trainer' | 'veritalk' | 'impromptu' | 'professional_introduction';
 
@@ -17,11 +18,13 @@ export type Route =
     | { name: 'sessions' }
     | { name: 'session-detail'; id: string; shareKey?: string }
     | { name: 'cards-sandbox' }
-    | { name: 'overlay-preview' };
+    | { name: 'overlay-preview' }
+    | { name: 'debug-session' };
 
 function parseHash(): Route {
     const hash = window.location.hash.replace(/^#\/?/, '');
     if (hash === 'sessions') return { name: 'sessions' };
+    if (hash === 'debug-session') return { name: 'debug-session' };
     if (hash === 'cards_sandbox') return { name: 'cards-sandbox' };
     if (hash === '_preview') return { name: 'overlay-preview' };
     // Match #/sessions/:id/:key  (shareable)  or  #/sessions/:id  (owner)
@@ -107,6 +110,7 @@ export default function App() {
             )}
             {route.name === 'cards-sandbox' && <CardsSandbox />}
             {route.name === 'overlay-preview' && <OverlayPreview />}
+            {route.name === 'debug-session' && <DebugSession />}
         </div>
     );
 }

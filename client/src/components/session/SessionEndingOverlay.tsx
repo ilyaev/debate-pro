@@ -8,7 +8,7 @@ interface Props {
 export function SessionEndingOverlay({ mode, elapsed }: Props) {
     return (
         <div className="session session--ending">
-            <SessionTopbar mode={mode} elapsed={elapsed} />
+            <SessionTopbar mode={mode} elapsed={elapsed} status={''} />
 
             <div className="session__loading">
                 <div className="session__loading-spinner" />

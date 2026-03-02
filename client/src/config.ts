@@ -6,8 +6,8 @@ export const MODE_VISUALIZATION: Record<string, VisualizationType> = {
     pitch_perfect: 'tides_clash',
     veritalk: 'tides_clash',
     empathy_trainer: 'tides_overlay',
-    impromptu: 'classic',
-    professional_introduction: 'classic',
+    impromptu: 'tides_overlay',
+    professional_introduction: 'tides_overlay',
 };
 
 export const SESSION_LIMIT_SECONDS = 180;

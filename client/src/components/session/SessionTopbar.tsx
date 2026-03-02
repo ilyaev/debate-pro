@@ -1,5 +1,7 @@
 import { Target, Handshake, Swords, Zap, Mic } from 'lucide-react';
 import { MODE_CONFIG, formatTime, SESSION_WARNING_SECONDS } from '../../config';
+import type { SessionStatus } from '../../types';
+import { STATUS_TEXT } from './SessionStatusDisplay';
 
 const MODE_ICONS: Record<string, React.ReactNode> = {
     pitch_perfect: <Target size={18} strokeWidth={2} />,
@@ -11,9 +13,10 @@ const MODE_ICONS: Record<string, React.ReactNode> = {
 interface Props {
     mode: string;
     elapsed: number;
+    status: SessionStatus;
 }
 
-export function SessionTopbar({ mode, elapsed }: Props) {
+export function SessionTopbar({ mode, elapsed, status }: Props) {
     const config = MODE_CONFIG[mode];
     const label = config?.label ?? mode;
     const iconUrl = config?.iconUrl;
@@ -43,6 +46,9 @@ export function SessionTopbar({ mode, elapsed }: Props) {
                 </span>
                 {label}
             </span>
+            <div className="session__topbar-status">
+                <span className="session__status-text">{STATUS_TEXT[status]}</span>
+            </div>
             <span className={`session__timer ${elapsed >= SESSION_WARNING_SECONDS ? 'session__timer--warning' : ''}`}>
                 {formatTime(elapsed)}
             </span>

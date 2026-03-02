@@ -22,7 +22,8 @@ export function useSessionLogic(
     mode: string,
     userId: string,
     onEnd: (report: SessionReport) => void,
-    context?: { organization: string; role: string }
+    context?: { organization: string; role: string },
+    options: { enabled?: boolean } = { enabled: true }
 ): UseSessionLogicReturn {
     const { connect, disconnect, sendBinary, sendJSON, isConnected } = useWebSocket(mode, userId, context);
     const { initPlayback, startCapture, stopCapture, pauseCapture, resumeCapture, playChunk, handleInterrupt, userAnalyserRef, aiAnalyserRef } = useAudio(sendBinary);
@@ -82,6 +83,8 @@ export function useSessionLogic(
 
     // WebSocket connection + message dispatcher
     useEffect(() => {
+        if (!options.enabled) return;
+
         console.log('🔌 [Session] Connecting to WebSocket...');
         const ws = connect();
 

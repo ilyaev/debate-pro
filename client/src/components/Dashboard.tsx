@@ -2,11 +2,12 @@ import type { MetricSnapshot } from '../types';
 import { Lightbulb } from 'lucide-react';
 
 interface Props {
+    status: import('../types').SessionStatus;
     metrics: MetricSnapshot | null;
     elapsed: number;
 }
 
-export function Dashboard({ metrics }: Props) {
+export function Dashboard({ status, metrics }: Props) {
     const totalFillers = metrics
         ? Object.values(metrics.filler_words).reduce((a, b) => a + b, 0)
         : 0;
@@ -41,7 +42,7 @@ export function Dashboard({ metrics }: Props) {
     };
 
     return (
-        <div className="dashboard">
+        <div className={`dashboard ${status === 'connecting' ? 'skeleton-dim' : ''}`}>
             <div className="dashboard__metric">
                 <span className={`dashboard__value ${getFillerClass(totalFillers)}`}>{totalFillers}</span>
                 <span className="dashboard__label">Fillers</span>
