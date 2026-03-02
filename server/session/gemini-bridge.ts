@@ -82,6 +82,7 @@ export async function connectGemini(
           },
         },
       },
+      tools: state.mode === 'veritalk' || state.mode === 'professional_introduction' ? [{ googleSearch: {} }] : undefined,
     },
   });
 

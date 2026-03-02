@@ -1247,3 +1247,19 @@ gcloud run deploy debatepro \
 | HTTPS | No (localhost) | Yes (Cloud Run auto-TLS) |
 | Scaling | Single instance | 0-10 instances (autoscale) |
 | When to use | All development and testing | Contest submission only |
+---
+
+## Phase 8: Refactoring & Stability
+
+### Step 8.1 — Decompose `server/store.ts`
+Move from a single file to a `server/store/` directory:
+- `types.ts`: Define `SessionStore` and domain interfaces.
+- `file-store.ts`: Local development implementation.
+- `firestore-store.ts`: Production implementation.
+- `store.ts`: Barrel file and factory function.
+
+### Step 8.2 — Production Hardening
+- **Firestore Integration**: Enable `ignoreUndefinedProperties: true` in `FirestoreStore` to prevent crashes on optional fields.
+- **JSON Resilience**: Integrate `jsonrepair` in `report.ts` to handle malformed LLM responses.
+- **ADK Logging**: Add detailed Zod issue logging for report validation failures.
+- **PWA Assets**: Ensure `site.webmanifest` exists in `client/public/`.

@@ -214,10 +214,8 @@ See [specs/deployment.md](specs/deployment.md) for detailed manual steps and alt
 │   │   ├── transcript-buffer.ts
 │   │   ├── tone-analyzer.ts # Background LLM tone analysis
 │   │   └── constants.ts     # Tunable thresholds
+│   ├── store/               # Modular session store (Factory + File/Firestore)
 │   ├── adk/                 # Google ADK integration (non-streaming)
-│   │   ├── agents.ts        # LlmAgent definitions (report agent)
-│   │   ├── runner.ts        # Runner factory + runReportAgent()
-│   │   └── index.ts         # Barrel exports
 │   ├── agents/prompts/      # Persona system prompts (markdown)
 │   ├── api/                 # REST endpoints
 │   └── services/            # OG image rendering

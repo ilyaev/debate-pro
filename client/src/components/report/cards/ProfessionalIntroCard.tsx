@@ -10,9 +10,9 @@ interface CardProps {
 }
 
 export const ProfessionalIntroCard = forwardRef<HTMLDivElement, CardProps>(({ report, isOgImage, ogBackgroundImage }, ref) => {
-    const { overall_score, metrics, extraFields, social_share_texts, improvement_tips } = report;
+    const { overall_score, metrics, extraFields, social_share_texts } = report;
     const metricsMap = metrics as unknown as Record<string, number | string>;
-    const summaryText = social_share_texts?.performance_card_summary || improvement_tips[0] || 'A solid professional introduction.';
+    const summaryText = social_share_texts?.performance_card_summary || 'A solid professional introduction.';
 
     // Fallback empty extra fields if not set
     const extra = extraFields || {};
@@ -150,7 +150,7 @@ export const ProfessionalIntroCard = forwardRef<HTMLDivElement, CardProps>(({ re
                         <div style={{ display: 'flex', fontSize: '48px', fontWeight: '800', color: '#ea580c', lineHeight: 1 }}>{formatMetricValue('avg_words_per_minute', metricsMap['avg_words_per_minute'])}</div>
                     </div>
 
-                    {/* Metric 3: Scenario Specific */}
+                    {/* Metric 3: Strongest Asset */}
                     <div style={{
                         flex: 1, padding: '32px 24px', borderRadius: '24px',
                         background: 'rgba(255, 255, 255, 0.95)',
@@ -178,6 +178,37 @@ export const ProfessionalIntroCard = forwardRef<HTMLDivElement, CardProps>(({ re
                             paddingTop: '8px'
                         }}>
                             {extra.strongest_asset || 'Solid Performance'}
+                        </div>
+                    </div>
+
+                    {/* Metric 4: Weakest Moment (Replaces missing layout space nicely) */}
+                    <div style={{
+                        flex: 1, padding: '32px 24px', borderRadius: '24px',
+                        background: 'rgba(255, 255, 255, 0.95)',
+                        border: '1px solid rgba(255,255,255,0.4)',
+                        color: '#334155',
+                        display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px',
+                        boxShadow: '0 10px 40px -10px rgba(0, 0, 0, 0.4)'
+                    }}>
+                        <div style={{ padding: '16px', borderRadius: '16px', background: '#fee2e2', color: '#b91c1c', display: 'flex' }}>
+                            <Target size={32} strokeWidth={2.5} />
+                        </div>
+                        <div style={{ display: 'flex', flexDirection: 'column', fontSize: '28px', color: '#64748b', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                            <span style={{ display: 'flex' }}>Weak Point</span>
+                        </div>
+                        <div style={{
+                            display: '-webkit-box',
+                            WebkitLineClamp: 3,
+                            WebkitBoxOrient: 'vertical',
+                            overflow: 'hidden',
+                            fontSize: '20px',
+                            fontWeight: '800',
+                            color: '#b91c1c',
+                            lineHeight: 1.2,
+                            textAlign: 'center',
+                            paddingTop: '8px'
+                        }}>
+                            {extra.weakest_moment || 'No major issues'}
                         </div>
                     </div>
 

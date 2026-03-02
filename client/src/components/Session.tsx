@@ -67,13 +67,13 @@ export function Session({ mode, userId, context, onEnd }: Props) {
             <TranscriptFeed cues={cues} feedEndRef={feedEndRef} />
 
             <div className="session__actions">
-                <button
+                {/* <button
                     className="session__btn session__btn--pause"
                     onClick={togglePause}
                     disabled={!isConnected || status === 'connecting'}
                 >
                     {isPaused ? 'Resume Session' : 'Pause Session'}
-                </button>
+                </button> */}
                 <button
                     className="session__btn session__btn--end"
                     onClick={handleEnd}

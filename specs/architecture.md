@@ -91,7 +91,7 @@
 | Analytics Agent | ADK `LlmAgent` + `InMemoryRunner` | Reimplemented as ADK agent in `server/agents/analytics-agent.ts`. Uses `runEphemeral()` for stateless transcript chunk analysis. |
 | Google Search Tool | ADK built-in `GOOGLE_SEARCH` | Provides real-time fact-checking for Veritalk mode (defined in `server/adk/tools.ts`) |
 | Gemini Live API Client | `@google/genai` | Opens bidirectional WebSocket to Gemini for audio/video streaming |
-| Session Store | `@google-cloud/firestore` | Persists session metadata, transcripts, and metrics for post-session reports |
+| Session Store | `FileStore` / `FirestoreStore` | Persists session metadata, transcripts, and metrics. Modularized in `server/store/`. |
 
 **Key design decisions:**
 - **Express + `ws` over Fastify.** Express is the most widely understood Node.js framework. The `ws` library provides raw WebSocket control needed for binary audio streaming.
@@ -190,7 +190,7 @@ The application is developed and tested entirely locally. No Google Cloud infras
 ```
 
 - **Gemini Live API:** Accessed directly over the internet (same as production). No emulator needed.
-- **Firestore:** During local development, use **in-memory storage** (a simple Map/object) instead of Firestore. The session store is abstracted behind an interface, so switching is a config change. Optionally, you can use the [Firebase Local Emulator Suite](https://firebase.google.com/docs/emulator-suite) for Firestore if you need persistence during development.
+- **Firestore:** During local development, the system automatically uses `FileStore` (persisting to `sessions.json`) instead of Firestore. This is controlled by the factory in `server/store.ts`. Optionally, you can use the [Firebase Local Emulator Suite](https://firebase.google.com/docs/emulator-suite) for Firestore if you need true production-parity during development.
 - **API Key:** Stored in a local `.env` file, loaded via `dotenv`. Never committed to git.
 - **Hot reload:** Backend uses `tsx watch server/main.ts`. Client uses Vite dev server (`npm run dev:client`) with React HMR. In development, the Vite dev server proxies API/WebSocket requests to the Express backend.
 
@@ -316,7 +316,11 @@ gemili/
 │   │   └── tools.ts              # FunctionTool wrappers (analyze_speech_metrics, GOOGLE_SEARCH)
 │   ├── tools/
 │   │   └── search-tool.ts       # Google Search grounding wrapper
-│   ├── store.ts                 # Session store interface (FileStore / Firestore)
+│   ├── store/                   # Modular session store implementations
+│   │   ├── types.ts             # Store interfaces & domain types
+│   │   ├── file-store.ts        # Local JSON persistence (Development)
+│   │   └── firestore-store.ts   # Google Cloud Firestore (Production)
+│   ├── store.ts                 # Store factory (createStore) & barrel file
 │   ├── report.ts                # Post-session report generation
 │   └── config.ts                # Environment config, constants
 ├── Dockerfile

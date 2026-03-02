@@ -17,7 +17,7 @@ interface Props {
 export function ProfessionalIntroReport({ data, onRestart, transcript, sessionId, userId, isShared }: Props) {
     // Custom Extra Fields based on config.ts:
     // - strongest_asset (string)
-    // - missed_opportunities (string[])
+    // - weakest_moment (string)
     // - overall_verdict (string)
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -48,18 +48,13 @@ export function ProfessionalIntroReport({ data, onRestart, transcript, sessionId
             <CategoryCards categories={data.categories} />
             <MetricsStrip metrics={data.metrics} displayMetrics={data.displayMetrics} />
 
-            {extra.missed_opportunities && extra.missed_opportunities.length > 0 && (
+            {extra.weakest_moment && (
                 <div className="report__extra-card report__extra-card--warning">
                     <div className="report__extra-card-header">
-                        <h3>Missed Opportunities</h3>
-                        <span className="report__extra-badge">{extra.missed_opportunities.length}</span>
+                        <h3>Weakest Moment</h3>
                     </div>
                     <div className="report__extra-card-body">
-                        <ul className="report__missed-list">
-                            {extra.missed_opportunities.map((opp: string, i: number) => (
-                                <li key={i}>{opp}</li>
-                            ))}
-                        </ul>
+                        <p>{extra.weakest_moment}</p>
                     </div>
                 </div>
             )}

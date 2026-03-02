@@ -35,7 +35,11 @@ This skill provides a comprehensive overview of the Gemili project, including it
 
 ### `/server` (Node.js + Express + TypeScript)
 - **Entry**: `main.ts`
-- **Core**: `store.ts` (State), `ws-handler.ts` (WebSockets).
+- **Core**: `store.ts` (Factory/Barrel), `ws-handler.ts` (WebSockets).
+- **Data Storage**: `store/` contains the modular store implementations:
+    - `types.ts`: Shared interfaces and domain models.
+    - `file-store.ts`: Local JSON persistence for development.
+    - `firestore-store.ts`: Production Firestore implementation.
 - **Agents**: `agents/` contains logic for specific AI personas (Coaching, Analytics).
 - **API**: `api/` REST endpoints.
 

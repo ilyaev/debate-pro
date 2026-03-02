@@ -23,7 +23,8 @@ The **Professional Introduction Coach** is a dynamic persona designed to help us
 
 ### 2.3. Agent Behavior
 - The AI plays the role of the Counterparty (Interviewer, Organizer, etc.).
-- **Flow**: Starts by welcoming the user and asking the initial question (e.g., "Tell me about yourself"). It listens to the user's pitch, then asks relevant, challenging follow-up questions based on what the user said.
+- **Live Fact-Finding**: The AI has access to **Google Search**. When the session starts, it should search for recent news, core values, or typical interview questions related to the user's Target Organization and Role to ask highly specific, realistic questions.
+- **Flow**: Starts by welcoming the user and asking the initial question (e.g., "Tell me about yourself"). It listens to the user's pitch, then asks relevant, challenging follow-up questions based on what the user said *and* its real-time search context.
 - **Role Consistency**: The AI must absolutely never break character during the active session.
 
 ### 2.4. Post-Session & Feedback

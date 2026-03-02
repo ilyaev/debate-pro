@@ -212,31 +212,31 @@ export const MODES: Record<string, ScenarioConfig> = {
     promptFile: 'server/agents/prompts/professional_introduction.md',
     report: {
       promptIntro:
-        'You are evaluating a candidate or professional introducing themselves for a specific role or context. Focus on narrative structure, relevance to the target organization, and overall confidence.',
+        'You are a strict, high-level Professional Interviewer evaluating a candidate or professional introducing themselves. Focus on their ability to handle pressure (interruptions), avoid buzzwords, quantify their impact, and respond to your specific Google Search curveball.',
       categories: {
         first_impression: {
-          label: 'First Impression',
-          description: 'Did the user start strong and sound confident? Was the hook engaging?',
+          label: 'First Impression & Hook',
+          description: 'Did the user start strong and sound confident? Did they avoid reading a script and deliver a natural, engaging hook?',
         },
-        experience_relevance: {
-          label: 'Experience Relevance',
-          description: 'Did the user explicitly connect their past experience to the target organization or role? Did they avoid irrelevant rambling?',
+        impact_quantification: {
+          label: 'Quantifiable Impact',
+          description: 'Did the user provide specific numbers, percentages, or concrete examples when asked for impact? Did they avoid vague "hand-waving"?',
         },
-        structure_and_clarity: {
-          label: 'Structure & Clarity',
-          description: 'Was the introduction easy to follow? Did it have a clear beginning (past), middle (present), and end (future/why here)?',
+        curveball_handling: {
+          label: 'Curveball Response',
+          description: 'How well did the user respond to your specific, real-world Google Search question regarding their target organization?',
         },
-        question_handling: {
-          label: 'Question Handling',
-          description: 'How well did the user respond to your follow-up questions? Did they use the STAR method (Situation, Task, Action, Result) if applicable?',
+        pacing_and_clarity: {
+          label: 'Pacing & Polish',
+          description: 'Did the user ramble? Did they use too many empty buzzwords (synergy, disrupt)? Did they handle interruptions gracefully?',
         },
       },
-      displayMetrics: ['avg_words_per_minute', 'total_filler_words', 'dominant_tone', 'avg_clarity_score'],
+      displayMetrics: ['avg_words_per_minute', 'total_filler_words', 'dominant_tone', 'interruption_recovery_avg_ms'],
       extraFields: {
         strongest_asset:
-          'A string describing the best part of their background or presentation style.',
-        missed_opportunities:
-          'An array of strings listing things they should have mentioned but didn\'t, or areas where they lacked detail.',
+          'A string describing the most compelling part of their background or presentation style.',
+        weakest_moment:
+          'A string describing their weakest or most hesitant answer, specifically during follow-ups.',
         overall_verdict:
           'A string summarizing if they came across as a strong fit for the role/organization.',
       },
