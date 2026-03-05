@@ -10,18 +10,22 @@ import { renderOgImage, areFontsLoaded, loadAssets } from '../services/og-render
 loadAssets();
 
 // ─── Validation Schemas ───────────────────────────────────────────────────────
-const userIdQuery = z.object({ userId: z.string().min(1) });
+const userIdQuery = z.object({
+    userId: z.string().trim().min(1).max(100)
+}).strict();
+
 const shareKeyParam = z.object({
-    id: z.string().min(1),
-    key: z.string().length(24),
-});
+    id: z.string().trim().min(1).max(50),
+    key: z.string().trim().length(24),
+}).strict();
+
 const presetSchema = z.object({
-    userId: z.string().min(1),
-    presetName: z.string().min(1),
-    organization: z.string(),
-    role: z.string(),
-    background: z.string().optional(),
-});
+    userId: z.string().trim().min(1).max(100),
+    presetName: z.string().trim().min(1).max(100),
+    organization: z.string().trim().max(100),
+    role: z.string().trim().max(100),
+    background: z.string().trim().max(1000).optional(),
+}).strict();
 
 // ─── Router Factory (dependency injection) ────────────────────────────────────
 export function createSessionsRouter(store: SessionStore): Router {

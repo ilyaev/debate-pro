@@ -76,7 +76,7 @@ const steps = [
         desc: 'No scripts. No safety nets. Speak your mind and hold your ground against real-time interruptions.'
     },
     {
-        title: 'Review the Tape',
+        title: 'Instant Feedback',
         desc: 'Dissect your performance to see exactly where you lost control of the conversation—and how to win it back.'
     }
 ];

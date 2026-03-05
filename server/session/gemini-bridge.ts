@@ -138,14 +138,11 @@ function handleGeminiMessage(
 
             // We must respond to the tool call to keep the API happy before we close
             try {
-              session.sendClientContent({
-                turnComplete: true,
-                tools: [{
-                  functionResponses: [{
-                    name: 'endSession',
-                    id: call.id,
-                    response: { result: 'Session terminating...' }
-                  }]
+              session.sendToolResponse({
+                functionResponses: [{
+                  name: 'endSession',
+                  id: call.id,
+                  response: { result: 'Session terminating...' }
                 }]
               });
             } catch (err) {

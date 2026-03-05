@@ -15,7 +15,7 @@ Before modifying any code, the AI MUST analyze the target file(s) using this fra
 
 -   **Responsibility Check:** Does this file/function do too much? (e.g., mixing data fetching, business logic, and UI rendering). Files with 9+ responsibilities or 14+ mutable closure variables are "god objects" — split them.
 -   **Dependency Check:** Are there circular dependencies or cross-boundary imports? Are there duplicate instantiations (e.g., two `createStore()` calls in different files)?
--   **Security Check:** Are inputs validated (Zod)? Are outputs sanitized (HTML escaping)? Are error traces leaked? Are debug hooks (monkey-patches, prototype overrides) guarded by `config.isDev` or removed?
+-   **Security Check:** Are inputs validated (Zod)? Do string validations explicitly use `.trim()` and `.max(limit)` to prevent DoS attacks via huge payloads or whitespace bypasses? Are objects `.strict()` to prevent prototype pollution or JSON bloat? Are outputs sanitized? Are debug hooks guarded by `config.isDev`?
 -   **Performance Check:** Are expensive operations cached? Are unrelated computations blocking the event loop? Watch for O(n²) patterns (e.g., recomputing metrics from full transcript history on every update).
 -   **Type Safety:** Are there `any` types or loose casts (`as string`) that can be strict? Replace loose `let` closure variables with a typed state object.
 -   **Regex Check:** Are regex patterns in `RegExp` constructors or string form double-escaped? e.g., `[^\\w\\s]` in a regex literal is wrong — use `[^\w\s]`.
@@ -63,6 +63,8 @@ When refactoring API routes, apply these patterns:
     export function createRouter(store: SessionStore): Router { ... }
     ```
 2.  **Validation:** Use `zod` schemas for all `req.query`, `req.params`, and `req.body`.
+    *   **CRITICAL:** All string validations MUST include `.trim()` before `.min(1)` and MUST have a `.max(N)` limit to prevent memory exhaustion DoS attacks.
+    *   **CRITICAL:** All object schemas MUST end with `.strict()` to reject unexpected fields.
 3.  **Service Extraction:** Move complex logic (e.g., image generation, PDF rendering) to `server/services/`.
 4.  **Middleware:** Extract auth and guard logic to `server/middleware/`.
 5.  **Error Handling:** Catch all errors and return standardized JSON: `{ error: string }`.

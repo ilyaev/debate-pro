@@ -13,6 +13,7 @@ interface Props {
 
 export function ShareCardPreview({ serverImageUrl, sessionKey, sessionId, shareGatewayUrl, report }: Props) {
     const [isDownloading, setIsDownloading] = useState(false);
+    const [isImageLoaded, setIsImageLoaded] = useState(false);
     const canNativeShare = Boolean(navigator.share);
 
     const twitterText = report.social_share_texts?.twitter_template
@@ -55,11 +56,17 @@ export function ShareCardPreview({ serverImageUrl, sessionKey, sessionId, shareG
     return (
         <>
             <div className="share-modal__card-preview">
-                {serverImageUrl ? (
-                    <img src={serverImageUrl} alt="Performance Card Preview" style={{ width: '90%', paddingTop: '20px', paddingBottom: '20px' }} />
-                ) : (
+                {serverImageUrl && (
+                    <img
+                        src={serverImageUrl}
+                        alt="Performance Card Preview"
+                        style={{ width: '90%', paddingTop: '20px', paddingBottom: '20px', display: isImageLoaded ? 'block' : 'none' }}
+                        onLoad={() => setIsImageLoaded(true)}
+                    />
+                )}
+                {(!serverImageUrl || !isImageLoaded) && (
                     <div className="share-modal__preview-placeholder">
-                        {sessionId && !sessionKey ? 'Generating preview...' : 'Preview unavailable'}
+                        {sessionId && !sessionKey ? 'Generating preview...' : (!isImageLoaded && serverImageUrl ? 'Generating preview...' : 'Preview unavailable')}
                     </div>
                 )}
             </div>
