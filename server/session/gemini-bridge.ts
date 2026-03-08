@@ -126,7 +126,7 @@ function handleGeminiMessage(
 
   if (!serverContent) {
     if (message.toolCall) {
-      console.log(`   [${state.id}] ← toolCall:`, JSON.stringify(message.toolCall).slice(0, 200));
+      console.log(`   [${state.id}] ← toolCall:`, JSON.stringify(message.toolCall));
 
       // Check if AI is invoking the session termination tool
       const functionCalls = message.toolCall.functionCalls;
