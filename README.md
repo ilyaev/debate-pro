@@ -67,10 +67,11 @@ graph TB
 
     subgraph Backend["☁️ Cloud Run"]
         Server["Node.js Server<br/>(Express + WebSocket)"]
+        ADK["Gemini ADK<br/>(Real-time Metrics & Analysis Report)"]
     end
 
     subgraph Google["🔷 Google Cloud & AI"]
-        Gemini["Gemini 2.5 Flash<br/>(Live API)"]
+        Gemini["Gemini 2.5 Flash<br/>(Live API & REST)"]
         Firestore["Firestore<br/>(Session Storage)"]
         Search["Google Search<br/>(Grounding)"]
     end
@@ -79,6 +80,8 @@ graph TB
     Server -- "WebSocket<br/>(audio responses + metrics)" --> Browser
     Server -- "WebSocket<br/>(streaming audio)" --> Gemini
     Gemini -- "WebSocket<br/>(voice + transcriptions)" --> Server
+    Server -- "Transcripts" --> ADK
+    ADK -- "REST API<br/>(runAsync/runEphemeral)" --> Gemini
     Server -- "REST<br/>(read/write sessions)" --> Firestore
     Gemini -. "Grounding queries<br/>(Veritalk mode)" .-> Search
 ```
